@@ -1,16 +1,16 @@
 
-const Square = ({id, getSquareId, text}) => {
+const Square = ({id, getSquareId}) => {
+    {/* <img src="src/assets/ivysaur.gif" onClick={handleImgClick}/> */}
     function handleImgClick(e) {
         e.stopPropagation();
         const parent = e.currentTarget.parentNode;
         getSquareId(parent)
     }
+    const text=""
 
 
     return(<>
-        <button id={id} className='block' onClick={getSquareId}>
-        <img src="src/components/13d@2x.png" onClick={handleImgClick}/>
-            {text}</button>
+        <button id={id} className='block' onClick={getSquareId}>{text}</button>
     </>)
 }
 

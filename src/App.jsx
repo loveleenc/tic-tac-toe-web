@@ -1,32 +1,31 @@
 import { useState } from 'react'
-import Grid from './components/Grid'
 import Setup from './components/Setup'
+import Game from './Game'
+import MainScreen from './components/MainScreen'
 
 function App() {
   const [width, setWidth] = useState(0)
   const [height, setHeight] = useState(0)
-  
+  const [player, setPlayer] = useState(null)
+  const [winMoves, setWinMoves] = useState(3)
+  const [gameOver, setGameOver] = useState(true)
+  const [playGame, setPlayGame] = useState(false)
 
-  const updateWidth = (value) => {
-    setWidth(value)
-  } 
 
-  const updateHeight = (value) => {
-    setHeight(value)
+  const startGame = () => {
+    setPlayGame(true)
   }
 
-  
+  if (!playGame){
+    return (
+      <MainScreen handlePlayButtonClick={startGame}/>
+    )
+  }
 
   return (
     <>
-      <Setup setWidth={updateWidth} setHeight={updateHeight} />
-      <Grid width={width} height={height}/>
-      {/* <form>
-        <p>Enter width: <input name="inputWidth" onChange={onWidthChange}/></p>
-        Enter height: <input name="inputHeight" onChange={onHeightChange}/>
-        <p><button type="submit" onClick={onSubmit}>Create Grid</button></p>
-      </form> */}
-      
+      <Setup setWidth={setWidth} setHeight={setHeight} setPlayer={setPlayer} setNeededConsecutiveMoves={setWinMoves}/>
+      <Game width={width} height={height} player={player} minMoves={winMoves} gameOver={gameOver}/>
     </>
   )
 }

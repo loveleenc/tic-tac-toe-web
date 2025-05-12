@@ -12,7 +12,14 @@ const Grid = ({width, height, players}) => {
         for(let i=0; i< height; i++){
             let w = []
             for(let j = 0; j < width; j++){
-                w.push(<Square id={count} key={count} getSquareId={getSquareId} text=""/>)
+                let text = ""
+                for(const player of players){
+                    if(player.moves.includes(count)){
+                        text = player.symbol
+                        break
+                    }
+                }
+                w.push(<Square id={count} key={count} getSquareId={getSquareId} text={text}/>)
                 count +=1
             }
             grid.push(w)

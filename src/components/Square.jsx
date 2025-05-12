@@ -1,16 +1,25 @@
 
-const Square = ({id, getSquareId}) => {
+const Square = ({id, getSquareId, text}) => {
+
     {/* <img src="src/assets/ivysaur.gif" onClick={handleImgClick}/> */}
-    function handleImgClick(e) {
-        e.stopPropagation();
-        const parent = e.currentTarget.parentNode;
+    const handleImgClick = (event) => {
+        console.log("clicking image")
+        event.stopPropagation();
+        const parent = event.currentTarget.parentNode;
+        getSquareId(parent)
+        event.target.src = "src/assets/ivysaur.gif"
+    }
+
+    const handleClick = (event) => {
+        event.stopPropagation();
+        const button = event.currentTarget.parentNode;
         getSquareId(parent)
     }
-    const text=""
-
 
     return(<>
-        <button id={id} className='block' onClick={getSquareId}>{text}</button>
+        <button id={id} className='block'>
+            <img src="data:," onClick={handleImgClick}/>
+        </button>
     </>)
 }
 

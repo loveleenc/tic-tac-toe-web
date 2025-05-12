@@ -2,7 +2,7 @@
 const createComputerPlayer = (players) => {
     let computer = null
     function getRandomCharacter() {
-        const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+        const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
         const randomIndex = Math.floor(Math.random() * characters.length);
         computer = characters.charAt(randomIndex);
     }
@@ -21,6 +21,33 @@ const createComputerPlayer = (players) => {
     return computer
 }
 
+
+const createInitialPlayerData = (players) => {
+    const template = {
+        symbol: null,
+        moves: [],
+        turn: false,
+        isComputer: false
+    }
+    const data = new Array()
+
+    for(let i=0; i < players.length; i++){
+        data.push({...template, moves: template.moves.slice(), symbol: players[i]})
+    }
+    
+    const computerSymbol = createComputerPlayer(players)
+    data.push({...template, symbol: computerSymbol, isComputer: true})
+    selectFirstPlayer(data)
+    return data
+}
+
+const selectFirstPlayer = (data) => {
+    const randomIndex = Math.floor(Math.random() * data.length)
+    data[randomIndex].turn = true
+}
+
+
+
 export default {
-    createComputerPlayer
+    createInitialPlayerData
 }

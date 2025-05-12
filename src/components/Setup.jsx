@@ -12,6 +12,7 @@ const Setup = ({setWidth, setHeight, setPlayer, setNeededConsecutiveMoves}) => {
     }
 
     const updatePlayer = (value) => {
+        console.log("player is: ", value)
         setPlayer(value)
     }
 

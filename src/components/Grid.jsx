@@ -1,10 +1,8 @@
 import Square from "./Square"
 
 
-const Grid = ({width, height, players}) => {
-    const getSquareId = (target) => {
-        console.log(target.id)
-    }
+const Grid = ({width, height, players, getSquareId}) => {
+    
 
     const createGrid = () =>{
         const grid = []

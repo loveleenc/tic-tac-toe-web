@@ -46,8 +46,26 @@ const selectFirstPlayer = (data) => {
     data[randomIndex].turn = true
 }
 
+const updateMoveInPlayerData = (playerData, id) => {
+    const currentPlayerIndex = playerData.findIndex(player => player.turn === true)
+    const newPlayerData = playerData.slice()
+    newPlayerData[currentPlayerIndex].moves.push(parseInt(id, 10))
 
+    if (currentPlayerIndex + 1 === newPlayerData.length){
+        newPlayerData[0].turn = true
+    }
+    else{
+        newPlayerData[currentPlayerIndex + 1].turn = true
+    }
+    newPlayerData[currentPlayerIndex].turn = false
+    return newPlayerData
+}
+
+const checkIfCurrentPlayerHasWon = () => {
+    
+}
 
 export default {
-    createInitialPlayerData
+    createInitialPlayerData,
+    updateMoveInPlayerData
 }

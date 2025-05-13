@@ -9,14 +9,24 @@ const Square = ({id, getSquareId, text}) => {
         event.stopPropagation();
         event.target.src = "src/assets/ivysaur.gif"
         const parent = event.currentTarget.parentNode;
-        getSquareId(parent)
+        getSquareId(parent.id)
         setDisabled(true)
     }
 
-    return(<>
-        <button id={id} className='block' disabled={isDisabled}>
-            <img className='playerSprite' src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" onClick={handleImgClick}/>
-        </button>
+    const handleButtonClick = (event) => {
+        getSquareId(event.target.id)
+        setDisabled(true)
+    }
+
+    // return(<>
+    //     <button id={id} className='block' disabled={isDisabled}>
+    //         <img className='playerSprite' src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" onClick={handleImgClick}/>
+    //     </button>
+    // </>)
+
+
+    return (<>
+    <button id={id} className='block' disabled={isDisabled} onClick={handleButtonClick}>{text}</button>
     </>)
 }
 

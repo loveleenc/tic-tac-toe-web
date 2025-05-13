@@ -46,3 +46,7 @@ button:hover {
   background-color: #646cff;
 }
 
+.foo {
+  filter: blur(8px);
+
+}

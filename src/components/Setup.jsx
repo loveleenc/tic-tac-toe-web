@@ -4,20 +4,19 @@ const Setup = ({setWidth, setHeight, setPlayer, setNeededConsecutiveMoves}) => {
     const [isSubmitted, setSubmitted] = useState(false)
 
     const updateWidth = (value) => {
-        setWidth(value)
+        setWidth(parseInt(value, 10))
     } 
     
     const updateHeight = (value) => {
-        setHeight(value)
+        setHeight(parseInt(value, 10))
     }
 
     const updatePlayer = (value) => {
-        console.log("player is: ", value)
         setPlayer(value)
     }
 
     const updateNumberOfMovesNeededToWin = (value) => {
-        setNeededConsecutiveMoves(value)
+        setNeededConsecutiveMoves(parseInt(value, 10))
     }
 
     const onSubmit = (event) => {

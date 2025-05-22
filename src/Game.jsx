@@ -52,7 +52,7 @@ const Game = ({width, height, player, minMoves}) => {
     index = grid.length * grid[0].length
     
     return (
-        <>
+        <div className="grid">
             {grid.map((row, i) => {
                 let squares = row.map(s => <Square id={s.count} key={s.count} getSquareId={getSquareId} text={s.text} />)
                 if (i + 1 < grid.length){
@@ -61,7 +61,7 @@ const Game = ({width, height, player, minMoves}) => {
                 }
                 return squares
             })}
-        </>
+        </div>
     )
 }
 

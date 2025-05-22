@@ -1,4 +1,5 @@
 import { useState, memo } from "react";
+import './../styles/grid.css';
 
 const Square = memo(({id, getSquareId, text}) => {
     const [isDisabled, setDisabled] = useState(false)

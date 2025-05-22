@@ -1,14 +1,3 @@
-.block {
-  display: inline-block;
-  background-color: #04AA6D; 
-  border-radius: 0px;
-  border: 2px solid black;
-  width: 100px;
-  height: 100px;
-  vertical-align:middle;
-  font-size: 60px;
-  font-size-adjust: initial;
-}
 
 .playerSprite {
   width: 90px;
@@ -22,16 +11,13 @@
   /* cursor: pointer; */
   /* transition: border-color 0.25s; */
 
-button:hover {
-  background-color: #646cff;
-  outline: 40px auto -webkit-focus-ring-color;
-}
+
 /* border-color: #646cff; */
 /* button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 } */
 
-.container {
+/* .container {
   display: grid;
   grid-template-columns: auto auto auto;
 }
@@ -46,9 +32,8 @@ button:hover {
 
 .container > div:hover{
   background-color: #646cff;
-}
+} */
 
-.foo {
+/* .foo {
   filter: blur(8px);
-
-}
+} */

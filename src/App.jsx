@@ -24,10 +24,10 @@ function App() {
   }
 
   const stopGame = () => {
-    // if (!window.confirm(`Game over! Do you want to go back?`)){
-    //   return
-    // }
-    // setPlayGame(false)
+    if (!window.confirm(`Game over! Do you want to go back?`)){
+      return
+    }
+    setPlayGame(false)
   }
 
   if (!playGame){
@@ -40,7 +40,7 @@ function App() {
     <>
       {/* <button onClick={handleQuitGame}>Quit</button > */}
       <Setup setWidth={setWidth} setHeight={setHeight} setPlayer={setPlayer} setNeededConsecutiveMoves={setWinMoves}/>
-      <Game width={width} height={height} player={player} minMoves={winMoves} stopGame={stopGame}/>
+      <Game width={width} height={height} player={player} minMoves={winMoves}/>
     </>
   )
 }

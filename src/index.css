@@ -6,6 +6,8 @@
   width: 100px;
   height: 100px;
   vertical-align:middle;
+  font-size: 60px;
+  font-size-adjust: initial;
 }
 
 .playerSprite {

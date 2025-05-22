@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, memo } from "react";
 
-const Square = ({id, getSquareId, text}) => {
+const Square = memo(({id, getSquareId, text}) => {
     const [isDisabled, setDisabled] = useState(false)
 
     
@@ -24,10 +24,9 @@ const Square = ({id, getSquareId, text}) => {
     //     </button>
     // </>)
 
-
     return (<>
     <button id={id} className='block' disabled={isDisabled} onClick={handleButtonClick}>{text}</button>
     </>)
-}
+})
 
 export default Square

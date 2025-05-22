@@ -65,14 +65,12 @@ const selectNextPlayer = (playerData)=>{
 }
 
 
-const createGridArray = (width, height, playerData, x_coordinates, y_coordinates) => {
+const createGridArray = (width, height, playerData) => {
     const grid = []
     let count = 0
     for (let i = 0; i < height; i++){
         let row = []
         for (let j = 0; j < width; j++){
-            x_coordinates.push(i)
-            y_coordinates.push(j)
             let text = ""
             for (const player of playerData){
                 if (player.moves.includes(count)){
@@ -93,14 +91,14 @@ function* range(start, stop, step = 1) {
         stop = start
         start = 0
     }
-
+    
     for (let i = start; step > 0 ? i < stop : i > stop; i += step) {
         yield i
     }
 }
 
-const hasWon = (ids, playerData, minMoves) => {
-    const moves = playerData.find((player) => player.turn === true).moves
+const hasWon = (ids, pd, minMoves) => {
+    const moves = pd.find((player) => player.turn === true).moves
     let count = 0
     for(const id of ids){
         if(moves.includes(id)){
@@ -113,7 +111,7 @@ const hasWon = (ids, playerData, minMoves) => {
     return false
 }
 
-const hasCurrentPlayerHasWon = (id, minMoves, width, height, playerData) => {
+const hasCurrentPlayerHasWon = (id, minMoves, width, height, pd) => {
     const maxCount = (width * height) - 1
     const leftList = [0]
     const rightList = [width - 1]
@@ -197,7 +195,7 @@ const hasCurrentPlayerHasWon = (id, minMoves, width, height, playerData) => {
         diagonal2.push(i)
     }
 
-    return hasWon(vertical, playerData, minMoves) || hasWon(horizontal, playerData, minMoves) || hasWon(diagonal1, playerData, minMoves) || hasWon(diagonal2, playerData, minMoves)
+    return hasWon(vertical, pd, minMoves) || hasWon(horizontal, pd, minMoves) || hasWon(diagonal1, pd, minMoves) || hasWon(diagonal2, pd, minMoves)
 
 }
 

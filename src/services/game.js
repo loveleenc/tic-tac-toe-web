@@ -199,10 +199,16 @@ const hasCurrentPlayerHasWon = (id, minMoves, width, height, pd) => {
 
 }
 
+const nobodyWins = (playerData, width, height) => {
+    const total_moves = playerData.map(player => player.moves.length).reduce((a, c) => a + c, 0)
+    return total_moves === (width * height)
+}
+
 export default {
     createInitialPlayerData,
     updateMoveInPlayerData,
     createGridArray,
     selectNextPlayer,
-    hasCurrentPlayerHasWon
+    hasCurrentPlayerHasWon,
+    nobodyWins
 }

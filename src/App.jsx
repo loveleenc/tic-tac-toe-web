@@ -11,13 +11,12 @@ function App() {
   const [winMoves, setWinMoves] = useState(3)
   const [playGame, setPlayGame] = useState(false)
 
-  const handleQuitGame = () =>{
+  const handleGameOver = () =>{
     setPlayGame(false)
     setWidth(0)
     setHeight(0)
     setPlayer(null)
     setWinMoves(3)
-    setGameOver(false)
   }
 
   const startGame = () => {
@@ -42,7 +41,7 @@ function App() {
       {/* <button onClick={handleQuitGame}>Quit</button > */}
       <Navigation />
       <Setup setWidth={setWidth} setHeight={setHeight} setPlayer={setPlayer} setNeededConsecutiveMoves={setWinMoves}/>
-      <Game width={width} height={height} player={player} minMoves={winMoves}/>
+      <Game width={width} height={height} player={player} minMoves={winMoves} handleGameOver={handleGameOver}/>
     </>
   )
 }

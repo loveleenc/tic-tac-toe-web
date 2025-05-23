@@ -2,7 +2,6 @@ import { useState } from 'react'
 import Setup from './components/Setup'
 import Game from './Game'
 import MainScreen from './components/MainScreen'
-import Navigation from './components/Navigation'
 
 function App() {
   const [width, setWidth] = useState(0)
@@ -39,7 +38,6 @@ function App() {
   return (
     <>
       {/* <button onClick={handleQuitGame}>Quit</button > */}
-      <Navigation />
       <Setup setWidth={setWidth} setHeight={setHeight} setPlayer={setPlayer} setNeededConsecutiveMoves={setWinMoves}/>
       <Game width={width} height={height} player={player} minMoves={winMoves} handleGameOver={handleGameOver}/>
     </>

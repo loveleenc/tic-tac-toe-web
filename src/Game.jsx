@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from "react"
 import gameServices from "./services/game"
 import Square from "./components/Square"
-import game from "./services/game"
+import Navigation from './components/Navigation'
 
 const Game = ({width, height, player, minMoves, handleGameOver}) => {
     const [playerData, setPlayerData] = useState(null)
@@ -12,28 +12,17 @@ const Game = ({width, height, player, minMoves, handleGameOver}) => {
     const updateGame = (id) => {
         setPlayerData(playerData => {
             let newPlayerData = gameServices.updateMoveInPlayerData(playerData, id)
-            // const newPlayerData = playerData.slice()
-            // const currentPlayerIndex = playerData.findIndex(player => player.turn === true)
-            // newPlayerData[currentPlayerIndex].moves.push(parseInt(id, 10))
 
             if(gameServices.hasCurrentPlayerHasWon(id, minMoves, width, height, newPlayerData)){
-                window.confirm(`Game over! Player ${newPlayerData.find(player => player.turn === true).symbol} Do you want to go back?`)
+                alert(`Game over! Player ${newPlayerData.find(player => player.turn === true).symbol} has won!`)
                 setGameOver(true)
             }
             else if (gameServices.nobodyWins(newPlayerData, width, height)){
-                alert("nobody won jack shit")
+                alert("Nobody wins :(")
                 setGameOver(true)
             }
             else{
                 gameServices.selectNextPlayer(newPlayerData)
-                // const currentPlayerIndex = newPlayerData.findIndex(player => player.turn === true)
-                // if (currentPlayerIndex + 1 === newPlayerData.length){
-                //     newPlayerData[0].turn = true
-                // }
-                // else{
-                //     newPlayerData[currentPlayerIndex + 1].turn = true
-                // }
-                // newPlayerData[currentPlayerIndex].turn = false
             }
             return newPlayerData
         })
@@ -46,6 +35,12 @@ const Game = ({width, height, player, minMoves, handleGameOver}) => {
         }
     }, [gameOver])
 
+    const quitGame = () => {
+        if(window.confirm("Do you want to quit the game?")){
+            setPlayerData(null)
+            handleGameOver()
+        }
+    }
 
     const getSquareId = useCallback((id) => {
         const int_id = parseInt(id, 10)
@@ -68,16 +63,19 @@ const Game = ({width, height, player, minMoves, handleGameOver}) => {
 
 
     return (
-        <div className="grid">
-            {grid.map((row, i) => {
-                let squares = row.map(s => <Square id={s.count} key={s.count} getSquareId={getSquareId} text={s.text} />)
-                if (i + 1 < grid.length){
-                    squares.push(<br key={index}/>)
-                    index +=1
-                }
-                return squares
-            })}
-        </div>
+        <>
+            <Navigation quitGame={quitGame}/>
+            <div className="grid">
+                {grid.map((row, i) => {
+                    let squares = row.map(s => <Square id={s.count} key={s.count} getSquareId={getSquareId} text={s.text} />)
+                    if (i + 1 < grid.length){
+                        squares.push(<br key={index}/>)
+                        index +=1
+                    }
+                    return squares
+                })}
+            </div>
+        </>
     )
 }
 

@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from "react"
 import gameServices from "./services/game"
 import Square from "./components/Square"
 import Navigation from './components/Navigation'
+import './styles/game.css'
 
 const Game = ({width, height, player, minMoves, handleGameOver}) => {
     const [playerData, setPlayerData] = useState(null)
@@ -42,6 +43,15 @@ const Game = ({width, height, player, minMoves, handleGameOver}) => {
         }
     }
 
+    const restartGame = () => {
+        if(window.confirm("Do you want to restart the game?")){
+            const players = new Array()
+            players.push(player)
+            const data = gameServices.createInitialPlayerData(players)
+            setPlayerData(data)
+        }
+    }
+
     const getSquareId = useCallback((id) => {
         const int_id = parseInt(id, 10)
         updateGame(int_id)
@@ -63,8 +73,8 @@ const Game = ({width, height, player, minMoves, handleGameOver}) => {
 
 
     return (
-        <>
-            <Navigation quitGame={quitGame}/>
+        <div className="gameBackground">
+            <Navigation quitGame={quitGame} restartGame={restartGame}/>
             <div className="grid">
                 {grid.map((row, i) => {
                     let squares = row.map(s => <Square id={s.count} key={s.count} getSquareId={getSquareId} text={s.text} />)
@@ -75,7 +85,7 @@ const Game = ({width, height, player, minMoves, handleGameOver}) => {
                     return squares
                 })}
             </div>
-        </>
+        </div>
     )
 }
 

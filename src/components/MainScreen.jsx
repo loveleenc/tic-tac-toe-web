@@ -9,7 +9,6 @@ const MainScreen = ({handlePlayButtonClick}) => {
     const onMouseOverPlayButton = (event, b) =>{
         event.target.src = b
     }
-    const k = 'src/assets/mainScreen/PlayButtonHighlight.png'
     return(
     <div className="mainScreenBackground">
         <img className="gameTitle" src='src/assets/mainScreen/ttt_title.gif' />

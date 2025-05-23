@@ -204,9 +204,9 @@ const hasCurrentPlayerHasWon = (id, minMoves, width, height, pd) => {
 
 }
 
-const nobodyWins = (playerData, width, height) => {
+const nobodyWins = (playerData, width, height, disabledSquares) => {
     const total_moves = playerData.map(player => player.moves.length).reduce((a, c) => a + c, 0)
-    return total_moves === (width * height)
+    return (disabledSquares.length + total_moves) === (width * height)
 }
 
 const selectSquaresToDisable = (width, height) => {

@@ -19,7 +19,7 @@ const Game = ({width, height, player, minMoves, disableSquares, handleGameOver})
                 alert(`Game over! Player ${newPlayerData.find(player => player.turn === true).symbol} has won!`)
                 setGameOver(true)
             }
-            else if (gameServices.nobodyWins(newPlayerData, width, height)){
+            else if (gameServices.nobodyWins(newPlayerData, width, height, disabledSquares)){
                 alert("Nobody wins :(")
                 setGameOver(true)
             }
@@ -58,7 +58,7 @@ const Game = ({width, height, player, minMoves, disableSquares, handleGameOver})
     const getSquareId = useCallback((id) => {
         const int_id = parseInt(id, 10)
         updateGame(int_id)
-    }, [width, height])
+    }, [width, disabledSquares])
     
     if (width === 0 && height === 0 && player === null){
         return (<></>)

@@ -4,9 +4,10 @@ import Square from "./components/Square"
 import Navigation from './components/Navigation'
 import './styles/game.css'
 
-const Game = ({width, height, player, minMoves, handleGameOver}) => {
+const Game = ({width, height, player, minMoves, disableSquares, handleGameOver}) => {
     const [playerData, setPlayerData] = useState(null)
     const [gameOver, setGameOver] = useState(false)
+    const [disabledSquares, setDisabledSquares] = useState([])
     let grid;
     let index;
 
@@ -32,6 +33,7 @@ const Game = ({width, height, player, minMoves, handleGameOver}) => {
     useEffect(() => {
         if (gameOver){
             setPlayerData(null)
+            setDisabledSquares([])
             handleGameOver()
         }
     }, [gameOver])
@@ -39,6 +41,7 @@ const Game = ({width, height, player, minMoves, handleGameOver}) => {
     const quitGame = () => {
         if(window.confirm("Do you want to quit the game?")){
             setPlayerData(null)
+            setDisabledSquares([])
             handleGameOver()
         }
     }
@@ -64,11 +67,15 @@ const Game = ({width, height, player, minMoves, handleGameOver}) => {
         const players = new Array()
         players.push(player)
         const data = gameServices.createInitialPlayerData(players)
+        if (disableSquares){
+            const squares = gameServices.selectSquaresToDisable(width, height)
+            setDisabledSquares(squares)
+        }
         setPlayerData(data)
         return (<></>)
     }
     
-    grid = gameServices.createGridArray(width, height, playerData)
+    grid = gameServices.createGridArray(width, height, playerData, disabledSquares)
     index = grid.length * grid[0].length
 
 

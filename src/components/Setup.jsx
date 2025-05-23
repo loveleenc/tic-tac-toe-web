@@ -18,7 +18,7 @@ const FormInput = ({text, fieldName, type}) => {
     )
 }
 
-const Setup = ({setWidth, setHeight, setPlayer, setNeededConsecutiveMoves}) => {
+const Setup = ({setWidth, setHeight, setPlayer, setNeededConsecutiveMoves, setDisabledSquares}) => {
     const [isSubmitted, setSubmitted] = useState(false)
 
     const updateWidth = (value) => {
@@ -37,12 +37,17 @@ const Setup = ({setWidth, setHeight, setPlayer, setNeededConsecutiveMoves}) => {
         setNeededConsecutiveMoves(parseInt(value, 10))
     }
 
+    const updateDisablingSquares = (value) => {
+        setDisabledSquares(value)
+    }
+
     const onSubmit = (event) => {
         event.preventDefault()
         updateWidth(event.target.inputWidth.value)
         updateHeight(event.target.inputHeight.value)
         updatePlayer(event.target.player.value)
         updateNumberOfMovesNeededToWin(event.target.moves.value)
+        updateDisablingSquares(event.target.squaresDisabled.checked)
         setSubmitted(true)
     }
 
@@ -58,6 +63,7 @@ const Setup = ({setWidth, setHeight, setPlayer, setNeededConsecutiveMoves}) => {
                     <FormInput text="Enter height: " fieldName="inputHeight" type="number"/>
                     <FormInput text="Enter player symbol: " fieldName="player" type="text"/>
                     <FormInput text="Number of moves needed to win: " fieldName="moves" type="number"/>
+                    <FormInput text="Disable random squares? " fieldName="squaresDisabled" type="checkbox" />
                     <p><button type="submit" className="createGridButton">Create Grid</button></p>
                 </form>
             </div>

@@ -24,9 +24,13 @@ const Square = memo(({id, getSquareId, text}) => {
     //         <img className='playerSprite' src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" onClick={handleImgClick}/>
     //     </button>
     // </>)
-
+    if (text === null){
+        return (<>
+                <button id={id} className='block' style={{backgroundColor: "gray"}} disabled="true" onClick={handleButtonClick}>{text}</button>
+            </>)
+    }
     return (<>
-    <button id={id} className='block' disabled={isDisabled} onClick={handleButtonClick}>{text}</button>
+        <button id={id} className='block' disabled={isDisabled} onClick={handleButtonClick}>{text}</button>
     </>)
 })
 

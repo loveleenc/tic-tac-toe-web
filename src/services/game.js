@@ -65,7 +65,7 @@ const selectNextPlayer = (playerData)=>{
 }
 
 
-const createGridArray = (width, height, playerData) => {
+const createGridArray = (width, height, playerData, disabledSquares) => {
     const grid = []
     let count = 0
     for (let i = 0; i < height; i++){
@@ -76,6 +76,11 @@ const createGridArray = (width, height, playerData) => {
                 if (player.moves.includes(count)){
                     text = player.symbol
                     break
+                }
+            }
+            if (text === ""){
+                if(disabledSquares.includes(count)){
+                    text = null
                 }
             }
             row.push({count: count, text: text})
@@ -204,11 +209,21 @@ const nobodyWins = (playerData, width, height) => {
     return total_moves === (width * height)
 }
 
+const selectSquaresToDisable = (width, height) => {
+    let squares = new Array()
+    for (let i = 0; i < 5; i ++){
+        squares.push(Math.floor(Math.random() * ((width * height) - 1)))
+    }
+    squares = [...new Set(squares)]
+    return squares
+}
+
 export default {
     createInitialPlayerData,
     updateMoveInPlayerData,
     createGridArray,
     selectNextPlayer,
     hasCurrentPlayerHasWon,
-    nobodyWins
+    nobodyWins,
+    selectSquaresToDisable
 }

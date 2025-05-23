@@ -11,11 +11,15 @@ const MainScreen = ({handlePlayButtonClick}) => {
     }
     return(
     <div className="mainScreenBackground">
-        <img className="gameTitle" src='src/assets/mainScreen/ttt_title.gif' />
-        <img id="boo" className="playButton" src={PLAY_BUTTON_GREEN}
-                        onMouseOver={() => onMouseOverPlayButton(event, PLAY_BUTTON_HIGHLIGHTED)}
-                        onMouseOut={() => onMouseOverPlayButton(event, PLAY_BUTTON_GREEN)}
-                        onClick={handlePlayButtonClick}/>
+        <div className="gameTitle">
+            <img src='src/assets/mainScreen/ttt_title.gif' />
+        </div>
+        <div>
+            <img id="boo" className="playButton" src={PLAY_BUTTON_GREEN}
+                            onMouseOver={() => onMouseOverPlayButton(event, PLAY_BUTTON_HIGHLIGHTED)}
+                            onMouseOut={() => onMouseOverPlayButton(event, PLAY_BUTTON_GREEN)}
+                            onClick={handlePlayButtonClick}/>
+        </div>
     </div>)
 }
 

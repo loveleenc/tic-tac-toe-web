@@ -1,14 +1,15 @@
 import { useState, useCallback, useEffect } from "react"
 import gameServices from "./services/game"
+import gameAPI from "./services/gameAPI"
 import Square from "./components/Square"
 import Navigation from './components/Navigation'
 import './styles/game.css'
 
 const Game = ({width, height, player, minMoves, disableSquares, handleGameOver}) => {
+    const [gridy, setGrid] = useState([])
     const [playerData, setPlayerData] = useState(null)
     const [gameOver, setGameOver] = useState(false)
     const [disabledSquares, setDisabledSquares] = useState([])
-    let grid;
     let index;
 
     const updateGame = (id) => {    
@@ -41,6 +42,8 @@ const Game = ({width, height, player, minMoves, disableSquares, handleGameOver})
                     }
                 }
             }
+            const grid = gameServices.createGridArray(width, height, newPlayerData, disabledSquares)
+            setGrid(grid)
             return newPlayerData
         })
     }
@@ -73,7 +76,7 @@ const Game = ({width, height, player, minMoves, disableSquares, handleGameOver})
     const getSquareId = useCallback((id) => {
         const int_id = parseInt(id, 10)
         updateGame(int_id)
-    }, [width, disabledSquares])
+    }, [width, disabledSquares, gridy])
     
     if (width === 0 && height === 0 && player === null){
         return (<></>)
@@ -82,31 +85,27 @@ const Game = ({width, height, player, minMoves, disableSquares, handleGameOver})
         const players = new Array()
         let squares = []
         players.push(player)
-        let data = gameServices.createInitialPlayerData(players)
-        if (disableSquares){
-            squares = gameServices.selectSquaresToDisable(width, height)
-            setDisabledSquares(squares)
-        }
-        if(data.find(p => p.turn === true && p.isComputer === true)){
-            const id = gameServices.playAsComputer(data, squares, "easy", width, height)
-            data = gameServices.updateMoveInPlayerData(data, id)
-            gameServices.selectNextPlayer(data)
-        }
-        setPlayerData(data)
+        gameAPI.createGame(players, width, height, minMoves, disableSquares)
+            .then(response => {
+                setGrid(response.data.grid)
+                index = response.data.grid.length * response.data.grid[0].length
+                setDisabledSquares(response.data.disabledSquares)
+                setPlayerData(response.data.playerData)
+            })
         return (<></>)
     }
     
-    grid = gameServices.createGridArray(width, height, playerData, disabledSquares)
-    index = grid.length * grid[0].length
-
+    if(playerData !== null){
+        console.log(playerData)
+    }
 
     return (
         <div className="gameBackground">
             <Navigation quitGame={quitGame} restartGame={restartGame}/>
             <div className="grid">
-                {grid.map((row, i) => {
+                {gridy.map((row, i) => {
                     let squares = row.map(s => <Square id={s.count} key={s.count} getSquareId={getSquareId} text={s.text} />)
-                    if (i + 1 < grid.length){
+                    if (i + 1 < gridy.length){
                         squares.push(<br key={index}/>)
                         index +=1
                     }

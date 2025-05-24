@@ -64,6 +64,26 @@ const selectNextPlayer = (playerData)=>{
     playerData[currentPlayerIndex].turn = false
 }
 
+const playAsComputer = (playerData, disabledSquares, difficulty, width, height) => {
+    let move;
+    const all_moves = playerData.map(p => p.moves).reduce((a, c) => a.concat(c), new Array()).concat(disabledSquares)
+    if (difficulty === 'easy'){     //TODO: change this later
+        if (1 + all_moves.length === (width * height)){
+            for (let i = 0; i < width * height; i++){
+                if (!all_moves.includes(i)){
+                    move = i
+                    return move
+                }
+            }
+        }
+        move = Math.floor(Math.random() * ((width * height) - 1))
+        while (all_moves.includes(move)){
+            move = Math.floor(Math.random() * ((width * height) - 1))
+        }
+    }
+    return move
+}
+
 
 const createGridArray = (width, height, playerData, disabledSquares) => {
     const grid = []
@@ -211,7 +231,7 @@ const nobodyWins = (playerData, width, height, disabledSquares) => {
 
 const selectSquaresToDisable = (width, height) => {
     let squares = new Array()
-    for (let i = 0; i < 5; i ++){
+    for (let i = 0; i < Math.floor((width*height)/3); i ++){
         squares.push(Math.floor(Math.random() * ((width * height) - 1)))
     }
     squares = [...new Set(squares)]
@@ -225,5 +245,6 @@ export default {
     selectNextPlayer,
     hasCurrentPlayerHasWon,
     nobodyWins,
-    selectSquaresToDisable
+    selectSquaresToDisable,
+    playAsComputer
 }

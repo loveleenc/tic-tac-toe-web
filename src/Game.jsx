@@ -11,8 +11,8 @@ const Game = ({width, height, player, minMoves, disableSquares, handleGameOver})
     let grid;
     let index;
 
-    const updateGame = (id) => {
-        setPlayerData(playerData => {
+    const updateGame = (id) => {    
+        setPlayerData(playerData => {   //TODO: fix this convoluted bullshit
             let newPlayerData = gameServices.updateMoveInPlayerData(playerData, id)
 
             if(gameServices.hasCurrentPlayerHasWon(id, minMoves, width, height, newPlayerData)){
@@ -25,6 +25,21 @@ const Game = ({width, height, player, minMoves, disableSquares, handleGameOver})
             }
             else{
                 gameServices.selectNextPlayer(newPlayerData)
+                if(newPlayerData.find(p => p.turn === true && p.isComputer === true)){
+                    const id = gameServices.playAsComputer(playerData, disabledSquares, "easy", width, height)
+                    newPlayerData = gameServices.updateMoveInPlayerData(newPlayerData, id)
+                    if(gameServices.hasCurrentPlayerHasWon(id, minMoves, width, height, newPlayerData)){
+                        alert(`Game over! Player ${newPlayerData.find(player => player.turn === true).symbol} has won!`)
+                        setGameOver(true)
+                    }
+                    else if(gameServices.nobodyWins(newPlayerData, width, height, disabledSquares)){
+                        alert("Nobody wins :(")
+                        setGameOver(true)
+                    }
+                    else{
+                        gameServices.selectNextPlayer(newPlayerData)
+                    }
+                }
             }
             return newPlayerData
         })
@@ -65,11 +80,17 @@ const Game = ({width, height, player, minMoves, disableSquares, handleGameOver})
     }
     else if (playerData === null){
         const players = new Array()
+        let squares = []
         players.push(player)
-        const data = gameServices.createInitialPlayerData(players)
+        let data = gameServices.createInitialPlayerData(players)
         if (disableSquares){
-            const squares = gameServices.selectSquaresToDisable(width, height)
+            squares = gameServices.selectSquaresToDisable(width, height)
             setDisabledSquares(squares)
+        }
+        if(data.find(p => p.turn === true && p.isComputer === true)){
+            const id = gameServices.playAsComputer(data, squares, "easy", width, height)
+            data = gameServices.updateMoveInPlayerData(data, id)
+            gameServices.selectNextPlayer(data)
         }
         setPlayerData(data)
         return (<></>)

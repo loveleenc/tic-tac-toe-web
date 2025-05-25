@@ -1,11 +1,10 @@
 import { useState, useCallback, useEffect } from "react"
-import gameServices from "./services/game"
 import gameAPI from "./services/gameAPI"
 import Square from "./components/Square"
 import Navigation from './components/Navigation'
 import './styles/game.css'
 
-const Game = ({width, height, player, minMoves, disableSquares, handleGameOver}) => {
+const Game = ({width, height, players, minMoves, disableSquares, handleGameOver}) => {
     const [gridy, setGrid] = useState([])
     const [playerData, setPlayerData] = useState(null)
     const [gameOver, setGameOver] = useState(false)
@@ -68,14 +67,15 @@ const Game = ({width, height, player, minMoves, disableSquares, handleGameOver})
     const getSquareId = useCallback((id) => {
         const int_id = parseInt(id, 10)
         updateGame(int_id)
-    }, [width, gridy])
+    }, [width])
     
-    if (width === 0 && height === 0 && player === null){
+    if (width === 0 && height === 0 && players === null){
         return (<></>)
     }
 
     else if (playerData === null){
-        const players = new Array()
+        const playerList = new Array()
+        
         players.push(player)
         gameAPI.createGame(players, width, height, minMoves, disableSquares)
             .then(response => {

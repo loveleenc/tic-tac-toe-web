@@ -14,9 +14,20 @@ const createGame = (players, width, height, minMoves, disableSquares) => {
 }
 
 const playMove = (move) => {
+    return axios.patch(baseUrl, {id: move})
+}
 
+const restartGame = () => {
+    return axios.put(baseUrl)
+}
+
+const deleteGame = () => {
+    return axios.delete(baseUrl)
 }
 
 export default {
-    createGame
+    createGame,
+    restartGame,
+    deleteGame,
+    playMove
 }

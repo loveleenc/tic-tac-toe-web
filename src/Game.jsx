@@ -37,7 +37,6 @@ const Game = ({width, height, player, minMoves, disableSquares, handleGameOver})
             gameAPI.deleteGame()
                 .then(() => {
                     setPlayerData(null)
-                    setDisabledSquares([])
                     setGrid([])
                     handleGameOver()
                 })
@@ -50,7 +49,6 @@ const Game = ({width, height, player, minMoves, disableSquares, handleGameOver})
             gameAPI.deleteGame()
                 .then(() => {
                     setPlayerData(null)
-                    setDisabledSquares([])
                     setGrid([])
                     handleGameOver()
                 })
@@ -75,6 +73,7 @@ const Game = ({width, height, player, minMoves, disableSquares, handleGameOver})
     if (width === 0 && height === 0 && player === null){
         return (<></>)
     }
+
     else if (playerData === null){
         const players = new Array()
         players.push(player)

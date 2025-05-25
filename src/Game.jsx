@@ -9,7 +9,6 @@ const Game = ({width, height, player, minMoves, disableSquares, handleGameOver})
     const [gridy, setGrid] = useState([])
     const [playerData, setPlayerData] = useState(null)
     const [gameOver, setGameOver] = useState(false)
-    const [disabledSquares, setDisabledSquares] = useState([])
     let index;
 
     const updateGame = (id) => {    
@@ -71,7 +70,7 @@ const Game = ({width, height, player, minMoves, disableSquares, handleGameOver})
     const getSquareId = useCallback((id) => {
         const int_id = parseInt(id, 10)
         updateGame(int_id)
-    }, [width, disabledSquares, gridy])
+    }, [width, gridy])
     
     if (width === 0 && height === 0 && player === null){
         return (<></>)
@@ -83,7 +82,6 @@ const Game = ({width, height, player, minMoves, disableSquares, handleGameOver})
             .then(response => {
                 setGrid(response.data.grid)
                 index = response.data.grid.length * response.data.grid[0].length
-                setDisabledSquares(response.data.disabledSquares)
                 setPlayerData(response.data.playerData)
             })
         return (<></>)

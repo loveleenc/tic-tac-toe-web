@@ -35,8 +35,10 @@ const createInitialPlayerData = (players) => {
         data.push({...template, moves: template.moves.slice(), symbol: players[i]})
     }
     
-    const computerSymbol = createComputerPlayer(players)
-    data.push({...template, symbol: computerSymbol, isComputer: true})
+    if (players.length === 1){
+        const computerSymbol = createComputerPlayer(players)
+        data.push({...template, symbol: computerSymbol, isComputer: true})
+    }
     selectFirstPlayer(data)
     return data
 }
@@ -125,6 +127,8 @@ function* range(start, stop, step = 1) {
 const hasWon = (ids, pd, minMoves) => {
     const moves = pd.find((player) => player.turn === true).moves
     let count = 0
+    console.log("ids:", ids)
+    console.log("moves:", moves)
     for(const id of ids){
         if(moves.includes(id)){
             count +=1

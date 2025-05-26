@@ -15,7 +15,7 @@ function App() {
     setPlayGame(false)
     setWidth(0)
     setHeight(0)
-    setPlayer(null)
+    setPlayers(null)
     setWinMoves(3)
     setDisabledSquares(false)
   }
@@ -32,7 +32,7 @@ function App() {
 
   return (
     <>
-      <Setup setWidth={setWidth} setHeight={setHeight} setPlayer={setPlayers} setNeededConsecutiveMoves={setWinMoves} 
+      <Setup setWidth={setWidth} setHeight={setHeight} setPlayers={setPlayers} setNeededConsecutiveMoves={setWinMoves} 
               setDisabledSquares={setDisabledSquares}/>
       <Game width={width} height={height} players={players} minMoves={winMoves} disableSquares={disableSquares} handleGameOver={handleGameOver}/>
     </>

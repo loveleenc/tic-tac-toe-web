@@ -11,8 +11,7 @@ const Game = ({width, height, players, minMoves, disableSquares, handleGameOver}
     let index;
 
     const updateGame = (id) => {    
-        setPlayerData(playerData => {   
-            return gameAPI.playMove(id)
+        gameAPI.playMove(id)
                 .then(response => {
                     const game = response.data
                     if(game.status === 'END' && game.winner !== null){
@@ -25,10 +24,9 @@ const Game = ({width, height, players, minMoves, disableSquares, handleGameOver}
                     }
                     else{
                         setGrid(game.grid)
-                        return game.playerData
+                        setPlayerData(game.playerData)
                     }
                 })
-        })
     }
 
     useEffect(() => {
@@ -74,9 +72,6 @@ const Game = ({width, height, players, minMoves, disableSquares, handleGameOver}
     }
 
     else if (playerData === null){
-        const playerList = new Array()
-        
-        players.push(player)
         gameAPI.createGame(players, width, height, minMoves, disableSquares)
             .then(response => {
                 setGrid(response.data.grid)
@@ -89,6 +84,7 @@ const Game = ({width, height, players, minMoves, disableSquares, handleGameOver}
     return (
         <div className="gameBackground">
             <Navigation quitGame={quitGame} restartGame={restartGame}/>
+            <p style={{position: 'absolute', top: '45px'}}>Current player: {playerData.find(p => p.turn === true).symbol}</p>
             <div className="grid">
                 {gridy.map((row, i) => {
                     let squares = row.map(s => <Square id={s.count} key={s.count} getSquareId={getSquareId} text={s.text} />)

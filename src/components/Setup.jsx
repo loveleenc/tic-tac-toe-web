@@ -9,7 +9,7 @@ const FormInput = ({text, fieldName, type}) => {
     if (type === "number"){
         return (
             <p style={{fontWeight: "bold"}}>
-                {text}<input type={type} className="formInput" name={fieldName} min="3"/>
+                {text}<input type={type} className="formInput" name={fieldName} min="3" onWheel={(event) => event.target.blur()}/>
             </p>
         )
     }
@@ -22,9 +22,9 @@ const FormInput = ({text, fieldName, type}) => {
 }
 
 
-const GameType = () => {
+const GameType = ({numberOfPlayers, setNumberOfPlayers}) => {
     const [isSinglePlayer, setSinglePlayer] = useState(true)
-    const [numberOfPlayers, setNumberOfPlayers] = useState(1)
+    
 
     const handleGameTypeSelect = (event) => {
         if (event.target.value === SINGLE_PLAYER){
@@ -33,12 +33,16 @@ const GameType = () => {
         }
         else if(event.target.value === MULTI_PLAYER){
             setSinglePlayer(false)
+            setNumberOfPlayers(2)
         }
     }
 
     const handlePlayerNumber = (event) =>{
-        console.log(event.target.value)
-        setNumberOfPlayers(parseInt(event.target.value, 10))
+        let value = event.target.value
+        if(value === ""){
+            value = 2
+        }
+        setNumberOfPlayers(parseInt(value, 10))
     }
 
     return (
@@ -50,17 +54,27 @@ const GameType = () => {
             </select>
             {
                 !isSinglePlayer && 
-                (<p style={{fontWeight: 'bold'}}>Select the number of players: <input type="number" onChange={handlePlayerNumber} className="formInput" name="playerNumber" min="2"/>
+                (<p style={{fontWeight: 'bold'}}>Select the number of players: <input defaultValue={numberOfPlayers} type="number" onChange={handlePlayerNumber} className="formInput" onWheel={(event) => event.target.blur()} name="playerNumber" min="2"/>
                 </p>)
             }
-            {[...Array(numberOfPlayers).keys()].map(index => <FormInput text={`Enter player ${index+=1} symbol: `} fieldName={`player${index+=1}`} type="text" />)}
+            {[...Array(numberOfPlayers).keys()].map(index => <FormInput key={index} text={`Enter player ${index+=1} symbol: `} fieldName={`player${index}`} type="text" />)}
         </>
     )
 }
 
+const Notification = ({text}) => {
+    if (text === null){
+        return (<p></p>)
+    }
+
+    return (<p>{text}</p>)
+}
+
 const Setup = ({setWidth, setHeight, setPlayers, setNeededConsecutiveMoves, setDisabledSquares}) => {
     const [isSubmitted, setSubmitted] = useState(false)
-    
+    const [numberOfPlayers, setNumberOfPlayers] = useState(1)
+    const [notf, setNotification] = useState(null)
+
     const updateWidth = (value) => {
         setWidth(parseInt(value, 10))
     } 
@@ -81,17 +95,36 @@ const Setup = ({setWidth, setHeight, setPlayers, setNeededConsecutiveMoves, setD
         setDisabledSquares(value)
     }
 
+    const allDataHasBeenEntered = (event) => {
+        const players = new Array()
+        for (let i = 1; i <= numberOfPlayers; i++){
+            players.push(event.target[`player${i}`].value)
+        }
+
+        return event.target.inputWidth.value !== "" &&
+            event.target.inputHeight.value !== "" &&
+            event.target.moves.value !== "" &&
+            players.reduce((a, c) => a && c !== "", true)
+    }
+
     const onSubmit = (event) => {
         event.preventDefault()
+        if (!allDataHasBeenEntered(event)){
+            setNotification("Please enter data in all the fields")
+            setTimeout (() => setNotification(null), 5000)
+            return
+        }
         updateWidth(event.target.inputWidth.value)
         updateHeight(event.target.inputHeight.value)
-        updatePlayers(event.target.player.value)
+        const players = new Array()
+        for (let i = 1; i <= numberOfPlayers; i++){
+            players.push(event.target[`player${i}`].value)
+        }
+        updatePlayers(players)
         updateNumberOfMovesNeededToWin(event.target.moves.value)
         updateDisablingSquares(event.target.squaresDisabled.checked)
         setSubmitted(true)
     }
-
-    
 
     if (isSubmitted){
         return (<></>)
@@ -99,6 +132,7 @@ const Setup = ({setWidth, setHeight, setPlayers, setNeededConsecutiveMoves, setD
 
     return (
         <div className="setupContainer">
+            <Notification text={notf} />
             <div className="title">Setup Game</div>
             <div className="formContainer">
                 <form onSubmit={onSubmit} className="form">
@@ -106,7 +140,7 @@ const Setup = ({setWidth, setHeight, setPlayers, setNeededConsecutiveMoves, setD
                     <FormInput text="Enter height: " fieldName="inputHeight" type="number"/>
                     <FormInput text="Number of moves needed to win: " fieldName="moves" type="number"/>
                     <FormInput text="Disable random squares? " fieldName="squaresDisabled" type="checkbox" />
-                    <GameType />
+                    <GameType numberOfPlayers={numberOfPlayers} setNumberOfPlayers={setNumberOfPlayers}/>
                     <p><button type="submit" className="createGridButton">Create Grid</button></p>
                 </form>
             </div>

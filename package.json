@@ -8,7 +8,8 @@
     "build": "vite build ./ui",
     "lint": "eslint .",
     "preview": "vite preview",
-    "backend": "node --watch index.js"
+    "backend": "node --watch index.js",
+    "start": "npm run build & npm run backend"
   },
   "dependencies": {
     "axios": "^1.9.0",

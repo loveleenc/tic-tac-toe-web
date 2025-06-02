@@ -1,6 +1,5 @@
 import express from 'express'
-import gameServices from './src/services/game.js'
-import cors from 'cors'
+import gameServices from './game.js'
 
 let playerData = []
 let maxCount = 0;
@@ -11,7 +10,7 @@ let squares = []
 
 const app = express()
 app.use(express.json())
-app.use(cors())
+app.use(express.static('ui/dist'))
 
 app.post('/game', (request, response) => {
     const body = request.body

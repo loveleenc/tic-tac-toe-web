@@ -22,7 +22,7 @@
     width: 100vw;
     background-position: center;
     background-repeat: no-repeat;
-    background-image: url('../assets/mainScreen/pika_bckgnd.jpg');
+    background-image: url('/assets/mainScreen/pika_bckgnd.jpg');
 }
 
 .gameTitle img{

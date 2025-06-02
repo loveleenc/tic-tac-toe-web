@@ -1,8 +1,8 @@
 import './../styles/mainScreen.css'
 
 
-const PLAY_BUTTON_GREEN = 'src/assets/mainScreen/PlayButton.png' 
-const PLAY_BUTTON_HIGHLIGHTED = 'src/assets/mainScreen/PlayButtonHighlight.png'
+const PLAY_BUTTON_GREEN = '/assets/mainScreen/PlayButton.png' 
+const PLAY_BUTTON_HIGHLIGHTED = '/assets/mainScreen/PlayButtonHighlight.png'
 
 const MainScreen = ({handlePlayButtonClick}) => {
 
@@ -12,7 +12,7 @@ const MainScreen = ({handlePlayButtonClick}) => {
     return(
     <div className="mainScreenBackground">
         <div className="gameTitle">
-            <img src='src/assets/mainScreen/ttt_title.gif' />
+            <img src='/assets/mainScreen/ttt_title.gif' />
         </div>
         <div>
             <img id="boo" className="playButton" src={PLAY_BUTTON_GREEN}

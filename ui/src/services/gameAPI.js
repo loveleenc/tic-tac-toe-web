@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const baseUrl = 'http://localhost:3001/game'
+const baseUrl = '/game'
 
 const createGame = (players, width, height, minMoves, disableSquares) => {
     const gameData = {

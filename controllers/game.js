@@ -86,8 +86,6 @@ const verifyAndUpdateGameState = (id, game) => {
 
 
 gameRouter.patch('/', middleware.getGame, (request, response) => {
-    // const gameId = request.cookies.gameId
-    // const game = getGames()[gameId]
     const game = request.game
     if(request.body.id === undefined){
         return response.status(400).json({error: 'move id is missing in request'})
@@ -111,16 +109,12 @@ gameRouter.patch('/', middleware.getGame, (request, response) => {
 
 
 gameRouter.delete('/', middleware.getGame, (request, response) => {
-    // const gameId = request.cookies.gameId
-    // const game = getGames()[gameId]
     delete request.game
     return response.status(204).end()
 })
 
 
 gameRouter.put('/', middleware.getGame, (request, response) => {
-    // const gameId = request.cookies.gameId
-    // const game = getGames()[gameId]
     const game = request.game
     game.playerData.forEach(player => player.moves = [])
     game.grid = gameServices.createGridArray(game.width, game.height, game.playerData, game.squares)

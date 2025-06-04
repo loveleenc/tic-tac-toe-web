@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const baseUrl = '/game'
+const baseUrl = '/api/game'
 
 const createGame = (players, width, height, minMoves, disableSquares) => {
     const gameData = {

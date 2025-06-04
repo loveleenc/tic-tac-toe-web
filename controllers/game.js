@@ -15,7 +15,7 @@ gameRouter.post('/', (request, response) => {
     }
 
     if(!request.body.width || !request.body.height){
-        return response.status(400).json({error: 'height or width is missing or less than 3'})
+        return response.status(400).json({error: 'height or width is missing'})
     }
 
     if (isNaN(parseInt(request.body.width, 10)) || isNaN(parseInt(request.body.height, 10)) ||
@@ -55,7 +55,6 @@ gameRouter.post('/', (request, response) => {
     const newGame = {
         playerData: game.playerData,
         grid: game.grid,
-        disabledSquares: game.squares,   //TODO: to be removed
         status: 'ONGOING',
         winner: null
     }
@@ -65,7 +64,6 @@ gameRouter.post('/', (request, response) => {
 
 const verifyAndUpdateGameState = (id, game) => {
     const updatedGame = {
-        disabledSquares: game.squares    //TODO: to be removed
     }
     game.playerData = gameServices.updateMoveInPlayerData(game.playerData, id)
     if(gameServices.hasCurrentPlayerHasWon(id, game.minMoves, game.width, game.height, game.playerData)){
@@ -78,7 +76,6 @@ const verifyAndUpdateGameState = (id, game) => {
     }
     else{
         gameServices.selectNextPlayer(game.playerData)
-        updatedGame.disabledSquares = game.squares
         updatedGame.playerData = game.playerData
         updatedGame.grid = gameServices.createGridArray(game.width, game.height, game.playerData, game.squares)
         updatedGame.status = 'ONGOING'

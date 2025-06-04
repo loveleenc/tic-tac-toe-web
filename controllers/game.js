@@ -1,9 +1,10 @@
 import { Router } from "express";
 import gameServices from '../utils/game.js'
 import { v4 as uuidv4 } from 'uuid'
-
+import getGames from "../data/liveData.js";
+import middleware from "../utils/middleware.js";
 const gameRouter = Router()
-const games = {}
+
 
 gameRouter.post('/', (request, response) => {
     const body = request.body
@@ -49,7 +50,7 @@ gameRouter.post('/', (request, response) => {
     
     game.grid = gameServices.createGridArray(game.width, game.height, game.playerData, game.squares)
     const gameId = uuidv4()
-    games[gameId] = game
+    getGames()[gameId] = game
     response.cookie('gameId', gameId)
     const newGame = {
         playerData: game.playerData,
@@ -62,8 +63,7 @@ gameRouter.post('/', (request, response) => {
 })
 
 
-const verifyAndUpdateGameState = (id, gameId) => {
-    const game = games[gameId]
+const verifyAndUpdateGameState = (id, game) => {
     const updatedGame = {
         disabledSquares: game.squares    //TODO: to be removed
     }
@@ -88,10 +88,10 @@ const verifyAndUpdateGameState = (id, gameId) => {
 }
 
 
-gameRouter.patch('/', (request, response) => {
-    const gameId = request.cookies.gameId
-    const game = games[gameId]
-    
+gameRouter.patch('/', middleware.getGame, (request, response) => {
+    // const gameId = request.cookies.gameId
+    // const game = getGames()[gameId]
+    const game = request.game
     if(request.body.id === undefined){
         return response.status(400).json({error: 'move id is missing in request'})
     }
@@ -104,25 +104,27 @@ gameRouter.patch('/', (request, response) => {
         return response.status(400).json({error: 'move id selected is out of range of the game board'})
     }
 
-    let updatedGame = verifyAndUpdateGameState(request.body.id, gameId)
+    let updatedGame = verifyAndUpdateGameState(request.body.id, game)
     if(game.playerData.find(p => p.turn === true && p.isComputer === true)){
         const id = gameServices.playAsComputer(game.playerData, game.squares, "easy", game.width, game.height)
-        updatedGame = verifyAndUpdateGameState(id, gameId)
+        updatedGame = verifyAndUpdateGameState(id, game)
     }
     return response.json(updatedGame)
 })
 
 
-gameRouter.delete('/', (request, response) => {
-    const gameId = request.cookies.gameId
-    delete games[gameId]
+gameRouter.delete('/', middleware.getGame, (request, response) => {
+    // const gameId = request.cookies.gameId
+    // const game = getGames()[gameId]
+    delete request.game
     return response.status(204).end()
 })
 
 
-gameRouter.put('/', (request, response) => {
-    const gameId = request.cookies.gameId
-    const game = games[gameId]
+gameRouter.put('/', middleware.getGame, (request, response) => {
+    // const gameId = request.cookies.gameId
+    // const game = getGames()[gameId]
+    const game = request.game
     game.playerData.forEach(player => player.moves = [])
     game.grid = gameServices.createGridArray(game.width, game.height, game.playerData, game.squares)
     const refreshGameg = {

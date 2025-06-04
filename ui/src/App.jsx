@@ -10,7 +10,7 @@ function App() {
   const [winMoves, setWinMoves] = useState(3)
   const [playGame, setPlayGame] = useState(false)
   const [disableSquares, setDisabledSquares] = useState(false)
-  
+
   const handleGameOver = () =>{
     setPlayGame(false)
     setWidth(0)
@@ -30,6 +30,7 @@ function App() {
     )
   }
 
+  
   return (
     <>
       <Setup setWidth={setWidth} setHeight={setHeight} setPlayers={setPlayers} setNeededConsecutiveMoves={setWinMoves} 

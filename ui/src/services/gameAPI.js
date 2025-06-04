@@ -14,7 +14,10 @@ const createGame = (players, width, height, minMoves, disableSquares) => {
 }
 
 const playMove = (move) => {
-    return axios.patch(baseUrl, {id: move})
+    return axios.patch(baseUrl, {id: move, }, {
+        headers: {
+                Cookie: "gameId=value;"
+            }})
 }
 
 const restartGame = () => {

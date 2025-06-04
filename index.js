@@ -1,16 +1,14 @@
 import express from 'express'
 import gameServices from './game.js'
+import { v4 as uuidv4 } from 'uuid'
+import cookieParser from 'cookie-parser'
 
-let playerData = []
-let maxCount = 0;
-let width = 0;
-let height = 0;
-let minMoves = 0;
-let squares = []
+const games = {}
 
 const app = express()
 app.use(express.json())
 app.use(express.static('ui/dist'))
+app.use(cookieParser())
 
 app.post('/game', (request, response) => {
     const body = request.body
@@ -33,65 +31,71 @@ app.post('/game', (request, response) => {
         return response.status(400).json({error: 'both width and height of the grid should be greater than or equal to 3'})
     }
 
-    if(request.body.minMoves < 3 || request.body.minMoves < Math.max(width, height)){
+    if(request.body.minMoves < 3 || request.body.minMoves > Math.max(request.body.width, request.body.height)){
         return response.status(400).json({error: 'min number of moves needed to win should be greater than or equal to 3 and less than or equal to the width/height (whichever is bigger)'})
     }
 
-    width = request.body.width
-    height = request.body.height
-    maxCount = width * height
-    minMoves = request.body.minMoves
+    const game = {}
+    game.width = request.body.width
+    game.height = request.body.height
+    game.minMoves = request.body.minMoves
     if(request.body.disableSquares){
-        squares = gameServices.selectSquaresToDisable(width, height)
+        game.squares = gameServices.selectSquaresToDisable(game.width, game.height)
     }
-
-    playerData = gameServices.createInitialPlayerData(players)
-    if(playerData.find(p => p.turn === true && p.isComputer === true)){
-        const id = gameServices.playAsComputer(playerData, squares, "easy", width, height)
-        playerData = gameServices.updateMoveInPlayerData(playerData, id)
-        gameServices.selectNextPlayer(playerData)
+    else{
+        game.squares = []
     }
-
-    const grid = gameServices.createGridArray(width, height, playerData, squares)
-
+    game.playerData = gameServices.createInitialPlayerData(players)
+    if(game.playerData.find(p => p.turn === true && p.isComputer === true)){
+        const id = gameServices.playAsComputer(game.playerData, game.squares, "easy", game.width, game.height)
+        game.playerData = gameServices.updateMoveInPlayerData(game.playerData, id)
+        gameServices.selectNextPlayer(game.playerData)
+    }
+    
+    game.grid = gameServices.createGridArray(game.width, game.height, game.playerData, game.squares)
+    const gameId = uuidv4()
+    games[gameId] = game
+    response.cookie('gameId', gameId)
     const newGame = {
-        playerData: playerData,
-        grid: grid,
-        disabledSquares: squares,   //TODO: to be removed
+        playerData: game.playerData,
+        grid: game.grid,
+        disabledSquares: game.squares,   //TODO: to be removed
         status: 'ONGOING',
         winner: null
     }
     return response.json(newGame)
 })
 
-const verifyAndUpdateGameState = (id) => {
-    const updatedGame = {
-        disabledSquares: squares    //TODO: to be removed
+const verifyAndUpdateGameState = (id, gameId) => {
+    const game = games[gameId]
+    const updatedGamee = {
+        disabledSquares: game.squares    //TODO: to be removed
     }
-    playerData = gameServices.updateMoveInPlayerData(playerData, id)
-    if(gameServices.hasCurrentPlayerHasWon(id, minMoves, width, height, playerData)){
-        updatedGame.status = 'END'
-        updatedGame.winner = playerData.find(player => player.turn === true).symbol
+    game.playerData = gameServices.updateMoveInPlayerData(game.playerData, id)
+    if(gameServices.hasCurrentPlayerHasWon(id, game.minMoves, game.width, game.height, game.playerData)){
+        updatedGamee.status = 'END'
+        updatedGamee.winner = game.playerData.find(player => player.turn === true).symbol
     }
-
-    else if (gameServices.nobodyWins(playerData, width, height, squares)){
-        updatedGame.status = 'END'
-        updatedGame.winner = null
+    else if (gameServices.nobodyWins(game.playerData, game.width, game.height, game.squares)){
+        updatedGamee.status = 'END'
+        updatedGamee.winner = null
     }
-
     else{
-        gameServices.selectNextPlayer(playerData)
-        updatedGame.disabledSquares = squares
-        updatedGame.playerData = playerData
-        updatedGame.grid = gameServices.createGridArray(width, height, playerData, squares)
-        updatedGame.status = 'ONGOING'
-        updatedGame.winner = null
+        gameServices.selectNextPlayer(game.playerData)
+        updatedGamee.disabledSquares = game.squares
+        updatedGamee.playerData = game.playerData
+        updatedGamee.grid = gameServices.createGridArray(game.width, game.height, game.playerData, game.squares)
+        updatedGamee.status = 'ONGOING'
+        updatedGamee.winner = null
     }
-    return updatedGame
+    return updatedGamee
 }
 
 
 app.patch('/game', (request, response) => {
+    const gameId = request.cookies.gameId
+    const game = games[gameId]
+    
     if(request.body.id === undefined){
         return response.status(400).json({error: 'move id is missing in request'})
     }
@@ -100,40 +104,39 @@ app.patch('/game', (request, response) => {
         return response.status(400).json({error: 'move id should be an integer that specifies the id of the cell which has been selected'})
     }
 
-    else if(request.body.id > (width * height) - 1){
+    else if(request.body.id > (game.width * game.height) - 1){
         return response.status(400).json({error: 'move id selected is out of range of the game board'})
     }
 
-    let updatedGame = verifyAndUpdateGameState(request.body.id)
-    if(playerData.find(p => p.turn === true && p.isComputer === true)){
-        const id = gameServices.playAsComputer(playerData, squares, "easy", width, height)
-        updatedGame = verifyAndUpdateGameState(id)
+    let updatedGame = verifyAndUpdateGameState(request.body.id, gameId)
+    if(game.playerData.find(p => p.turn === true && p.isComputer === true)){
+        const id = gameServices.playAsComputer(game.playerData, game.squares, "easy", game.width, game.height)
+        updatedGame = verifyAndUpdateGameState(id, gameId)
     }
     return response.json(updatedGame)
-
 })
 
 app.delete('/game', (request, response) => {
-    playerData = []
-    width = 0
-    height = 0
-    squares = []
+    const gameId = request.cookies.gameId
+    delete games[gameId]
     return response.status(204).end()
 })
 
 
 app.put('/game', (request, response) => {
-    playerData.forEach(player => player.moves = [])
-    const grid = gameServices.createGridArray(width, height, playerData, squares)
-    const refreshGame = {
-        playerData: playerData,
-        grid: grid,
-        disableSquares: squares,
+    const gameId = request.cookies.gameId
+    const game = games[gameId]
+    game.playerData.forEach(player => player.moves = [])
+    game.grid = gameServices.createGridArray(game.width, game.height, game.playerData, game.squares)
+    const refreshGameg = {
+        playerData: game.playerData,
+        grid: game.grid,
+        disableSquares: game.squares,
         status: 'ONGOING',
         winner: null
     }
-    return response.json(refreshGame)
+    return response.json(refreshGameg)
 })
 
-const PORT = 3001
+const PORT = 3001 || process.env.PORT
 app.listen(PORT, () => {console.log(`server running on port: ${PORT}`)})

@@ -127,8 +127,6 @@ function* range(start, stop, step = 1) {
 const hasWon = (ids, pd, minMoves) => {
     const moves = pd.find((player) => player.turn === true).moves
     let count = 0
-    console.log("ids:", ids)
-    console.log("moves:", moves)
     for(const id of ids){
         if(moves.includes(id)){
             count +=1

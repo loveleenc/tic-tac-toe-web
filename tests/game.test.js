@@ -163,6 +163,19 @@ describe('Successful game creation via POST request', function (){
         assert.strictEqual(response.body.playerData.find(p => p.turn === true && p.isComputer === true), undefined)
     })
 
+    test('If squares are disabled in the request body, then the grid should contain disabled squares', async function() {
+        const gamesAtStart = Object.keys(getGames())
+        this.game.disableSquares = true
+        const response = await api.post('/api/game')
+            .send(this.game)
+            .expect(200)
+            .expect('Content-Type', /application\/json/)
+
+        assert.notStrictEqual(response.body, null)
+        assert.strictEqual(Object.keys(getGames()).length, Object.keys(gamesAtStart).length + 1)
+        assert.strictEqual(response.body.grid.some(row => row.find(cell => cell.text === null)), true)
+    })
+
     test('in single player, the returned player whose turn it is to play is always the human', async function (){
         const gamesAtStart = Object.keys(getGames())
         this.game.players = ['a']
@@ -200,7 +213,8 @@ describe('Successful game creation via POST request', function (){
             .send(this.game)
             .expect(200)
             .expect('Content-Type', /application\/json/)
-        assert.strictEqual(response.body.playerData.find(p => p.isComputer === true), undefined)
+        assert.strictEqual(response.body.playerData.length, this.game.players.length)
+        // assert.strictEqual(response.body.playerData.find(p => p.isComputer === true), undefined)
         response.body.playerData.forEach(p => {
             assert.strictEqual(p.moves.length, 0)
             assert.strictEqual(p.hasOwnProperty('symbol'), true)

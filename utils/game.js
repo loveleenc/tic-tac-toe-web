@@ -1,252 +1,261 @@
-
 const createComputerPlayer = (players) => {
-    let computer = null
-    function getRandomCharacter() {
-        const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-        const randomIndex = Math.floor(Math.random() * characters.length);
-        computer = characters.charAt(randomIndex);
-    }
+  let computer = null;
+  function getRandomCharacter() {
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    computer = characters.charAt(randomIndex);
+  }
 
-    function symbolIsTaken(){
-        for (const player of players){
-            if (player === computer){
-                return true
-            }
-        }
-        return false
+  function symbolIsTaken() {
+    for (const player of players) {
+      if (player === computer) {
+        return true;
+      }
     }
-    while (symbolIsTaken() || computer === null){
-        getRandomCharacter()
-    } 
-    return computer
-}
-
+    return false;
+  }
+  while (symbolIsTaken() || computer === null) {
+    getRandomCharacter();
+  }
+  return computer;
+};
 
 const createInitialPlayerData = (players) => {
-    const template = {
-        symbol: null,
-        moves: [],
-        turn: false,
-        isComputer: false
-    }
-    const data = new Array()
+  const template = {
+    symbol: null,
+    moves: [],
+    turn: false,
+    isComputer: false,
+  };
+  const data = new Array();
 
-    for(let i=0; i < players.length; i++){
-        data.push({...template, moves: template.moves.slice(), symbol: players[i]})
-    }
-    
-    if (players.length === 1){
-        const computerSymbol = createComputerPlayer(players)
-        data.push({...template, symbol: computerSymbol, isComputer: true})
-    }
-    selectFirstPlayer(data)
-    return data
-}
+  for (let i = 0; i < players.length; i++) {
+    data.push({
+      ...template,
+      moves: template.moves.slice(),
+      symbol: players[i],
+    });
+  }
+
+  if (players.length === 1) {
+    const computerSymbol = createComputerPlayer(players);
+    data.push({ ...template, symbol: computerSymbol, isComputer: true });
+  }
+  selectFirstPlayer(data);
+  return data;
+};
 
 const selectFirstPlayer = (data) => {
-    const randomIndex = Math.floor(Math.random() * data.length)
-    data[randomIndex].turn = true
-}
+  const randomIndex = Math.floor(Math.random() * data.length);
+  data[randomIndex].turn = true;
+};
 
 const updateMoveInPlayerData = (playerData, id) => {
-    const currentPlayerIndex = playerData.findIndex(player => player.turn === true)
-    const newPlayerData = playerData.slice()
-    newPlayerData[currentPlayerIndex].moves.push(parseInt(id, 10))
-    return newPlayerData
-}
+  const currentPlayerIndex = playerData.findIndex(
+    (player) => player.turn === true
+  );
+  const newPlayerData = playerData.slice();
+  newPlayerData[currentPlayerIndex].moves.push(parseInt(id, 10));
+  return newPlayerData;
+};
 
-const selectNextPlayer = (playerData)=>{
-    const currentPlayerIndex = playerData.findIndex(player => player.turn === true)
-    if (currentPlayerIndex + 1 === playerData.length){
-        playerData[0].turn = true
-    }
-    else{
-        playerData[currentPlayerIndex + 1].turn = true
-    }
-    playerData[currentPlayerIndex].turn = false
-}
+const selectNextPlayer = (playerData) => {
+  const currentPlayerIndex = playerData.findIndex(
+    (player) => player.turn === true
+  );
+  if (currentPlayerIndex + 1 === playerData.length) {
+    playerData[0].turn = true;
+  } else {
+    playerData[currentPlayerIndex + 1].turn = true;
+  }
+  playerData[currentPlayerIndex].turn = false;
+};
 
-const playAsComputer = (playerData, disabledSquares, difficulty, width, height) => {
-    let move;
-    const all_moves = playerData.map(p => p.moves).reduce((a, c) => a.concat(c), new Array()).concat(disabledSquares)
-    if (difficulty === 'easy'){     //TODO: change this later
-        if (1 + all_moves.length === (width * height)){
-            for (let i = 0; i < width * height; i++){
-                if (!all_moves.includes(i)){
-                    move = i
-                    return move
-                }
-            }
+const playAsComputer = (game) => {
+  let move;
+  const all_moves = game.playerData
+    .map((p) => p.moves)
+    .reduce((a, c) => a.concat(c), new Array())
+    .concat(game.squares);
+    if (1 + all_moves.length === game.width * game.height) {
+      for (let i = 0; i < game.width * game.height; i++) {
+        if (!all_moves.includes(i)) {
+          move = i;
+          return move;
         }
-        move = Math.floor(Math.random() * ((width * height) - 1))
-        while (all_moves.includes(move)){
-            move = Math.floor(Math.random() * ((width * height) - 1))
-        }
+      }
     }
-    return move
-}
-
-
-const createGridArray = (width, height, playerData, disabledSquares) => {
-    const grid = []
-    let count = 0
-    for (let i = 0; i < height; i++){
-        let row = []
-        for (let j = 0; j < width; j++){
-            let text = ""
-            for (const player of playerData){
-                if (player.moves.includes(count)){
-                    text = player.symbol
-                    break
-                }
-            }
-            if (text === ""){
-                if(disabledSquares.includes(count)){
-                    text = null
-                }
-            }
-            row.push({count: count, text: text})
-            count += 1
-        }
-        grid.push(row)
+    move = Math.floor(Math.random() * (game.width * game.height - 1));
+    while (all_moves.includes(move)) {
+      move = Math.floor(Math.random() * (game.width * game.height - 1));
     }
-    return grid
-}
+  return move;
+};
+
+const createGridArray = (game) => {
+  const grid = [];
+  let count = 0;
+  for (let i = 0; i < game.height; i++) {
+    let row = [];
+    for (let j = 0; j < game.width; j++) {
+      let text = "";
+      for (const player of game.playerData) {
+        if (player.moves.includes(count)) {
+          text = player.symbol;
+          break;
+        }
+      }
+      if (text === "") {
+        if (game.squares.includes(count)) {
+          text = null;
+        }
+      }
+      row.push({ count: count, text: text });
+      count += 1;
+    }
+    grid.push(row);
+  }
+  return grid;
+};
 
 function* range(start, stop, step = 1) {
-    if (stop == null) {
-        stop = start
-        start = 0
-    }
-    
-    for (let i = start; step > 0 ? i < stop : i > stop; i += step) {
-        yield i
-    }
+  if (stop == null) {
+    stop = start;
+    start = 0;
+  }
+
+  for (let i = start; step > 0 ? i < stop : i > stop; i += step) {
+    yield i;
+  }
 }
 
 const hasWon = (ids, pd, minMoves) => {
-    const moves = pd.find((player) => player.turn === true).moves
-    let count = 0
-    for(const id of ids){
-        if(moves.includes(id)){
-            count +=1
-        }
-        if (count === minMoves){
-            return true
-        }
+  const moves = pd.find((player) => player.turn === true).moves;
+  let count = 0;
+  for (const id of ids) {
+    if (moves.includes(id)) {
+      count += 1;
     }
-    return false
-}
+    if (count === minMoves) {
+      return true;
+    }
+  }
+  return false;
+};
 
-const hasCurrentPlayerHasWon = (id, minMoves, width, height, pd) => {
-    const maxCount = (width * height) - 1
-    const leftList = [0]
-    const rightList = [width - 1]
-    for(let i=1; i<height; i++){
-        leftList.push(leftList.slice(-1)[0] + width)
-        rightList.push(rightList.slice(-1)[0] + width)
-    }
-    
-    const vertical = []
-    for(let i of range(id-(minMoves-1)*width, id+width, width)){
-        if(i < 0){
-            continue
-        }
-        vertical.push(i)
-    }
-    for(let i of range(id+width, id+(minMoves)*width, width)){
-        if (i > maxCount){
-            break
-        }
-        vertical.push(i)
-    }
-    
+const hasCurrentPlayerHasWon = (id, game) => {
+  const maxCount = game.width * game.height - 1;
+  const leftList = [0];
+  const rightList = [game.width - 1];
+  for (let i = 1; i < game.height; i++) {
+    leftList.push(leftList.slice(-1)[0] + game.width);
+    rightList.push(rightList.slice(-1)[0] + game.width);
+  }
 
-    const horizontal = []
-    for(let i of range(id, id-minMoves, -1)){
-        if (i == id){
-            horizontal.push(i)
-            continue
-        }
-
-        if(rightList.includes(i)){
-            break
-        }
-        horizontal.push(i)
+  const vertical = [];
+  for (let i of range(id - (game.minMoves - 1) * game.width, id + game.width, game.width)) {
+    if (i < 0) {
+      continue;
     }
-    for(let i of range(id+1, id+minMoves)){
-        if(leftList.includes(i)){
-            break
-        }
-        horizontal.push(i)
+    vertical.push(i);
+  }
+  for (let i of range(id + game.width, id + game.minMoves * game.width, game.width)) {
+    if (i > maxCount) {
+      break;
     }
-    horizontal.sort()
+    vertical.push(i);
+  }
 
-    const diagonal1 = []
-    for(let i of range(id, id-(minMoves*(width + 1)), -(width+1))){
-        if (i == id){
-            diagonal1.push(i)
-            continue
-        }
-
-        if(i < 0 || rightList.includes(i)){
-            break
-        }
-        diagonal1.push(i)
-    }
-    for(let i of range(id+width+1, id+(minMoves*(width + 1)), width + 1)){
-        if(i > maxCount || leftList.includes(i)){
-            break
-        }
-        diagonal1.push(i)
-    }
-    diagonal1.sort()
-
-
-    const diagonal2 = []
-    for(let i of range(id-(width-1)*(minMoves-1), id, width - 1)){
-        if (leftList.includes(i) || i < 0){
-            continue
-        }
-        diagonal2.push(i)
+  const horizontal = [];
+  for (let i of range(id, id - game.minMoves, -1)) {
+    if (i == id) {
+      horizontal.push(i);
+      continue;
     }
 
-    for(let i of range(id, id+(width-1)*(minMoves), width - 1)){
-        if (i == id){
-            diagonal2.push(i)
-            continue
-        }
-        if(rightList.includes(i) || i > maxCount){
-            break
-        }
-        diagonal2.push(i)
+    if (rightList.includes(i)) {
+      break;
+    }
+    horizontal.push(i);
+  }
+  for (let i of range(id + 1, id + game.minMoves)) {
+    if (leftList.includes(i)) {
+      break;
+    }
+    horizontal.push(i);
+  }
+  horizontal.sort();
+
+  const diagonal1 = [];
+  for (let i of range(id, id - game.minMoves * (game.width + 1), -(game.width + 1))) {
+    if (i == id) {
+      diagonal1.push(i);
+      continue;
     }
 
-    return hasWon(vertical, pd, minMoves) || hasWon(horizontal, pd, minMoves) || hasWon(diagonal1, pd, minMoves) || hasWon(diagonal2, pd, minMoves)
+    if (i < 0 || rightList.includes(i)) {
+      break;
+    }
+    diagonal1.push(i);
+  }
+  for (let i of range(id + game.width + 1, id + game.minMoves * (game.width + 1), game.width + 1)) {
+    if (i > maxCount || leftList.includes(i)) {
+      break;
+    }
+    diagonal1.push(i);
+  }
+  diagonal1.sort();
 
-}
+  const diagonal2 = [];
+  for (let i of range(id - (game.width - 1) * (game.minMoves - 1), id, game.width - 1)) {
+    if (leftList.includes(i) || i < 0) {
+      continue;
+    }
+    diagonal2.push(i);
+  }
 
-const nobodyWins = (playerData, width, height, disabledSquares) => {
-    const total_moves = playerData.map(player => player.moves.length).reduce((a, c) => a + c, 0)
-    return (disabledSquares.length + total_moves) === (width * height)
-}
+  for (let i of range(id, id + (game.width - 1) * game.minMoves, game.width - 1)) {
+    if (i == id) {
+      diagonal2.push(i);
+      continue;
+    }
+    if (rightList.includes(i) || i > maxCount) {
+      break;
+    }
+    diagonal2.push(i);
+  }
+
+  return (
+    hasWon(vertical, game.playerData, game.minMoves) ||
+    hasWon(horizontal, game.playerData, game.minMoves) ||
+    hasWon(diagonal1, game.playerData, game.minMoves) ||
+    hasWon(diagonal2, game.playerData, game.minMoves)
+  );
+};
+
+const nobodyWins = (game) => {
+  const total_moves = game.playerData
+    .map((player) => player.moves.length)
+    .reduce((a, c) => a + c, 0);
+  return game.squares.length + total_moves === game.width * game.height;
+};
 
 const selectSquaresToDisable = (width, height) => {
-    let squares = new Array()
-    for (let i = 0; i < Math.floor((width*height)/3); i ++){
-        squares.push(Math.floor(Math.random() * ((width * height) - 1)))
-    }
-    squares = [...new Set(squares)]
-    return squares
-}
+  let squares = new Array();
+  for (let i = 0; i < Math.floor((width * height) / 3); i++) {
+    squares.push(Math.floor(Math.random() * (width * height - 1)));
+  }
+  squares = [...new Set(squares)];
+  return squares;
+};
 
 export default {
-    createInitialPlayerData,
-    updateMoveInPlayerData,
-    createGridArray,
-    selectNextPlayer,
-    hasCurrentPlayerHasWon,
-    nobodyWins,
-    selectSquaresToDisable,
-    playAsComputer
-}
+  createInitialPlayerData,
+  updateMoveInPlayerData,
+  createGridArray,
+  selectNextPlayer,
+  hasCurrentPlayerHasWon,
+  nobodyWins,
+  selectSquaresToDisable,
+  playAsComputer,
+};

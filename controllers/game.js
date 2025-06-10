@@ -43,12 +43,12 @@ gameRouter.post('/', (request, response) => {
     }
     game.playerData = gameServices.createInitialPlayerData(players)
     if(game.playerData.find(p => p.turn === true && p.isComputer === true)){
-        const id = gameServices.playAsComputer(game.playerData, game.squares, "easy", game.width, game.height)
+        const id = gameServices.playAsComputer(game)
         game.playerData = gameServices.updateMoveInPlayerData(game.playerData, id)
         gameServices.selectNextPlayer(game.playerData)
     }
     
-    game.grid = gameServices.createGridArray(game.width, game.height, game.playerData, game.squares)
+    game.grid = gameServices.createGridArray(game)
     const gameId = uuidv4()
     getGames()[gameId] = game
     response.cookie('gameId', gameId)
@@ -66,18 +66,18 @@ const verifyAndUpdateGameState = (id, game) => {
     const updatedGame = {
     }
     game.playerData = gameServices.updateMoveInPlayerData(game.playerData, id)
-    if(gameServices.hasCurrentPlayerHasWon(id, game.minMoves, game.width, game.height, game.playerData)){
+    if(gameServices.hasCurrentPlayerHasWon(id, game)){
         updatedGame.status = 'END'
         updatedGame.winner = game.playerData.find(player => player.turn === true).symbol
     }
-    else if (gameServices.nobodyWins(game.playerData, game.width, game.height, game.squares)){
+    else if (gameServices.nobodyWins(game)){
         updatedGame.status = 'END'
         updatedGame.winner = null
     }
     else{
         gameServices.selectNextPlayer(game.playerData)
         updatedGame.playerData = game.playerData
-        updatedGame.grid = gameServices.createGridArray(game.width, game.height, game.playerData, game.squares)
+        updatedGame.grid = gameServices.createGridArray(game)
         updatedGame.status = 'ONGOING'
         updatedGame.winner = null
     }
@@ -101,7 +101,7 @@ gameRouter.patch('/', middleware.getGame, (request, response) => {
 
     let updatedGame = verifyAndUpdateGameState(request.body.id, game)
     if(game.playerData.find(p => p.turn === true && p.isComputer === true)){
-        const id = gameServices.playAsComputer(game.playerData, game.squares, "easy", game.width, game.height)
+        const id = gameServices.playAsComputer(game)
         updatedGame = verifyAndUpdateGameState(id, game)
     }
     return response.json(updatedGame)
@@ -117,7 +117,7 @@ gameRouter.delete('/', middleware.getGame, (request, response) => {
 gameRouter.put('/', middleware.getGame, (request, response) => {
     const game = request.game
     game.playerData.forEach(player => player.moves = [])
-    game.grid = gameServices.createGridArray(game.width, game.height, game.playerData, game.squares)
+    game.grid = gameServices.createGridArray(game)
     const refreshGameg = {
         playerData: game.playerData,
         grid: game.grid,

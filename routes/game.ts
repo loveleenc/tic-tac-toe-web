@@ -9,7 +9,7 @@ import parsers from "../utils/parsers";
 
 const gameRouter = Router()
 
-gameRouter.post('/', (request:Request<unknown,unknown,
+gameRouter.post('/', middleware.parseGameSetup, (request:Request<unknown,unknown,
     Setup, unknown>, response:Response<OutgoingGameData>) => {
     const game:Game = {
         width:request.body.width,

@@ -4,14 +4,16 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite ./ui",
-    "build": "vite build ./ui",
+    "ui-build": "vite build ./ui",
     "lint": "eslint .",
     "preview": "vite preview",
     "ts-node": "ts-node",
-    "backend": "ts-node index.ts",
-    "start": "npm run build & npm run backend",
+    "backend-ts": "ts-node index.ts",
+    "start": "npm run ui-build && npm run backend",
     "test": "NODE_ENV=test node --test",
-    "tsc": "tsc"
+    "tsc": "tsc",
+    "backend-js": "node ./build/index.js",
+    "backend": "tsc && npm run backend-js"
   },
   "dependencies": {
     "axios": "^1.9.0",

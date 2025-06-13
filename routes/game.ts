@@ -21,7 +21,9 @@ gameRouter.post('/', middleware.parseGameSetup, (request:Request<unknown,unknown
     gameService.createAllPlayerData(request.body.players, game)
     
     const games = getGames()
-    games[uuidv4()] = game
+    const gameId = uuidv4()
+    games[gameId] = game
+    response.cookie('gameId', gameId)
     const outgoingGameData:OutgoingGameData = {
         grid: gameService.createGridArray(game),
         playerData: game.playerData,
@@ -51,7 +53,7 @@ gameRouter.patch('/', middleware.getGame, (request:ExistingGameRequest, response
 })
 
 gameRouter.delete('/', middleware.getGame, (request:ExistingGameRequest, response:Response) => {
-    delete request.game
+    delete getGames()[request.cookies.gameId]
     response.status(204).end()
 })
 

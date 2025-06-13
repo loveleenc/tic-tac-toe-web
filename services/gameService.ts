@@ -71,7 +71,7 @@ const updateMoveInPlayerData = (playerData:Player[], id:number):Player[] => {
     (player) => player.turn === true
   );
   const newPlayerData = playerData.slice();
-  newPlayerData[currentPlayerIndex].moves.push(id, 10);
+  newPlayerData[currentPlayerIndex].moves.push(id);
   return newPlayerData;
 };
 
@@ -271,8 +271,8 @@ const selectSquaresToDisable = (width:Game["width"], height:Game["height"]):Game
 const updateGameState = (id:number, game:Game):OutgoingGameData => {
   let outgoingGameData = verifyAndUpdateGameState(id, game)
   if(game.playerData.find(p => p.turn === true && p.isComputer === true)){
-        const id = playAsComputer(game)
-        outgoingGameData = verifyAndUpdateGameState(id, game)
+        const new_id = playAsComputer(game)
+        outgoingGameData = verifyAndUpdateGameState(new_id, game)
   }
   return outgoingGameData
 }

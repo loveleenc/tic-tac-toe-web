@@ -28,11 +28,14 @@ const getGame = (request:ExistingGameRequest, response:Response, next:NextFuncti
     const games = getGames()
     const gameId = request.cookies.gameId
     try{
+        if(!games[gameId]){
+            throw new Error(`Game with id ${gameId} does not exist`)
+        }
         request.game = games[gameId]
         next()
     }
     catch(error){
-        response.json(`Game with id ${gameId} does not exist`)
+        response.json(`Game not found`)
         next(error)
     }
 }

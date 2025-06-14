@@ -31,13 +31,9 @@ const Game = ({width, height, players, minMoves, disableSquares, handleGameOver}
 
     useEffect(() => {
         if (gameOver){
-            gameAPI.deleteGame()
-                .then(() => {
-                    setPlayerData(null)
-                    setGrid([])
-                    handleGameOver()
-                })
-            
+            setPlayerData(null)
+            setGrid([])
+            handleGameOver()
         }
     }, [gameOver])
 

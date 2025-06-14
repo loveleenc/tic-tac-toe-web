@@ -39,6 +39,9 @@ gameRouter.patch('/', middleware.getGame, (request:ExistingGameRequest, response
         const game = request.game
         const id = parsers.parseId(request.body.id, game)
         const outgoingGameData = gameService.updateGameState(id, game)
+        if(outgoingGameData.status === GameStatus.END){
+            delete getGames()[request.cookies.gameId]
+        }
         response.json(outgoingGameData)
         next()
     }

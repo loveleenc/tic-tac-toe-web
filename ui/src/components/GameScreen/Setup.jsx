@@ -1,5 +1,5 @@
 import { useState } from "react"
-import './../styles/setup.css'
+import './../../styles/setup.css'
 
 
 const SINGLE_PLAYER = 'single-player'

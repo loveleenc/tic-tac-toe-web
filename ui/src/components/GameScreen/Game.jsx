@@ -1,8 +1,8 @@
 import { useState, useCallback, useEffect } from "react"
-import gameAPI from "./services/gameAPI"
-import Square from "./components/Square"
-import Navigation from './components/Navigation'
-import './styles/game.css'
+import gameAPI from "./../../services/gameAPI.js"
+import Square from "./../Square.jsx"
+import Navigation from './../Navigation.jsx'
+import './../../styles/game.css'
 
 const Game = ({width, height, players, minMoves, disableSquares, handleGameOver}) => {
     const [gridy, setGrid] = useState([])

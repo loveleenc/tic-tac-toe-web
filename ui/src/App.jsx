@@ -1,41 +1,23 @@
 import { useState } from 'react'
-import Setup from './components/Setup'
-import Game from './Game'
+// import Setup from './components/GameScreen/Setup'
+// import Game from './Game'
 import MainScreen from './components/MainScreen'
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
+import GameScreen from './components/GameScreen/GameScreen'
+import About from './components/MainScreen/About'
+import Leaderboard from './components/MainScreen/Leaderboard'
 
 function App() {
-  const [width, setWidth] = useState(0)
-  const [height, setHeight] = useState(0)
-  const [players, setPlayers] = useState(null)
-  const [winMoves, setWinMoves] = useState(3)
-  const [playGame, setPlayGame] = useState(false)
-  const [disableSquares, setDisabledSquares] = useState(false)
-
-  const handleGameOver = () =>{
-    setPlayGame(false)
-    setWidth(0)
-    setHeight(0)
-    setPlayers(null)
-    setWinMoves(3)
-    setDisabledSquares(false)
-  }
-
-  const startGame = () => {
-    setPlayGame(true)
-  }
-
-  if (!playGame){
-    return (
-      <MainScreen handlePlayButtonClick={startGame}/>
-    )
-  }
-
-  
   return (
     <>
-      <Setup setWidth={setWidth} setHeight={setHeight} setPlayers={setPlayers} setNeededConsecutiveMoves={setWinMoves} 
-              setDisabledSquares={setDisabledSquares}/>
-      <Game width={width} height={height} players={players} minMoves={winMoves} disableSquares={disableSquares} handleGameOver={handleGameOver}/>
+    <Router>
+      <Routes>
+        <Route path="/" element={<MainScreen />} />
+        <Route path="/play" element={<GameScreen />}/>
+        <Route path="/about" element={<About />} />
+        <Route path="/leaderboard" element={<Leaderboard />} />
+      </Routes>
+    </Router>
     </>
   )
 }

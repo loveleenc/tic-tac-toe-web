@@ -85,3 +85,15 @@
     margin-right: auto;
     margin-left: auto;
 }
+
+.backButton{
+    position: absolute;
+    left: 0;
+    right:0;
+    bottom:0;
+    top: 390px;
+    width:  10%;
+    height: 10%;
+    margin-right: auto;
+    margin-left: auto;
+}

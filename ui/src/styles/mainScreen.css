@@ -55,13 +55,33 @@
     left: 0;
     right:0;
     bottom:0;
-    top: 350px;
-    width:  20%;
-    height: 20%;
-    /* /* margin-left: 200px; */
+    top: 270px;
+    width:  10%;
+    height: 10%;
     margin-right: auto;
     margin-left: auto;
 }
 
+.leaderboardButton {
+    position: absolute;
+    left: 0;
+    right:0;
+    bottom:0;
+    top: 330px;
+    width:  10%;
+    height: 10%;
+    margin-right: auto;
+    margin-left: auto;
+}
 
-
+.aboutButton {
+    position: absolute;
+    left: 0;
+    right:0;
+    bottom:0;
+    top: 390px;
+    width:  10%;
+    height: 10%;
+    margin-right: auto;
+    margin-left: auto;
+}

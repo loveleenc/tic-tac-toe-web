@@ -12,11 +12,10 @@ const Togglable = ({childElement1, childElement2}) => {
     return (
         <div>
             <div style={hideWhenVisibleIsTrue}>
-                {childElement1(toggleVisibility)}
+                {childElement1}
             </div>
             <div style={showWhenVisibleIsFalse}>
-                <button onClick={toggleVisibility}>back</button>
-                {childElement2}
+                {childElement2()}
             </div>
         </div>
     )

@@ -86,14 +86,24 @@
     margin-left: auto;
 }
 
+.aboutSection{
+    position: absolute;
+    left: 0;
+    right:0;
+    bottom:0;
+    top: 270px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
 .backButton{
     position: absolute;
     left: 0;
     right:0;
     bottom:0;
-    top: 390px;
+    top: 0px;
     width:  10%;
     height: 10%;
-    margin-right: auto;
+    /* margin-right: auto; */
     margin-left: auto;
 }

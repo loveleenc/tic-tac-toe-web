@@ -3,45 +3,76 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import About from "./MainScreen/About";
 import Leaderboard from "./MainScreen/Leaderboard";
 import GameScreen from "./GameScreen/GameScreen";
-import Togglable from "./Togglable";
+import { useState } from "react";
 
 const PLAY_BUTTON_BROWN = "/assets/navigation/play.png";
 
-const AboutButton = (toggleVisibility) => {
-    return (<>
-        <img onClick={toggleVisibility} className="aboutButton" src="/assets/navigation/about.png" />
-    </>)
-}
-
 const Menu = () => {
+  const [visible, setVisible] = useState(true);
+  const showMenuWhenVisibleIsTrue = { display: visible ? "" : "none" };
+
+  const [visibleAbout, setVisibleAbout] = useState(false);
+  const showAboutWhenVisibleIsTrue = { display: visibleAbout ? "" : "none" };
+
+  const [visibleScoreboard, setVisibleScoreboard] = useState(false);
+  const showScoreboardWhenVisibleIsTrue = {
+    display: visibleScoreboard ? "" : "none",
+  };
+
+  const handleAboutButtonClick = () => {
+    setVisible(false);
+    setVisibleAbout(true);
+  };
+
+  const handleLeaderboardButtonClick = () => {
+    setVisible(false);
+    setVisibleScoreboard(true);
+  };
+
+  const handleBackButtonClick = () => {
+    setVisible(true);
+    setVisibleAbout(false);
+    setVisibleScoreboard(false);
+  };
+
   return (
-    <div>
-      <span>
+    <>
+      <div style={showMenuWhenVisibleIsTrue}>
         <Link to="/play">
-          <img className="playButton" src="/assets/navigation/play.png" />
+          <img className="playButton" src={PLAY_BUTTON_BROWN} />
         </Link>
-      </span>
-      <span>
-        <Togglable childElement1={AboutButton} childElement2={<About />} />
-        {/* <Link to="/about">
-          <img className="aboutButton" src="/assets/navigation/about.png" />
-        </Link> */}
-      </span>
-      <span>
-        <Link to="/leaderboard">
-          <img
-            className="leaderboardButton"
-            src="/assets/navigation/leaderboard.png"
-          />
-        </Link>
-      </span>
-    </div>
+        <img
+          onClick={handleAboutButtonClick}
+          className="aboutButton"
+          src="/assets/navigation/about.png"
+        />
+        <img
+          onClick={handleLeaderboardButtonClick}
+          className="leaderboardButton"
+          src="/assets/navigation/leaderboard.png"
+        />
+      </div>
+
+      <div style={showAboutWhenVisibleIsTrue}>
+        <About />
+        <img
+          onClick={handleBackButtonClick}
+          className="backButton"
+          src="/assets/navigation/back.png"
+        />
+      </div>
+
+      <div style={showScoreboardWhenVisibleIsTrue}>
+        <Leaderboard />
+        <img
+          onClick={handleBackButtonClick}
+          className="backButton"
+          src="/assets/navigation/back.png"
+        />
+      </div>
+    </>
   );
 };
-
-const T = (onClickFunction) => {
-    return <><button onClick={onClickFunction}>show</button></>
-} 
 
 const MainScreen = () => {
   return (

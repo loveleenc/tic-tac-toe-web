@@ -40,13 +40,13 @@ const Menu = () => {
       <div style={showMenuWhenVisibleIsTrue}>
         <div>
           <Link to="/play">
-            <img className="playButton" src={PLAY_BUTTON_BROWN} />
+            <img className="mainMenuItem playButton navigationButton" src={PLAY_BUTTON_BROWN} />
           </Link>
         </div>
         <div>
           <img
             onClick={handleAboutButtonClick}
-            className="aboutButton"
+            className="mainMenuItem aboutButton navigationButton"
             src="/assets/navigation/about.png"
             role="button"
           />
@@ -54,7 +54,7 @@ const Menu = () => {
         <div>
           <img
             onClick={handleLeaderboardButtonClick}
-            className="leaderboardButton"
+            className="mainMenuItem leaderboardButton navigationButton"
             src="/assets/navigation/leaderboard.png"
             role="button"
           />
@@ -65,7 +65,7 @@ const Menu = () => {
         <About />
         <img
           onClick={handleBackButtonClick}
-          className="backButton"
+          className="backButton navigationButton"
           src="/assets/navigation/back.png"
           role="button"
         />
@@ -75,7 +75,7 @@ const Menu = () => {
         <Leaderboard />
         <img
           onClick={handleBackButtonClick}
-          className="backButton"
+          className="backButton navigationButton"
           src="/assets/navigation/back.png"
           role="button"
         />

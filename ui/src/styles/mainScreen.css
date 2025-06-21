@@ -17,7 +17,7 @@
     /* width:90%; */
     /* height: 1080px;
     width: 1920px; */
-
+    animation: fade-in 1s;
     height: 100vh; 
     width: 100vw;
     background-position: center;
@@ -50,40 +50,51 @@
     text-align: center;
 }
 
-.playButton {
+@keyframes fade-in {
+    from {
+        opacity: 0%;
+    }
+    to{
+        opacity: 100%;
+    }
+}
+
+.navigationButton{
+    width:  10%;
+    height: 10%;
+}
+
+.mainMenuItem{
     position: absolute;
     left: 0;
     right:0;
     bottom:0;
+    width:  10%;
+    height: 10%;
+    margin-right: auto;
+    margin-left: auto;
+} 
+
+.navigationButton:hover{
+    transform:scale(1.1);
+    transition: 0.3s;
+}
+
+.navigationButton:not(:hover){
+    transform: scale(1);
+    transition: 0.3s;
+}
+
+.playButton{
     top: 270px;
-    width:  10%;
-    height: 10%;
-    margin-right: auto;
-    margin-left: auto;
 }
 
-.leaderboardButton {
-    position: absolute;
-    left: 0;
-    right:0;
-    bottom:0;
+.leaderboardButton{
     top: 330px;
-    width:  10%;
-    height: 10%;
-    margin-right: auto;
-    margin-left: auto;
 }
 
-.aboutButton {
-    position: absolute;
-    left: 0;
-    right:0;
-    bottom:0;
+.aboutButton{
     top: 390px;
-    width:  10%;
-    height: 10%;
-    margin-right: auto;
-    margin-left: auto;
 }
 
 .aboutSection{
@@ -104,6 +115,5 @@
     top: 0px;
     width:  10%;
     height: 10%;
-    /* margin-right: auto; */
     margin-left: auto;
 }

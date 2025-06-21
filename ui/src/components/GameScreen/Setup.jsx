@@ -1,5 +1,6 @@
 import { useState } from "react"
 import './../../styles/setup.css'
+import Navigation from "../Navigation"
 
 
 const SINGLE_PLAYER = 'single-player'
@@ -70,10 +71,16 @@ const Notification = ({text}) => {
     return (<p>{text}</p>)
 }
 
-const Setup = ({setWidth, setHeight, setPlayers, setNeededConsecutiveMoves, setDisabledSquares}) => {
+const Setup = ({setWidth, setHeight, setPlayers, setNeededConsecutiveMoves, setDisabledSquares, resetSetup}) => {
     const [isSubmitted, setSubmitted] = useState(false)
     const [numberOfPlayers, setNumberOfPlayers] = useState(1)
     const [notf, setNotification] = useState(null)
+
+    const quitGame = () => {
+        if(window.confirm("Do you want to quit the game?")){
+            resetSetup()
+        }
+    }
 
     const updateWidth = (value) => {
         setWidth(parseInt(value, 10))
@@ -131,6 +138,8 @@ const Setup = ({setWidth, setHeight, setPlayers, setNeededConsecutiveMoves, setD
     }
 
     return (
+        <>
+        <Navigation quitGame={quitGame}/>
         <div className="setupContainer">
             <Notification text={notf} />
             <div className="title">Setup Game</div>
@@ -145,6 +154,7 @@ const Setup = ({setWidth, setHeight, setPlayers, setNeededConsecutiveMoves, setD
                 </form>
             </div>
         </div>
+        </>
     )
 }
 

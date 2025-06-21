@@ -3,7 +3,6 @@ import gameAPI from "./../../services/gameAPI.js"
 import Square from "./../Square.jsx"
 import Navigation from './../Navigation.jsx'
 import './../../styles/game.css'
-import {useNavigate} from 'react-router-dom'
 
 
 const Game = ({width, height, players, minMoves, disableSquares, handleGameOver}) => {
@@ -11,7 +10,6 @@ const Game = ({width, height, players, minMoves, disableSquares, handleGameOver}
     const [playerData, setPlayerData] = useState(null)
     const [gameOver, setGameOver] = useState(false)
     let index;
-    const navigate = useNavigate()
 
     const updateGame = (id) => {    
         gameAPI.playMove(id)
@@ -37,7 +35,7 @@ const Game = ({width, height, players, minMoves, disableSquares, handleGameOver}
             setPlayerData(null)
             setGrid([])
             handleGameOver()
-            navigate('/')
+            
         }
     }, [gameOver])
 
@@ -48,7 +46,6 @@ const Game = ({width, height, players, minMoves, disableSquares, handleGameOver}
                     setPlayerData(null)
                     setGrid([])
                     handleGameOver()
-                    navigate('/')
                 })
         }
     }

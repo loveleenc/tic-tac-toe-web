@@ -6,7 +6,10 @@ export interface Player{
     moves:number[],
     turn:boolean,
     isComputer:boolean,
+    username: string | null,
 }
+
+export type NonSensitivePlayer = Omit<Player, 'username'>
 
 export interface Game{
   playerData:Player[],
@@ -30,7 +33,7 @@ export enum GameStatus{
 
 export interface OutgoingGameData{
   grid?: Grid,
-  playerData:Player[],
+  playerData:NonSensitivePlayer[],
   status: GameStatus,
   winner: playerSymbol | null,
 }

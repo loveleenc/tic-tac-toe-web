@@ -1,16 +1,15 @@
-import { Router, Request,Response, NextFunction } from "express";
+import { Router, Response, NextFunction } from "express";
 import middleware from "../utils/middleware";
-import { Game, GameStatus, OutgoingGameData, Setup } from "../types/types";
+import { Game, GameStatus, OutgoingGameData } from "../types/types";
 import gameService from "../services/gameService";
 import { v4 as uuidv4 } from 'uuid'
 import getGames from "../data/liveData";
-import { ExistingGameRequest } from "../types/express/request";
+import { ExistingGameRequest, LoggedInUserRequest } from "../types/express/request";
 import parsers from "../utils/parsers";
 
 const gameRouter = Router()
 
-gameRouter.post('/', middleware.parseGameSetup, (request:Request<unknown,unknown,
-    Setup, unknown>, response:Response<OutgoingGameData>) => {
+gameRouter.post('/', [middleware.extractUser, middleware.parseGameSetup], async (request:LoggedInUserRequest, response:Response<OutgoingGameData>) => {
     const game:Game = {
         width:request.body.width,
         height:request.body.height,
@@ -18,7 +17,7 @@ gameRouter.post('/', middleware.parseGameSetup, (request:Request<unknown,unknown
         squares: request.body.disableSquares ? gameService.selectSquaresToDisable(request.body.width, request.body.height) : [],
         playerData: [],
     }
-    gameService.createAllPlayerData(request.body.players, game)
+    const filteredPlayers = gameService.createAllPlayerData(request.body.players, request.user.username, game)
     
     const games = getGames()
     const gameId = uuidv4()
@@ -26,7 +25,7 @@ gameRouter.post('/', middleware.parseGameSetup, (request:Request<unknown,unknown
     response.cookie('gameId', gameId)
     const outgoingGameData:OutgoingGameData = {
         grid: gameService.createGridArray(game),
-        playerData: game.playerData,
+        playerData: filteredPlayers,
         status: GameStatus.ONGOING,
         winner: null,
     }
@@ -34,9 +33,13 @@ gameRouter.post('/', middleware.parseGameSetup, (request:Request<unknown,unknown
     return
 })
 
-gameRouter.patch('/', middleware.getGame, (request:ExistingGameRequest, response:Response, next:NextFunction) => {
+gameRouter.patch('/', [middleware.extractUser, middleware.getGame], async (request:ExistingGameRequest, response:Response, next:NextFunction) => {
     try{
         const game = request.game
+        if(!gameService.currentPlayerHasSentTheRequest(request.user, game)){
+            response.status(400).json({error: 'only the current player can play the game'})
+            return
+        }
         const id = parsers.parseId(request.body.id, game)
         const outgoingGameData = gameService.updateGameState(id, game)
         if(outgoingGameData.status === GameStatus.END){
@@ -55,12 +58,12 @@ gameRouter.patch('/', middleware.getGame, (request:ExistingGameRequest, response
     }
 })
 
-gameRouter.delete('/', middleware.getGame, (request:ExistingGameRequest, response:Response) => {
+gameRouter.delete('/', [middleware.extractUser, middleware.getGame], async (request:ExistingGameRequest, response:Response) => {
     delete getGames()[request.cookies.gameId]
     response.status(204).end()
 })
 
-gameRouter.put('/', middleware.getGame, (request:ExistingGameRequest, response:Response<OutgoingGameData>) => {
+gameRouter.put('/', [middleware.extractUser, middleware.getGame], async (request:ExistingGameRequest, response:Response<OutgoingGameData>) => {
     const game:Game = request.game
     const outgoingGameData:OutgoingGameData = gameService.restartGame(game)
     response.json(outgoingGameData)

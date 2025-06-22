@@ -1,7 +1,27 @@
 import { NextFunction, Request, Response } from "express";
 import parsers from "./parsers";
 import getGames from "../data/liveData";
-import { ExistingGameRequest } from "../types/express/request";
+import { ExistingGameRequest, LoggedInUserRequest } from "../types/express/request";
+import jwt, { JwtPayload } from 'jsonwebtoken'
+import User from "../models/user";
+
+const extractToken = (request:LoggedInUserRequest, _response:Response, next:NextFunction) => {
+    const authorization = request.get('authorization')
+    if(authorization?.startsWith('Bearer ')){
+        request.token = authorization.replace('Bearer ', '')
+    }
+    next()
+}
+
+const extractUser = async (request:LoggedInUserRequest, _response:Response, next:NextFunction) => {
+    if(typeof process.env.SECRET === 'string'){
+    const decodedToken = jwt.verify(request.token, process.env.SECRET) as JwtPayload
+    if(decodedToken?.id){
+        request.user = await User.findById(decodedToken.id)
+        }
+    }
+    next()
+}
 
 const parseGameSetup = (request:Request, response:Response, next:NextFunction) => {
     try{
@@ -40,7 +60,24 @@ const getGame = (request:ExistingGameRequest, response:Response, next:NextFuncti
     }
 }
 
+const errorHandler = (error:unknown, _request: ExistingGameRequest | LoggedInUserRequest, response:Response, next:NextFunction) => {
+    if(error instanceof Error){
+        if (error.name === 'JsonWebTokenError'){
+            response.status(401).json({error: 'token invalid'})
+            return
+        }
+        else if (error.name === 'TokenExpiredError'){
+            response.status(401).json({error: 'token expired'})
+            return
+        }
+    }
+    next(error)
+}
+
 export default {
     parseGameSetup,
-    getGame
+    getGame,
+    extractToken,
+    extractUser,
+    errorHandler
 }

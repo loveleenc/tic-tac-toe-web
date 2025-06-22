@@ -1,4 +1,5 @@
-import { Game, Player, playerSymbol, Grid, Row, Cell, GameStatus, OutgoingGameData} from "../types/types";
+import { ReturnedUser, UserModel } from "../types/models";
+import { Game, Player, playerSymbol, Grid, Row, Cell, GameStatus, OutgoingGameData, NonSensitivePlayer} from "../types/types";
 
 
 const createComputerPlayer = (players:string[]):playerSymbol => {
@@ -28,12 +29,13 @@ const selectFirstPlayer = (data:Player[]):void => {
   data[randomIndex].turn = true;
 };
 
-const createInitialPlayerData = (players:playerSymbol[]):Player[] => {
+const createInitialPlayerData = (players:playerSymbol[], username: string):Player[] => {
   const template:Player = {
     symbol: '',
     moves: [],
     turn: false,
     isComputer: false,
+    username: null
   };
   const data:Player[] = new Array();
 
@@ -46,6 +48,7 @@ const createInitialPlayerData = (players:playerSymbol[]):Player[] => {
   }
 
   if (players.length === 1) {
+    data[0].username = username
     const computerSymbol:playerSymbol = createComputerPlayer(players);
     data.push({ ...template, symbol: computerSymbol, isComputer: true });
   }
@@ -53,9 +56,21 @@ const createInitialPlayerData = (players:playerSymbol[]):Player[] => {
   return data;
 };
 
-const createAllPlayerData = (players:playerSymbol[], game:Game):void => {
-  game.playerData = createInitialPlayerData(players)
+const createAllPlayerData = (players:playerSymbol[], username:string, game:Game):NonSensitivePlayer[] => {
+  game.playerData = createInitialPlayerData(players, username)
   playFirstMove(game)
+  return filterPlayerData(game.playerData)
+}
+
+const filterPlayerData = (playerData:Player[]):NonSensitivePlayer[] => {
+  const filteredPlayers = playerData.map(p => {
+    const {username, ...remainingData} = p
+    const filteredPlayer:NonSensitivePlayer = {
+      ...remainingData
+    }
+    return filteredPlayer
+  })
+  return filteredPlayers
 }
 
 const playFirstMove = (game:Game):void => {
@@ -280,7 +295,7 @@ const updateGameState = (id:number, game:Game):OutgoingGameData => {
 const restartGame = (game:Game):OutgoingGameData => {
   game.playerData.forEach(player => player.moves = [])
     const outgoingGameData:OutgoingGameData = {
-        playerData: game.playerData,
+        playerData: filterPlayerData(game.playerData),
         status: GameStatus.ONGOING,
         winner: null,
         grid: createGridArray(game)
@@ -288,12 +303,20 @@ const restartGame = (game:Game):OutgoingGameData => {
     return outgoingGameData
 }
 
+const currentPlayerHasSentTheRequest = (user:ReturnedUser, game:Game):boolean => {
+  const currentPlayer = game.playerData.find(player => player.turn === true)
+  if(!currentPlayer){
+    throw new Error("unable to find the current player")
+  }
+  return user.username === currentPlayer.username
+}
+
 const verifyAndUpdateGameState = (id:number, game:Game):OutgoingGameData => {
     game.playerData = updateMoveInPlayerData(game.playerData, id)
     const updatedGame:OutgoingGameData = {
       status: GameStatus.ONGOING,
       winner: null,
-      playerData: game.playerData
+      playerData: filterPlayerData(game.playerData)
     }
     if(hasCurrentPlayerHasWon(id, game)){
         const winner = game.playerData.find(player => player.turn === true)
@@ -311,7 +334,7 @@ const verifyAndUpdateGameState = (id:number, game:Game):OutgoingGameData => {
         selectNextPlayer(game.playerData)
         updatedGame.status = GameStatus.ONGOING
         updatedGame.winner= null
-        updatedGame.playerData= game.playerData
+        updatedGame.playerData= filterPlayerData(game.playerData)
         updatedGame.grid= createGridArray(game)
     }
     return updatedGame
@@ -329,5 +352,6 @@ export default {
   nobodyWins,
   selectSquaresToDisable,
   playAsComputer,
-  createAllPlayerData
+  createAllPlayerData,
+  currentPlayerHasSentTheRequest
 };

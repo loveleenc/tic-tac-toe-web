@@ -1,26 +1,11 @@
 import { useState } from "react"
 import './../../styles/setup.css'
 import Navigation from "../Navigation"
-
+import Common from "../Common"
 
 const SINGLE_PLAYER = 'single-player'
 const MULTI_PLAYER = 'multi-player'
 
-const FormInput = ({text, fieldName, type}) => {
-    if (type === "number"){
-        return (
-            <p style={{fontWeight: "bold"}}>
-                {text}<input type={type} className="formInput" name={fieldName} min="3" onWheel={(event) => event.target.blur()}/>
-            </p>
-        )
-    }
-
-    return (
-        <p style={{fontWeight: "bold"}}>
-            {text}<input type={type} className="formInput" name={fieldName}/>
-        </p>
-    )
-}
 
 
 const GameType = ({numberOfPlayers, setNumberOfPlayers}) => {
@@ -58,7 +43,7 @@ const GameType = ({numberOfPlayers, setNumberOfPlayers}) => {
                 (<p style={{fontWeight: 'bold'}}>Select the number of players: <input defaultValue={numberOfPlayers} type="number" onChange={handlePlayerNumber} className="formInput" onWheel={(event) => event.target.blur()} name="playerNumber" min="2"/>
                 </p>)
             }
-            {[...Array(numberOfPlayers).keys()].map(index => <FormInput key={index} text={`Enter player ${index+=1} symbol: `} fieldName={`player${index}`} type="text" />)}
+            {[...Array(numberOfPlayers).keys()].map(index => <Common.FormInput key={index} text={`Enter player ${index+=1} symbol: `} fieldName={`player${index}`} type="text" />)}
         </>
     )
 }
@@ -145,10 +130,10 @@ const Setup = ({setWidth, setHeight, setPlayers, setNeededConsecutiveMoves, setD
             <div className="title">Setup Game</div>
             <div className="formContainer">
                 <form onSubmit={onSubmit} className="form">
-                    <FormInput text="Enter width: " fieldName="inputWidth" type="number"/>
-                    <FormInput text="Enter height: " fieldName="inputHeight" type="number"/>
-                    <FormInput text="Number of moves needed to win: " fieldName="moves" type="number"/>
-                    <FormInput text="Disable random squares? " fieldName="squaresDisabled" type="checkbox" />
+                    <Common.FormInput text="Enter width: " fieldName="inputWidth" type="number"/>
+                    <Common.FormInput text="Enter height: " fieldName="inputHeight" type="number"/>
+                    <Common.FormInput text="Number of moves needed to win: " fieldName="moves" type="number"/>
+                    <Common.FormInput text="Disable random squares? " fieldName="squaresDisabled" type="checkbox" />
                     <GameType numberOfPlayers={numberOfPlayers} setNumberOfPlayers={setNumberOfPlayers}/>
                     <p><button type="submit" className="createGridButton">Create Grid</button></p>
                 </form>

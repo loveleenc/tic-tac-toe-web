@@ -1,6 +1,6 @@
 class AuthenticationError extends Error{
     constructor(){
-        super('Authentication failed!')
+        super('Authentication failed! Invalid username or password')
         this.name = 'AuthenticationError'
     }
 }

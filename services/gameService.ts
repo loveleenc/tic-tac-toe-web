@@ -1,4 +1,4 @@
-import { ReturnedUser, UserModel } from "../types/models";
+import { ReturnedUser } from "../types/models";
 import { Game, Player, playerSymbol, Grid, Row, Cell, GameStatus, OutgoingGameData, NonSensitivePlayer} from "../types/types";
 
 

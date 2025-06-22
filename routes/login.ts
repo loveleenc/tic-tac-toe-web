@@ -12,10 +12,6 @@ loginRouter.post('/', async (request:Request, response:Response) => {
         }
 
         const userInfo = await userService.validateLogin(request.body.username, request.body.password)
-        if(!userInfo){
-            response.status(401).json({error: 'invalid username or password'})
-            return
-        }
         response.status(200).json(userInfo)
     }
     catch(error: unknown){

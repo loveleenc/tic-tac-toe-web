@@ -36,7 +36,7 @@ const validateLogin = async (username: string, password: string) => {
         return {token, username: user.username, name: user.name}
     }
     else{
-        throw new Error("secret not provided for token creation")
+        throw new Error("unable to get token for user")
     }
 }
 

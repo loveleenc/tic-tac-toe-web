@@ -5,6 +5,7 @@ import loginAPI from "../../services/loginAPI.js"
 const Login = () => {
     const navigate = useNavigate()
     const handleLogin = async (event) => {
+        console.log("login blah")
         event.preventDefault()
         const username = event.target.username.value
         const password = event.target.password.value
@@ -16,12 +17,18 @@ const Login = () => {
             .catch(error => console.log("unable to login"))
     }
 
+    const submitForm = (event) => {
+        console.log("form submission shiz")
+        form.onSubmit()
+    }
+
     return(
         <div>
             <form className="loginForm" onSubmit={handleLogin}>
                 <Common.FormInput text="Username " fieldName="username" type="text"/>
                 <Common.FormInput text="Password " fieldName="password" type="password"/>
-                <input type="image"  src="/assets/loginScreen/login.png" className="loginButton navigationButton" />
+                {/* <input type="image"  src="/assets/loginScreen/login.png" className="loginButton navigationButton" /> */}
+                <Common.NavigationButton text="Login" onClickEventHandler={null} />
             </form>
         </div>
     )

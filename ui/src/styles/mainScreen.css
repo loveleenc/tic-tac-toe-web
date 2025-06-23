@@ -59,10 +59,6 @@
     }
 }
 
-.navigationButton{
-    transform:scale(1)
-}
-
 .loginForm{
     margin-right: auto;
     margin-left: auto;
@@ -81,11 +77,16 @@
     left: 0;
     right:0;
     bottom:0;
-    width:  10%;
-    height: 10%;
+    width: min-content;
+    /* width:  10%;
+    height: 10%; */
     margin-right: auto;
     margin-left: auto;
 } 
+
+.navigationButton{
+    transform:scale(1);
+}
 
 .navigationButton:hover{
     transform:scale(1.1);
@@ -128,14 +129,4 @@
     width:  10%;
     height: 10%;
     margin-left: auto;
-}
-
-@font-face {
-  font-family: myFirstFont;
-  src: url('/fonts/common.ttf');
-}
-
-.trialFont {
-  font-family: myFirstFont;
-  text-shadow: -2px 0 white, 0 2px white, 2px 0 white, 0 -2px white;
 }

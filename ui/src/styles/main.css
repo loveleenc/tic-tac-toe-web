@@ -1,0 +1,36 @@
+@font-face {
+  font-family: pixelFont;
+  src: url('/fonts/common.ttf');
+}
+
+.pixelFontStyle {
+  font-family: pixelFont;
+  text-shadow: -2px 0 white, 0 2px white, 2px 0 white, 0 -2px white;
+}
+
+.buttonContainer {
+  margin-right: auto;
+  margin-left: auto;
+  position: relative;
+  text-align: center;
+  width:  200px;
+  height: 63px;  
+}
+
+.commonButtonText{
+  position: relative;
+  top:-42px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.hiddenButton{
+  position: relative;
+  top:-82px;
+  margin-right: auto;
+  margin-left: auto;
+  width:  200px;
+  height: 63px;  
+  opacity: 0;
+  /* visibility: hidden; */
+}

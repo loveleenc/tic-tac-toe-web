@@ -1,6 +1,3 @@
-import { useState } from 'react'
-// import Setup from './components/GameScreen/Setup'
-// import Game from './Game'
 import MainScreen from './components/MainScreen'
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
 import GameScreen from './components/GameScreen/GameScreen'

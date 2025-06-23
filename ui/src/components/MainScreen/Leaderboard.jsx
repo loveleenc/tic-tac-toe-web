@@ -3,7 +3,7 @@
 const Leaderboard = () => {
     return (
         <div className="pixelFontStyle">
-        Coming soon!
+            Coming soon!
         </div>
     )
 }

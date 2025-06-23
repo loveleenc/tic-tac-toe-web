@@ -72,14 +72,22 @@
     margin-left: auto;
 }
 
+.mainMenu{
+    position:relative;
+    left:0;
+    right:0;
+    top: 50px;
+    bottom:0;
+}
+
 .mainMenuItem{
     position: absolute;
     left: 0;
     right:0;
     bottom:0;
     width: min-content;
-    /* width:  10%;
-    height: 10%; */
+    width:  10%;
+    height: 10%;
     margin-right: auto;
     margin-left: auto;
 } 
@@ -128,5 +136,17 @@
     top: 0px;
     width:  10%;
     height: 10%;
+    margin-left:0%;
+}
+
+.leaderboardData{
+    position: absolute;
+    left: 0;
+    right:0;
+    bottom:0;
+    width: min-content;
+    width:  10%;
+    height: 10%;
+    margin-right: auto;
     margin-left: auto;
 }

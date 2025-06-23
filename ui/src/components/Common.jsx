@@ -22,20 +22,22 @@ const FormInput = ({ text, fieldName, type }) => {
   );
 };
 
-const NavigationButton = ({ text, onClickEventHandler }) => {
+const NavigationButton = (props) => {
   return (
-    <div className="buttonContainer navigationButton">
+    <div className="buttonContainer navigationButton" style={props.buttonLocation}>
       <img
         src="/assets/navigation/common.png"
         role="button"
+        className="commonButtonImage"
       />
-      <div onClick={onClickEventHandler} className="commonButtonText pixelFontStyle" style={{fontWeight: 'bold'}}>
-        {text}
+      <div onClick={props.onClickEventHandler} className="commonButtonText pixelFontStyle" style={{fontWeight: 'bold'}}>
+        {props.text}
       </div>
-      {(!onClickEventHandler) ? <input type="submit" className="hiddenButton"/> : null}
+      {props.children}
     </div>
   );
 };
+
 // style={{visibility: 'hidden'}}
 export default {
   FormInput,

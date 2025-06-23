@@ -17,20 +17,34 @@
   height: 63px;  
 }
 
-.commonButtonText{
+.commonButtonImage{
   position: relative;
-  top:-42px;
+  top: 0px;
   margin-right: auto;
   margin-left: auto;
+  height: 100%;
+}
+
+.commonButtonText{
+  position: relative;
+  top: -63px;
+  margin-right: auto;
+  margin-left: auto;
+  font-size: 0.8em;
+  height: 100%;
+  text-align: center;
+  vertical-align:text-bottom;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .hiddenButton{
   position: relative;
-  top:-82px;
+  top:-200%;
   margin-right: auto;
   margin-left: auto;
   width:  200px;
-  height: 63px;  
+  height: 100%;
   opacity: 0;
-  /* visibility: hidden; */
 }

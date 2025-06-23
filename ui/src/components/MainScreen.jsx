@@ -4,6 +4,7 @@ import About from "./MainScreen/About";
 import Leaderboard from "./MainScreen/Leaderboard";
 import GameScreen from "./GameScreen/GameScreen";
 import { useState } from "react";
+import Common from "./Common";
 
 const PLAY_BUTTON_BROWN = "/assets/navigation/play.png";
 
@@ -37,47 +38,51 @@ const Menu = () => {
 
   return (
     <>
-      <div style={showMenuWhenVisibleIsTrue}>
+      <div style={showMenuWhenVisibleIsTrue} className="mainMenu">
         <div>
           <Link to="/play">
-            <img className="mainMenuItem playButton navigationButton" src={PLAY_BUTTON_BROWN} />
+            <Common.NavigationButton
+              text="play"
+              buttonLocation={{ left: 0, right: 0, top: "50px", bottom: 0 }}
+            />
+            {/* <img className="mainMenuItem playButton navigationButton" src={PLAY_BUTTON_BROWN} /> */}
           </Link>
         </div>
         <div>
-          <img
+          <Common.NavigationButton
+            text="about"
+            onClickEventHandler={handleAboutButtonClick}
+            buttonLocation={{ left: 0, right: 0, top: "50px", bottom: 0 }}
+          />
+          {/* <img
             onClick={handleAboutButtonClick}
             className="mainMenuItem aboutButton navigationButton"
             src="/assets/navigation/about.png"
             role="button"
-          />
+          /> */}
         </div>
         <div>
-          <img
-            onClick={handleLeaderboardButtonClick}
-            className="mainMenuItem leaderboardButton navigationButton"
-            src="/assets/navigation/leaderboard.png"
-            role="button"
+          <Common.NavigationButton
+            text="leaderboard"
+            onClickEventHandler={handleLeaderboardButtonClick}
+            buttonLocation={{ left: 0, right: 0, top: "50px", bottom: 0 }}
           />
         </div>
       </div>
 
       <div style={showAboutWhenVisibleIsTrue}>
         <About />
-        <img
-          onClick={handleBackButtonClick}
-          className="backButton navigationButton"
-          src="/assets/navigation/back.png"
-          role="button"
+        <Common.NavigationButton
+          text="back"
+          onClickEventHandler={handleBackButtonClick}
         />
       </div>
 
-      <div style={showScoreboardWhenVisibleIsTrue}>
+      <div style={showScoreboardWhenVisibleIsTrue} className="">
         <Leaderboard />
-        <img
-          onClick={handleBackButtonClick}
-          className="backButton navigationButton"
-          src="/assets/navigation/back.png"
-          role="button"
+        <Common.NavigationButton
+          text="back"
+          onClickEventHandler={handleBackButtonClick}
         />
       </div>
     </>

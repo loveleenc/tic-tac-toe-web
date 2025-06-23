@@ -1,20 +1,25 @@
 import { useNavigate } from "react-router-dom"
 import Common from "../Common"
 import loginAPI from "../../services/loginAPI.js"
+import { useRef, useState } from 'react'
 
 const Login = () => {
     const navigate = useNavigate()
+    const dialogRef = useRef(null);
+    const [notification, setNotification] = useState('') 
+
     const handleLogin = async (event) => {
-        console.log("login blah")
         event.preventDefault()
         const username = event.target.username.value
         const password = event.target.password.value
         loginAPI.loginToGame(username, password)
             .then(response => {
-                console.log('login successful')
                 navigate('/main')
             })
-            .catch(error => console.log("unable to login"))
+            .catch(error => {
+                setNotification(`Unable to login. Please check username or password.`)
+                dialogRef.current.showModal()
+            })
     }
 
     const submitForm = (event) => {
@@ -27,11 +32,22 @@ const Login = () => {
             <form className="loginForm" onSubmit={handleLogin}>
                 <Common.FormInput text="Username " fieldName="username" type="text"/>
                 <Common.FormInput text="Password " fieldName="password" type="password"/>
-                {/* <input type="image"  src="/assets/loginScreen/login.png" className="loginButton navigationButton" /> */}
-                <Common.NavigationButton text="Login" onClickEventHandler={null} />
+                <Common.NavigationButton text="Login" onClickEventHandler={null} >
+                    <input type="submit" className="hiddenButton"/>
+                </Common.NavigationButton>
             </form>
+            <MessageDialog dialogRef={dialogRef} message={notification}/>
         </div>
     )
+}
+
+const MessageDialog = ({dialogRef, message}) => {
+    return (<dialog ref={dialogRef}>
+        <div className="pixelFontStyle">{message}</div>
+        <form method="dialog">
+            <button>OK</button>
+        </form>
+    </dialog>)
 }
 
 const LoginScreen = () => {

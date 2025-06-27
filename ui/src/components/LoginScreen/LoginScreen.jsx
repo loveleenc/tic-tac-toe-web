@@ -42,21 +42,46 @@ const Login = () => {
 }
 
 const MessageDialog = ({dialogRef, message}) => {
-    return (<dialog ref={dialogRef}>
+    return (<dialog ref={dialogRef} style={{width: "60%", borderRadius: "3%"}}>
         <div className="pixelFontStyle">{message}</div>
         <form method="dialog">
-            <button>OK</button>
+            <Common.NavigationButton text="Okay" onClickEventHandler={() => dialogRef.current.close()}/>
         </form>
     </dialog>)
 }
 
+const ForgotPasswordDialog = ({dialogRef}) => {
+    const divContainerRef = useRef(null)
+
+    return(
+        <dialog ref={dialogRef} style={{width: "60%", borderRadius: "4%", height: "60%"}}>
+            <div ref={divContainerRef} style={{lineHeight: 2, overflowY: 'scroll', textAlign: 'center', height: "80%" }}>
+                <div className="pixelFontStyle">Oh no! Did you forget your password? Well, there's nothing you can do about it now! *tears*</div>
+                <img src="/assets/loginScreen/noooo-star-wars.gif" style={{borderRadius: "5%"}}/>
+            
+                <div className="pixelFontStyle" style={{whiteSpace: 'pre-line'}}>{`...\n...\n...\n...\n...`}</div>
+                <div className="pixelFontStyle">Just kidding, you goober.</div>
+            </div>
+            <form method="dialog">
+                <Common.NavigationButton text="Okay" onClickEventHandler={() => {
+                    divContainerRef.current.scrollTo(0, 0);
+                    dialogRef.current.close()
+                    }}/>
+            </form>
+        </dialog>
+    )
+}
+
 const LoginScreen = () => {
+    const dialogRef = useRef(null);
     return (<div className="mainScreenBackground">
-        <div className="gameTitle">
-        <img src="/assets/mainScreen/ttt_title.gif" />
-        <Login />
-      </div>
-    </div>)
+                <div className="gameTitle">
+                    <img src="/assets/mainScreen/ttt_title.gif" />
+                </div>
+                <Login />
+                <div className="forgotPassword pixelFontStyle navigationButton" onClick={() => dialogRef.current.showModal()}>Forgot password?</div>
+                <ForgotPasswordDialog dialogRef={dialogRef} />
+            </div>)
 }
 
 export default LoginScreen

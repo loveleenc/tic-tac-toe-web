@@ -17,7 +17,7 @@ const playMove = (move) => {
     return axios.patch(baseUrl, {id: move, }, {
         headers: {
                 Cookie: "gameId=value;"
-            }})
+    }})
 }
 
 const restartGame = () => {

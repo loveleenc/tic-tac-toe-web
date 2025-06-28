@@ -29,6 +29,11 @@ const Square = memo(({id, getSquareId, text}) => {
                 <button id={id} className='block' style={{backgroundColor: "gray"}} disabled={true} onClick={handleButtonClick}>{text}</button>
             </>)
     }
+    if(text !== ""){
+        return (<>
+                <button id={id} className='block' disabled={true} onClick={handleButtonClick}>{text}</button>
+            </>)
+    }
     return (<>
         <button id={id} className='block' disabled={isDisabled} onClick={handleButtonClick}>{text}</button>
     </>)

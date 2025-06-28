@@ -38,10 +38,10 @@ const Leaderboard = () => {
         </tr> */}
         {scores.map((score) => (
           <tr>
-            <th>{score.user.name}</th>
-            <th>{score.wins}</th>
-            <th>{score.losses}</th>
-            <th>{score.ties}</th>
+            <td>{score.user.name}</td>
+            <td>{score.wins}</td>
+            <td>{score.losses}</td>
+            <td>{score.ties}</td>
           </tr>
         ))}
         </tbody>

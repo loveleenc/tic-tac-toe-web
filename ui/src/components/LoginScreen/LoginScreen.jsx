@@ -7,6 +7,7 @@ const Login = () => {
     const navigate = useNavigate()
     const dialogRef = useRef(null);
     const [notification, setNotification] = useState('') 
+    const [user, setUser] = useState(null)
 
     const handleLogin = async (event) => {
         event.preventDefault()
@@ -14,6 +15,7 @@ const Login = () => {
         const password = event.target.password.value
         loginAPI.loginToGame(username, password)
             .then(response => {
+                setUser(response.data.username);
                 navigate('/main')
             })
             .catch(error => {
@@ -22,9 +24,10 @@ const Login = () => {
             })
     }
 
-    const submitForm = (event) => {
-        console.log("form submission shiz")
-        form.onSubmit()
+
+    if(user !== null){
+        navigate('/main')
+        return null;
     }
 
     return(

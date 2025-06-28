@@ -284,11 +284,11 @@ const selectSquaresToDisable = (width:Game["width"], height:Game["height"]):Game
   return squares;
 };
 
-const updateGameState = (id:number, game:Game):OutgoingGameData => {
-  let outgoingGameData = verifyAndUpdateGameState(id, game)
+const updateGameState = async (id:number, game:Game):Promise<OutgoingGameData> => {
+  let outgoingGameData = await verifyAndUpdateGameState(id, game)
   if(game.playerData.find(p => p.turn === true && p.isComputer === true)){
         const new_id = playAsComputer(game)
-        outgoingGameData = verifyAndUpdateGameState(new_id, game)
+        outgoingGameData = await verifyAndUpdateGameState(new_id, game)
   }
   return outgoingGameData
 }
@@ -312,7 +312,7 @@ const currentPlayerHasSentTheRequest = (user:ReturnedUser, game:Game):boolean =>
   return user.username === currentPlayer.username
 }
 
-const verifyAndUpdateGameState = (id:number, game:Game):OutgoingGameData => {
+const verifyAndUpdateGameState = async (id:number, game:Game):Promise<OutgoingGameData> => {
     game.playerData = updateMoveInPlayerData(game.playerData, id)
     const updatedGame:OutgoingGameData = {
       status: GameStatus.ONGOING,
@@ -324,13 +324,21 @@ const verifyAndUpdateGameState = (id:number, game:Game):OutgoingGameData => {
         if(!winner){
           throw new Error("unable to find the current player who has won")
         }
-        // scoreService.addWinToUserScore(winner.username);
+        await scoreService.addWinToUserScore(winner.username);
+        game.playerData.forEach(async (player) => {
+          if(player.turn === false){
+            await scoreService.addLossToUserScore(player.username);
+          }
+        })
         updatedGame.status = GameStatus.END
         updatedGame.winner= winner.symbol
     }
     else if (nobodyWins(game)){
       updatedGame.status = GameStatus.END
       updatedGame.winner= null
+      game.playerData.forEach(async (player) => {
+        await scoreService.addTieToUserScore(player.username);
+      })
     }
     else{
         selectNextPlayer(game.playerData)

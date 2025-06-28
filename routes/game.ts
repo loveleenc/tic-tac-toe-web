@@ -41,7 +41,7 @@ gameRouter.patch('/', [middleware.extractUser, middleware.getGame], async (reque
             return
         }
         const id = parsers.parseId(request.body.id, game)
-        const outgoingGameData = gameService.updateGameState(id, game)
+        const outgoingGameData = await gameService.updateGameState(id, game)
         if(outgoingGameData.status === GameStatus.END){
             delete getGames()[request.cookies.gameId]
         }

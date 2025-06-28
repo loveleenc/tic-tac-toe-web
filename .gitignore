@@ -28,3 +28,6 @@ package-lock.json
 
 playwright/
 .env
+
+#random
+routes/mongo.js

@@ -1,22 +1,4 @@
 .mainScreenBackground {
-    /* position: absolute;
-    background-size:cover;
-    background-repeat: no-repeat;
-    background-position: center;
-    /* height: auto; 
-    width: auto; */
-    /* max-width: 100%; */
-    /* max-height: 100%; */ 
-    /* background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;   */
-    /* background-image: url('/ximages/websiteheader1.png'); */
-    /* background-repeat:no-repeat; */
-    /* background-size:contain; */
-    /* height:100%;width:100%; */
-    /* width:90%; */
-    /* height: 1080px;
-    width: 1920px; */
     animation: fade-in 1s;
     height: 100vh; 
     width: 100vw;
@@ -26,8 +8,6 @@
 }
 
 .gameTitle img{
-    max-width: inherit;
-    max-height: inherit;
     height: inherit;
     width: inherit;
     object-fit: contain;
@@ -37,7 +17,7 @@
     position:relative;
     left:0;
     right:0;
-    top: 20px;
+    top: 3%;
     bottom:0;
     margin-left: auto;
     margin-right: auto;
@@ -47,7 +27,7 @@
     /* border: 10px black;
     border-style: outset;
     border-radius: 22px;  */
-    text-align: center;
+    /* text-align: center; */
 }
 
 @keyframes fade-in {
@@ -87,6 +67,7 @@
     right:0;
     top: 50px;
     bottom:0;
+    height:30%;
 }
 
 .mainMenuItem{
@@ -115,47 +96,12 @@
     transition: 0.3s;
 }
 
-.playButton{
-    top: 270px;
-}
-
-.leaderboardButton{
-    top: 330px;
-}
-
-.aboutButton{
-    top: 390px;
-}
-
 .aboutSection{
     position: absolute;
     left: 0;
     right:0;
     bottom:0;
     top: 270px;
-    margin-right: auto;
-    margin-left: auto;
-}
-
-.backButton{
-    position: absolute;
-    left: 0;
-    right:0;
-    bottom:0;
-    top: 0px;
-    width:  10%;
-    height: 10%;
-    margin-left:0%;
-}
-
-.leaderboardData{
-    position: absolute;
-    left: 0;
-    right:0;
-    bottom:0;
-    width: min-content;
-    width:  10%;
-    height: 10%;
     margin-right: auto;
     margin-left: auto;
 }

@@ -7,7 +7,7 @@ const getScoreForAllUsers = async () => {
 }
 
 const getScore = async (username: string | null) => {   //todo: add expected type for returned mongoose object
-    if(!username){
+    if(username === null){
         return null;
     }
     const user = await User.findOne({ username: username });

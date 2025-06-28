@@ -1,5 +1,6 @@
 import { ReturnedUser } from "../types/models";
 import { Game, Player, playerSymbol, Grid, Row, Cell, GameStatus, OutgoingGameData, NonSensitivePlayer} from "../types/types";
+import scoreService from "./scoreService";
 
 
 const createComputerPlayer = (players:string[]):playerSymbol => {
@@ -323,6 +324,7 @@ const verifyAndUpdateGameState = (id:number, game:Game):OutgoingGameData => {
         if(!winner){
           throw new Error("unable to find the current player who has won")
         }
+        // scoreService.addWinToUserScore(winner.username);
         updatedGame.status = GameStatus.END
         updatedGame.winner= winner.symbol
     }

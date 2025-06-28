@@ -6,6 +6,13 @@ export interface UserModel{
     passwordHash: string
 }
 
+export interface ScoreModel{
+    wins: number,
+    losses: number,
+    ties: number,
+    user: ObjectId,
+}
+
 export interface ReturnedUser{
     name: string,
     username:string,

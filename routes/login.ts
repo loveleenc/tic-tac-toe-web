@@ -12,7 +12,10 @@ loginRouter.post('/', async (request:Request, response:Response) => {
         }
 
         const userInfo = await userService.validateLogin(request.body.username, request.body.password)
-        response.status(200).json(userInfo)
+        response.cookie('token', userInfo.token, {httpOnly: true, secure: true, sameSite: "strict"});
+        const { token, ...remaining} = userInfo;
+        const userInfoFiltered = {...remaining};
+        response.status(200).json(userInfoFiltered)
     }
     catch(error: unknown){
         let errorMessage = 'something went wrong. '

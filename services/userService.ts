@@ -1,4 +1,5 @@
 import User from "../models/user"
+import Score from "../models/scores"
 import { UserModel } from "../types/models"
 import bcrypt from 'bcrypt'
 import AuthenticationError from "../utils/errors"
@@ -12,6 +13,14 @@ const createNewUser = async (name:UserModel["name"], username:UserModel["usernam
         passwordHash: await createPassword(password)
     })
     const savedUser = await user.save()
+    
+    const score = new Score({
+        wins: 0,
+        losses: 0,
+        ties: 0,
+        user: savedUser._id,
+    })
+    await score.save()
     return savedUser
 }
 
@@ -33,7 +42,7 @@ const validateLogin = async (username: string, password: string) => {
     }
     if(typeof process.env.SECRET === 'string'){
         const token = jwt.sign(userPayload, process.env.SECRET, {expiresIn: 30 * 60})
-        return {token, username: user.username, name: user.name}
+        return {token: token, username: user.username, name: user.name}
     }
     else{
         throw new Error("unable to get token for user")

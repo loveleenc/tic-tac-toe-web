@@ -6,9 +6,8 @@ import jwt, { JwtPayload } from 'jsonwebtoken'
 import User from "../models/user";
 
 const extractToken = (request:LoggedInUserRequest, _response:Response, next:NextFunction) => {
-    const authorization = request.get('authorization')
-    if(authorization?.startsWith('Bearer ')){
-        request.token = authorization.replace('Bearer ', '')
+    if(request.cookies.token !== undefined){
+        request.token = request.cookies.token
     }
     next()
 }

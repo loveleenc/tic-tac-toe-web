@@ -9,7 +9,21 @@ const Leaderboard = () => {
       .then(response => {
         setScores(response.data);
       })
+      .catch(response => {
+        setScores([])
+      })
   }, []);
+
+
+  const getScores = () => scores.length !== 0 ? scores.map((score) => (
+          <tr>
+            <td>{score.user.name}</td>
+            <td>{score.wins}</td>
+            <td>{score.losses}</td>
+            <td>{score.ties}</td>
+          </tr>
+        )) : <tr><td colSpan="4">Unable to fetch scores. Please try again later.</td></tr>;
+
 
   return (
     <div className="pixelFontStyle">
@@ -24,26 +38,7 @@ const Leaderboard = () => {
           <th>Losses</th>
           <th>Draws</th>
         </tr>
-        {/* <tr>
-          <td>zoro</td>
-          <td>4</td>
-          <td>1</td>
-          <td>1</td>
-        </tr>
-        <tr>
-          <td>luffy</td>
-          <td>3</td>
-          <td>2</td>
-          <td>8</td>
-        </tr> */}
-        {scores.map((score) => (
-          <tr>
-            <td>{score.user.name}</td>
-            <td>{score.wins}</td>
-            <td>{score.losses}</td>
-            <td>{score.ties}</td>
-          </tr>
-        ))}
+        {getScores()}
         </tbody>
       </table>
     </div>

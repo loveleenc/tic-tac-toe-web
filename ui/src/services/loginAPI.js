@@ -10,6 +10,11 @@ const loginToGame = (username, password) => {
     return axios.post(baseUrl, loginData)
 }
 
+const whoami = () => {
+    return axios.get(`${baseUrl}/whoami`);
+}
+
 export default {
-    loginToGame
+    loginToGame,
+    whoami
 }

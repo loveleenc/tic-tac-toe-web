@@ -6,6 +6,7 @@ import config from './utils/config';
 import mongoose from 'mongoose';
 import userRouter from './routes/user';
 import middleware from './utils/middleware';
+import logoutRouter from './routes/logout';
 
 const app = express()
 
@@ -25,6 +26,7 @@ app.use(express.static('ui/dist'))
 app.use('/api/login', loginRouter)
 app.use('/users', userRouter)
 app.use('/api/game', gameRouter)
+app.use('/logout', logoutRouter)
 app.use(middleware.errorHandler)
 
 const PORT = process.env.PORT ?? 3001

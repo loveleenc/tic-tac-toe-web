@@ -4,15 +4,15 @@ import scoreAPI from "../../services/scoreAPI.js";
 const Leaderboard = () => {
   const [scores, setScores] = useState([]);
 
-  useEffect(() => {
-    scoreAPI.getScores()
-      .then(response => {
-        setScores(response.data);
-      })
-      .catch(response => {
-        setScores([])
-      })
-  }, []);
+  // useEffect(() => {
+  //   scoreAPI.getScores()
+  //     .then(response => {
+  //       setScores(response.data);
+  //     })
+  //     .catch(response => {
+  //       setScores([])
+  //     })
+  // }, []);
 
 
   const getScores = () => scores.length !== 0 ? scores.map((score) => (

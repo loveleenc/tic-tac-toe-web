@@ -1,0 +1,70 @@
+.scene {
+  perspective: 800px;
+  width: 700px;
+  height: 200px;
+  position: relative;
+  top: 100px;
+  left: 300px;
+}
+
+.carousel {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  transform-style: preserve-3d;
+  transition: 1s;
+}
+
+.carousel_cell {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0px;
+  top: 0px;
+  text-align: center;
+}
+
+.carousel_cell > img{
+    width: 15%;
+    display: flex;
+    justify-content: center;
+    border: 1px solid brown;
+}
+
+.carousel_cell > span{
+    text-align:center;
+    border: 1px solid brown;
+}
+
+.carousel_cell:hover {
+  border: 2px dotted gold;
+}
+
+.carousel_button {
+  position: absolute;
+  top: 270px;
+}
+
+.carousel_button_prev {
+  left: 340px;
+  width: 80px;
+}
+
+.carousel_button_next {
+  left: 440px;
+  width: 80px;
+}
+
+.carousel_cell:nth-child(1) {
+  background: linear-gradient(rgba(251, 194, 4, 0.9), rgba(229, 56, 0, 0.9));
+  transform: rotateY(0deg) translateZ(202px);
+}
+.carousel_cell:nth-child(2) {
+  background: linear-gradient(rgba(131, 186, 54, 0.9), rgba(112, 224, 187, 0.9));
+  transform: rotateY(120deg) translateZ(202px);
+}
+.carousel_cell:nth-child(3) {
+
+  background: linear-gradient(rgba(39, 108, 199, 0.9), rgba(120, 168, 229, 0.9));
+  transform: rotateY(240deg) translateZ(202px);
+}

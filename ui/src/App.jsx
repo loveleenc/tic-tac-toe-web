@@ -8,8 +8,8 @@ function App() {
     <>
     <Router>
       <Routes>
-        <Route path="/" element={<LoginScreen />} />
-        <Route path="/main" element={<MainScreen />} />
+        {/* <Route path="/" element={<LoginScreen />} /> */}
+        <Route path="/" element={<MainScreen />} />
         <Route path="/play" element={<GameScreen />}/>
       </Routes>
     </Router>

@@ -4,49 +4,43 @@
     height: 100%;
     border-color: red;
     position: absolute;
-    top: 45px;
-    overflow: scroll;
+    top: 48px;
     margin-bottom: 300px;
 }
 
 .title {
-    font-size: 30px;
+    font-size: 26px;
     color: black;
     text-shadow: orangered 1px 0 10px;
-    /* margin: auto; */
     text-align: center;
-    position: absolute;
-    top: 12%;
+    position: relative;
+    top: 9%;
     bottom: 0;
-    left: 40%;
-    right: 40%;
+    left: 0%;
+    right: 0%;
 }
 
 .formContainer{
     background-color: #68a792;
-    /* padding: 0;  */
-    /* overflow: hidden; */
-    /* border: 5px gray; */
     border-radius: 22px; 
     border-color: black;
     border-style:groove;
-    font-family: Georgia, 'Times New Roman', Times, serif;
     margin: auto;
 
-    width: 50%;
+    width: 60%;
     height: max-content;
-
     position: relative;
-    top: 18%;
+    top: 10%;
     bottom: 0;
     left: 0;
     right: 0;
-    
+    overflow-y:auto;
 }
 
 .form {
     text-align:center;
     padding: 10px;
+    
 }
 
 .formInput {

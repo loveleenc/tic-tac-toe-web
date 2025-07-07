@@ -3,6 +3,7 @@ import './../../styles/setup.css'
 import Navigation from "../Navigation"
 import Common from "../Common"
 import types from "../../types/types"
+import Difficulty from "./Difficulty"
 
 
 const GameType = ({setGameType}) => {
@@ -113,7 +114,9 @@ const Setup = ({setWidth, setHeight, setPlayers, setNeededConsecutiveMoves, setD
                     <GameType setGameType={setGameType}/>
                     <p><button type="submit" className="createGridButton">Create Grid</button></p>
                 </form>
+                <Difficulty/>
             </div>
+            
         </div>
         </>
     )

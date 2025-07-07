@@ -2,7 +2,6 @@ import "./../styles/mainScreen.css";
 import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from "react-router-dom";
 import About from "./MainScreen/About";
 import Leaderboard from "./MainScreen/Leaderboard";
-import GameScreen from "./GameScreen/GameScreen";
 import { useState } from "react";
 import Common from "./Common";
 import './../styles/leaderboard.css';

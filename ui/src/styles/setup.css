@@ -13,11 +13,6 @@
     color: black;
     text-shadow: orangered 1px 0 10px;
     text-align: center;
-    position: relative;
-    top: 9%;
-    bottom: 0;
-    left: 0%;
-    right: 0%;
 }
 
 .formContainer{
@@ -26,15 +21,13 @@
     border-color: black;
     border-style:groove;
     margin: auto;
-
     width: 60%;
-    height: max-content;
+    height: fit-content;
     position: relative;
-    top: 10%;
+    top: 2%;
     bottom: 0;
     left: 0;
     right: 0;
-    overflow-y:auto;
 }
 
 .form {

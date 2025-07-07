@@ -27,11 +27,11 @@ const GameScreen = () => {
 
     return (
         <>
-        {/* <Setup setWidth={setWidth} setHeight={setHeight} setPlayers={setPlayers} setNeededConsecutiveMoves={setWinMoves} 
+        <Setup setWidth={setWidth} setHeight={setHeight} setPlayers={setPlayers} setNeededConsecutiveMoves={setWinMoves} 
                       setDisabledSquares={setDisabledSquares} resetSetup={handleGameOver} setGameType={setGameType}
                       setDifficulty={setDifficulty}
-                      /> */}
-        <Difficulty setDifficulty={setDifficulty}/>
+                      />
+        {/* <Difficulty setDifficulty={setDifficulty}/> */}
         <Game width={width} height={height} players={players} minMoves={winMoves} disableSquares={disableSquares} handleGameOver={handleGameOver}
                 gameType={gameType}/>
         </>

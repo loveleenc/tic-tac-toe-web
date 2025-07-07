@@ -43,6 +43,7 @@ const parseGameSetup = (request:Request, response:Response, next:NextFunction) =
     }
 }
 
+
 const getGame = (request:ExistingGameRequest, response:Response, next:NextFunction) => {
     const games = getGames()
     const gameId = request.cookies.gameId

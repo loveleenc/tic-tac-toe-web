@@ -1,5 +1,6 @@
 import { ReturnedUser } from "../types/models";
-import { Game, Player, playerSymbol, Grid, Row, Cell, GameStatus, OutgoingGameData, NonSensitivePlayer} from "../types/types";
+import { Game, Player, playerSymbol, Grid, Row, Cell, GameStatus, OutgoingGameData, NonSensitivePlayer, GameType, GameDifficulty} from "../types/types";
+import computerService from "./computerService";
 import scoreService from "./scoreService";
 
 
@@ -30,7 +31,7 @@ const selectFirstPlayer = (data:Player[]):void => {
   data[randomIndex].turn = true;
 };
 
-const createInitialPlayerData = (players:playerSymbol[], username: string):Player[] => {
+const createInitialPlayerData = (players:playerSymbol[], username: string, gameType: GameType):Player[] => {
   const template:Player = {
     symbol: '',
     moves: [],
@@ -48,17 +49,37 @@ const createInitialPlayerData = (players:playerSymbol[], username: string):Playe
     });
   }
 
-  if (players.length === 1) {
+  if (gameType === GameType.SINGLEPLAYER) {
     data[0].username = username
     const computerSymbol:playerSymbol = createComputerPlayer(players);
     data.push({ ...template, symbol: computerSymbol, isComputer: true });
+    selectFirstPlayer(data);
   }
-  selectFirstPlayer(data);
   return data;
 };
 
+const addNewPlayer = (playerSymbol:playerSymbol, user_name:string, game:Game):NonSensitivePlayer => {
+  const template:Player = {
+    symbol: playerSymbol,
+    moves: [],
+    turn: false,
+    isComputer: false,
+    username: user_name
+  };
+  game.playerData.push(template);
+  if(!game.hasStarted){
+    game.hasStarted = true;
+  }
+  const {username, ...remainingData} = template
+
+  const filteredPlayer:NonSensitivePlayer = {
+    ...remainingData
+  }
+  return filteredPlayer;
+}
+
 const createAllPlayerData = (players:playerSymbol[], username:string, game:Game):NonSensitivePlayer[] => {
-  game.playerData = createInitialPlayerData(players, username)
+  game.playerData = createInitialPlayerData(players, username, game.gameType)
   playFirstMove(game)
   return filterPlayerData(game.playerData)
 }
@@ -105,25 +126,18 @@ const selectNextPlayer = (playerData:Player[]):void  => {
 
 
 const playAsComputer = (game:Game):number => {
-  let move;
-  const all_moves = game.playerData
-    .map((p) => p.moves)
-    .reduce((a, c) => a.concat(c), new Array())
-    .concat(game.squares);
-    if (1 + all_moves.length === game.width * game.height) {
-      for (let i = 0; i < game.width * game.height; i++) {
-        if (!all_moves.includes(i)) {
-          move = i;
-          return move;
-        }
-      }
-    }
-    move = Math.floor(Math.random() * (game.width * game.height - 1));
-    while (all_moves.includes(move)) {
-      move = Math.floor(Math.random() * (game.width * game.height - 1));
-    }
-  return move;
+  switch(game.difficulty){
+    case (GameDifficulty.EASY):
+      return computerService.easyMode(game);
+    case (GameDifficulty.MEDIUM):
+      return computerService.mediumMode(game);
+    case (GameDifficulty.HARD):
+      return computerService.hardMode(game);
+    default:
+      throw new Error("Difficult level does not match with expected ones");
+  }
 };
+
 
 const createGridArray = (game:Game):Grid => {
   const grid:Grid = [];
@@ -312,6 +326,16 @@ const currentPlayerHasSentTheRequest = (user:ReturnedUser, game:Game):boolean =>
   return user.username === currentPlayer.username
 }
 
+const playerAlreadyExistsInGame = (user:ReturnedUser, game: Game):boolean => {
+  const player = game.playerData.find(player => player.username === user.username)
+  return player !== undefined;
+}
+
+const playerSymbolAlreadyChosen = (symbol:playerSymbol, game:Game):boolean => {
+  const player = game.playerData.find(player => player.symbol.toLowerCase() === symbol.toLowerCase())
+  return player !== undefined;
+}
+
 const verifyAndUpdateGameState = async (id:number, game:Game):Promise<OutgoingGameData> => {
     game.playerData = updateMoveInPlayerData(game.playerData, id)
     const updatedGame:OutgoingGameData = {
@@ -354,7 +378,6 @@ export default {
   restartGame,
   updateGameState,
   verifyAndUpdateGameState,
-  createInitialPlayerData,
   updateMoveInPlayerData,
   createGridArray,
   selectNextPlayer,
@@ -363,5 +386,8 @@ export default {
   selectSquaresToDisable,
   playAsComputer,
   createAllPlayerData,
-  currentPlayerHasSentTheRequest
+  currentPlayerHasSentTheRequest,
+  playerAlreadyExistsInGame,
+  playerSymbolAlreadyChosen,
+  addNewPlayer
 };

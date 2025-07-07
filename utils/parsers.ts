@@ -1,4 +1,4 @@
-import { Game, playerSymbol, Setup } from "../types/types";
+import { Game, GameDifficulty, GameType, playerSymbol, Setup } from "../types/types";
 
 const isGameSetupData = (object: unknown): Setup => {
   if (!object || typeof object !== "object") {
@@ -9,7 +9,9 @@ const isGameSetupData = (object: unknown): Setup => {
     "width" in object &&
     "height" in object &&
     "minMoves" in object &&
-    "disableSquares" in object
+    "disableSquares" in object &&
+    "gameType" in object &&
+    "difficulty" in object
   ) {
     const setup: Setup = {
       players: parsePlayers(object.players),
@@ -17,6 +19,8 @@ const isGameSetupData = (object: unknown): Setup => {
       height: parseWHeight(object.height),
       minMoves: parseMinMoves(object.minMoves),
       disableSquares: parseDisableSquares(object.disableSquares),
+      gameType: parseGameType(object.gameType),
+      difficulty: parseGameDifficulty(object),
     };
     return setup;
   }
@@ -36,7 +40,7 @@ const isValidId = (id:unknown, game:Game):id is number => {
 
 const parsePlayers = (players: unknown): playerSymbol[] => {
   if (!isPlayers(players)) {
-    throw new Error("blah");
+    throw new Error("Is not a correct player symbol");
   }
   return players;
 };
@@ -68,6 +72,37 @@ const parseDisableSquares = (disableSquares: unknown): boolean => {
   }
   return disableSquares;
 };
+
+const parseGameType = (gameType: unknown): string => {
+  if(!isGameType(gameType)){
+    throw new Error("Game type is incorrect");
+  }
+  return gameType;
+}
+
+const isGameType = (gameType: unknown): gameType is GameType => {
+  return (
+    gameType !== null &&
+    typeof gameType === "string" &&
+      Object.values(GameType).map(value => value.toString()).includes(gameType))
+}
+
+const parseGameDifficulty = (difficulty: unknown):string | null => {
+  if(!isGameDifficulty(difficulty)){
+    throw new Error("Game difficulty is incorrect");
+  }
+  return difficulty;
+}
+
+const isGameDifficulty = (difficulty: unknown): difficulty is GameDifficulty | null => {
+  if(difficulty === null){
+    return true;
+  }
+  return (
+    typeof difficulty === "string" &&
+    Object.values(GameDifficulty).map(value => value.toString()).includes(difficulty)
+  )
+}
 
 const isPlayers = (players: unknown): players is playerSymbol[] => {
   return (
@@ -106,5 +141,6 @@ const isdisableSquares = (
 
 export default {
   isGameSetupData,
-  parseId
+  parseId,
+  parsePlayers
 };

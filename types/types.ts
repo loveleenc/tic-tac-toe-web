@@ -17,18 +17,34 @@ export interface Game{
   height:number,
   squares: number[],
   minMoves: number,
+  hasStarted: boolean,
+  gameType: GameType,
+  difficulty: null | GameDifficulty,
+}
+
+export enum GameDifficulty{
+  EASY= 'EASY',
+  MEDIUM = 'MEDIUM',
+  HARD = 'HARD'
 }
 
 export interface Cell{
   count:number,
   text: string | null
 }
+
 export type Row = Cell[]
 export type Grid = Row[]
 
 export enum GameStatus{
   ONGOING = 'ONGOING',
-  END = 'END'
+  END = 'END',
+  NOTSTARTED = 'NOTSTARTED'
+}
+
+export enum GameType{
+  SINGLEPLAYER = 'SINGLEPLAYER',
+  MULTIPLAYER = 'MULTIPLAYER'
 }
 
 export interface OutgoingGameData{
@@ -43,7 +59,9 @@ export interface Setup{
   width: number,
   height: number,
   minMoves: number,
-  disableSquares: boolean
+  disableSquares: boolean,
+  gameType: string,
+  difficulty: null | string,
 }
 
 export type gameId = string

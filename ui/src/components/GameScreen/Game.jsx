@@ -5,7 +5,7 @@ import Navigation from './../Navigation.jsx'
 import './../../styles/game.css'
 
 
-const Game = ({width, height, players, minMoves, disableSquares, handleGameOver, gameType}) => {
+const Game = ({width, height, players, minMoves, disableSquares, handleGameOver, gameType, difficulty}) => {
     const [gridy, setGrid] = useState([])
     const [playerData, setPlayerData] = useState(null)
     const [gameOver, setGameOver] = useState(false)
@@ -71,7 +71,7 @@ const Game = ({width, height, players, minMoves, disableSquares, handleGameOver,
     }
 
     else if (playerData === null){
-        gameAPI.createGame(players, width, height, minMoves, disableSquares, gameType)
+        gameAPI.createGame(players, width, height, minMoves, disableSquares, gameType, difficulty)
             .then(response => {
                 setGrid(response.data.grid)
                 index = response.data.grid.length * response.data.grid[0].length

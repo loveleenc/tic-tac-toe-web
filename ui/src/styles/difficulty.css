@@ -69,6 +69,22 @@
   height:25px;
 }
 
+.difficultyNavButtonLeft{
+  position: relative;
+  left:5%;
+}
+
+.difficultyNavButtonRight{
+  position: relative;
+  left:-5%;
+}
+
 .difficultyNavButton:hover{
-  border: 2px solid gold;
+  transform:scale(1.1);
+  transition: 0.3s;
+}
+
+.difficultyNavButton:not(:hover){
+    transform: scale(1);
+    transition: 0.3s;
 }

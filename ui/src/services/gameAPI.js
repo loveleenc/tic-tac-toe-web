@@ -2,14 +2,15 @@ import axios from 'axios'
 
 const baseUrl = '/api/game'
 
-const createGame = (players, width, height, minMoves, disableSquares, gameType) => {
+const createGame = (players, width, height, minMoves, disableSquares, gameType, difficulty) => {
     const gameData = {
         players: players,
         width: width,
         height: height,
         minMoves: minMoves,
         disableSquares: disableSquares,
-        gameType: gameType
+        gameType: gameType,
+        difficulty: difficulty
     }
     return axios.post(baseUrl, gameData)
 }

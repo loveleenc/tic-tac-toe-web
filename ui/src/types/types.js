@@ -9,7 +9,14 @@ const GameType = Object.freeze({
   MULTIPLAYER: "MULTIPLAYER",
 });
 
+const GameDifficulty = Object.freeze({
+  EASY: 'EASY',
+  MEDIUM : 'MEDIUM',
+  HARD : 'HARD'
+})
+
 export default {
     GameStatus,
-    GameType
+    GameType,
+    GameDifficulty
 }

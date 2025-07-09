@@ -6,10 +6,17 @@ import types from "../../types/types"
 import Difficulty from "./Difficulty"
 
 
-const GameType = ({setGameType}) => {
-
+const GameType = ({setGameType, setDifficulty}) => {
+    const [isSinglePlayer, setIsSinglePlayer] = useState(true)
     const handleGameTypeSelect = (event) => {
         setGameType(event.target.value)
+        if(event.target.value === types.GameType.MULTIPLAYER){
+            setIsSinglePlayer(false);
+        }
+        else{
+            setIsSinglePlayer(true);
+        }
+
     }
 
     return (
@@ -20,6 +27,7 @@ const GameType = ({setGameType}) => {
                 <option value={types.GameType.MULTIPLAYER}>Multi-player</option>
             </select>
             <Common.FormInput text={`Enter player 1 symbol: `} fieldName={`player1`} type="text" />
+            {isSinglePlayer && (<Difficulty setDifficulty={setDifficulty}/>)}
         </>
     )
 }
@@ -32,7 +40,7 @@ const Notification = ({text}) => {
     return (<p>{text}</p>)
 }
 
-const Setup = ({setWidth, setHeight, setPlayers, setNeededConsecutiveMoves, setDisabledSquares, resetSetup, setGameType}) => {
+const Setup = ({setWidth, setHeight, setPlayers, setNeededConsecutiveMoves, setDisabledSquares, resetSetup, setGameType, setDifficulty, difficulty}) => {
     const [isSubmitted, setSubmitted] = useState(false)
     const [notf, setNotification] = useState(null)
 
@@ -72,7 +80,8 @@ const Setup = ({setWidth, setHeight, setPlayers, setNeededConsecutiveMoves, setD
         return event.target.inputWidth.value !== "" &&
             event.target.inputHeight.value !== "" &&
             event.target.moves.value !== "" &&
-            players.reduce((a, c) => a && c !== "", true)
+            players.reduce((a, c) => a && c !== "", true) && 
+            ((event.target.gameType.value === types.GameType.SINGLEPLAYER && difficulty !== null) || event.target.gameType.value === types.GameType.MULTIPLAYER)
     }
 
     const onSubmit = (event) => {
@@ -111,10 +120,9 @@ const Setup = ({setWidth, setHeight, setPlayers, setNeededConsecutiveMoves, setD
                     <Common.FormInput text="Enter height: " fieldName="inputHeight" type="number"/>
                     <Common.FormInput text="Number of moves needed to win: " fieldName="moves" type="number"/>
                     <Common.FormInput text="Disable random squares? " fieldName="squaresDisabled" type="checkbox" />
-                    <GameType setGameType={setGameType}/>
+                    <GameType setGameType={setGameType} setDifficulty={setDifficulty}/>
                     <p><button type="submit" className="createGridButton">Create Grid</button></p>
                 </form>
-                <Difficulty/>
             </div>
             
         </div>

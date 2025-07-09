@@ -15,7 +15,8 @@
 .navigationbar {
   background-color: #333;
   display:inline-flex;
-  position: absolute;
+  width: 100em;
+  height: 45px;
   right:0;
   left:0;
 }

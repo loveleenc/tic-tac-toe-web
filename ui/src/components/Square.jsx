@@ -31,7 +31,7 @@ const Square = memo(({id, getSquareId, text}) => {
     }
     if(text !== ""){
         return (<>
-                <button id={id} className='block' disabled={true} onClick={handleButtonClick}>{text}</button>
+                <button id={id} className='block pixelFontStyle' disabled={true} onClick={handleButtonClick}>{text}</button>
             </>)
     }
     return (<>

@@ -20,7 +20,7 @@ const isGameSetupData = (object: unknown): Setup => {
       minMoves: parseMinMoves(object.minMoves),
       disableSquares: parseDisableSquares(object.disableSquares),
       gameType: parseGameType(object.gameType),
-      difficulty: parseGameDifficulty(object),
+      difficulty: parseGameDifficulty(object.difficulty),
     };
     return setup;
   }

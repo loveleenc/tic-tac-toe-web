@@ -23,12 +23,14 @@ const easyMode = (game: Game):number => {
 }
 
 const mediumMode = (game:Game): number => {
-    return -1;
+  game.difficulty;
+  return -1;
     //TODO: update this later
 }
 
 const hardMode = (game:Game): number => {
-    return -1;
+  game.difficulty;
+  return -1;
     //TODO: update this later
 }
 

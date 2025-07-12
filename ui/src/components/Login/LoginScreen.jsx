@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom"
-import Common from "../Common"
+import Common from "../Common/Common.jsx"
 import loginAPI from "../../services/loginAPI.js"
 import { useEffect, useRef, useState } from 'react'
 

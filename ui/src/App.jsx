@@ -1,7 +1,7 @@
-import MainScreen from './components/MainScreen'
+import MainScreen from './components/Main/MainScreen'
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
-import GameScreen from './components/GameScreen/GameScreen'
-import LoginScreen from './components/LoginScreen/LoginScreen'
+import GameScreen from './components/Games/GameScreen'
+import LoginScreen from './components/Login/LoginScreen'
 
 function App() {
   return (

@@ -1,12 +1,12 @@
 import "./../styles/mainScreen.css";
-import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from "react-router-dom";
-import About from "./MainScreen/About";
-import Leaderboard from "./MainScreen/Leaderboard";
+import { Link, useNavigate } from "react-router-dom";
+import About from "./About";
+import Leaderboard from "./Leaderboard";
 import { useState } from "react";
-import Common from "./Common";
+import Common from "../Common/Common";
 import './../styles/leaderboard.css';
 import './../styles/about.css';
-import logoutAPI from "../services/logoutAPI";
+import logoutAPI from "../../services/logoutAPI";
 
 const PLAY_BUTTON_BROWN = "/assets/navigation/play.png";
 

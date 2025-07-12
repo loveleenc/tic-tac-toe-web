@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./../../styles/difficulty.css";
-import types from "./../../types/types.js";
+import types from "../../types/types.js";
 
 
 const difficultyLevels = {

@@ -1,8 +1,9 @@
-import Setup from "./Setup";
+import Setup from "../Setup/Setup.jsx";
 import Game from "./Game.jsx";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import types from "../../types/types.js";
+import CreateOrJoinGame from "../Setup/CreateOrJoinGame.jsx";
 
 const GameScreen = () => {
     const [width, setWidth] = useState(0)
@@ -26,6 +27,7 @@ const GameScreen = () => {
 
     return (
         <>
+        <CreateOrJoinGame />
         <Setup setWidth={setWidth} setHeight={setHeight} setPlayers={setPlayers} setNeededConsecutiveMoves={setWinMoves} 
                       setDisabledSquares={setDisabledSquares} resetSetup={handleGameOver} setGameType={setGameType}
                       setDifficulty={setDifficulty} difficulty={difficulty}

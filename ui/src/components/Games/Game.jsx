@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from "react"
-import gameAPI from "./../../services/gameAPI.js"
-import Square from "./../Square.jsx"
-import Navigation from './../Navigation.jsx'
+import gameAPI from "../../services/gameAPI.js"
+import Square from "./Square.jsx"
+import Navigation from '../Common/Navigation.jsx'
 import './../../styles/game.css'
 
 

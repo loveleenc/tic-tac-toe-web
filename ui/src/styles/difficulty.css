@@ -62,29 +62,3 @@
   background: linear-gradient(rgba(39, 108, 199, 0.9), rgba(120, 168, 229, 0.9));
   transform: rotateY(240deg) translateZ(202px);
 }
-
-.difficultyNavButton{
-  border: 2px solid black;
-  border-radius: 5px;
-  height:25px;
-}
-
-.difficultyNavButtonLeft{
-  position: relative;
-  left:5%;
-}
-
-.difficultyNavButtonRight{
-  position: relative;
-  left:-5%;
-}
-
-.difficultyNavButton:hover{
-  transform:scale(1.1);
-  transition: 0.3s;
-}
-
-.difficultyNavButton:not(:hover){
-    transform: scale(1);
-    transition: 0.3s;
-}

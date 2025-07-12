@@ -1,5 +1,5 @@
 import { useState, memo } from "react";
-import '../styles/game.css';
+import './../../styles/game.css';
 
 const Square = memo(({id, getSquareId, text}) => {
     const [isDisabled, setDisabled] = useState(false)

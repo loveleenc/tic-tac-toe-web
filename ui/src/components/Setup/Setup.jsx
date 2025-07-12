@@ -1,9 +1,10 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import './../../styles/setup.css'
 import Navigation from "../Common/Navigation"
 import Common from "../Common/Common"
 import types from "../../types/types"
 import Difficulty from "./Difficulty"
+import { useNavigate } from "react-router-dom"
 
 
 const GameType = ({setGameType, setDifficulty}) => {
@@ -40,15 +41,18 @@ const Notification = ({text}) => {
     return (<p>{text}</p>)
 }
 
-const Setup = ({setWidth, setHeight, setPlayers, setNeededConsecutiveMoves, setDisabledSquares, resetSetup, setGameType, setDifficulty, difficulty}) => {
+const Setup = () => {
+    const [width, setWidth] = useState(0);
+    const [height, setHeight] = useState(0);
+    const [players, setPlayers] = useState(null);
+    const [winMoves, setWinMoves] = useState(3);
+    const [disableSquares, setDisabledSquares] = useState(false);
+    const [gameType, setGameType] = useState(types.GameType.SINGLEPLAYER);
+    const [difficulty, setDifficulty] = useState(null);
     const [isSubmitted, setSubmitted] = useState(false)
     const [notf, setNotification] = useState(null)
-
-    const quitGame = () => {
-        if(window.confirm("Do you want to quit the game?")){
-            resetSetup()
-        }
-    }
+    const navigate = useNavigate();
+    
 
     const updateWidth = (value) => {
         setWidth(parseInt(value, 10))
@@ -63,7 +67,7 @@ const Setup = ({setWidth, setHeight, setPlayers, setNeededConsecutiveMoves, setD
     }
 
     const updateNumberOfMovesNeededToWin = (value) => {
-        setNeededConsecutiveMoves(parseInt(value, 10))
+        setWinMoves(parseInt(value, 10))
     }
 
     const updateDisablingSquares = (value) => {
@@ -73,9 +77,6 @@ const Setup = ({setWidth, setHeight, setPlayers, setNeededConsecutiveMoves, setD
     const allDataHasBeenEntered = (event) => {
         const players = new Array()
         players.push(event.target['player1'].value)
-        // for (let i = 1; i <= numberOfPlayers; i++){
-        //     players.push(event.target[`player${i}`].value)
-        // }
 
         return event.target.inputWidth.value !== "" &&
             event.target.inputHeight.value !== "" &&
@@ -95,23 +96,18 @@ const Setup = ({setWidth, setHeight, setPlayers, setNeededConsecutiveMoves, setD
         updateHeight(event.target.inputHeight.value)
         const players = new Array()
         players.push(event.target['player1'].value)
-        // for (let i = 1; i <= numberOfPlayers; i++){
-        //     players.push(event.target[`player${i}`].value)
-        // }
         updatePlayers(players)
         updateNumberOfMovesNeededToWin(event.target.moves.value)
         updateDisablingSquares(event.target.squaresDisabled.checked)
         setSubmitted(true)
     }
 
-    if (isSubmitted){
-        return (<></>)
-    }
+    useEffect(() => {
+        navigate("/game", );
+    }, [isSubmitted])
 
     return (
         <>
-        <Navigation quitGame={quitGame}/>
-        <div className="setupContainer pixelFontStyle">
             <Notification text={notf} />
             <div className="title">Setup Game</div>
             <div className="formContainer">
@@ -124,8 +120,6 @@ const Setup = ({setWidth, setHeight, setPlayers, setNeededConsecutiveMoves, setD
                     <p><button type="submit" className="createGridButton">Create Grid</button></p>
                 </form>
             </div>
-            
-        </div>
         </>
     )
 }

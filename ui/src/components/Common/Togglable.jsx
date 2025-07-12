@@ -1,8 +1,8 @@
 import { useState } from "react"
 
 
-const Togglable = ({childElement1, childElement2}) => {
-    const [visible, setVisible] = useState(true)
+const Togglable = (props) => {
+    const [visible, setVisible] = useState(false)
 
     const hideWhenVisibleIsTrue = {display: visible ? 'none' : ''}
     const showWhenVisibleIsFalse = {display: visible ? '' : 'none'}
@@ -10,12 +10,13 @@ const Togglable = ({childElement1, childElement2}) => {
     const toggleVisibility = () => setVisible(!visible)
 
     return (
-        <div>
+        <div style={{ padding: "10px" }}>
             <div style={hideWhenVisibleIsTrue}>
-                {childElement1(toggleVisibility)}
+                <button className={props.buttonClassName} onClick={toggleVisibility}>{props.buttonLabel}</button>
             </div>
             <div style={showWhenVisibleIsFalse}>
-                {childElement2(toggleVisibility)}
+                {props.children}
+            <button style={{margin: '5px'}} className={props.buttonClassName} onClick={toggleVisibility}>cancel</button>
             </div>
         </div>
     )

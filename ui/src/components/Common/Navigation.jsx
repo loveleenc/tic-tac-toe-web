@@ -1,4 +1,4 @@
-import '../styles/navigation.css'
+import '../../styles/navigation.css'
 
 const Navigation = ({quitGame, restartGame}) => {
     return(<div className='navigationbar'>

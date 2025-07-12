@@ -51,7 +51,7 @@ const Menu = () => {
   return (
     <>
       <div style={showMenuWhenVisibleIsTrue} className="mainMenu">
-          <Link to="/play">
+          <Link to="/setup">
             <Common.NavigationButton
               text="play"
               buttonLocation={{ left: 0, right: 0, top: "25%", bottom: 0 }}

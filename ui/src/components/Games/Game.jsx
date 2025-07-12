@@ -3,9 +3,13 @@ import gameAPI from "../../services/gameAPI.js"
 import Square from "./Square.jsx"
 import Navigation from '../Common/Navigation.jsx'
 import './../../styles/game.css'
+import { useLocation, useNavigate } from "react-router-dom"
 
 
-const Game = ({width, height, players, minMoves, disableSquares, handleGameOver, gameType, difficulty}) => {
+const Game = () => {
+    const {state} = useLocation(); 
+    const navigate = useNavigate();
+
     const [gridy, setGrid] = useState([])
     const [playerData, setPlayerData] = useState(null)
     const [gameOver, setGameOver] = useState(false)
@@ -35,8 +39,7 @@ const Game = ({width, height, players, minMoves, disableSquares, handleGameOver,
         if (gameOver){
             setPlayerData(null)
             setGrid([])
-            handleGameOver()
-            
+            navigate("/")
         }
     }, [gameOver])
 
@@ -46,7 +49,7 @@ const Game = ({width, height, players, minMoves, disableSquares, handleGameOver,
                 .then(() => {
                     setPlayerData(null)
                     setGrid([])
-                    handleGameOver()
+                    navigate("/")
                 })
         }
     }
@@ -64,14 +67,15 @@ const Game = ({width, height, players, minMoves, disableSquares, handleGameOver,
     const getSquareId = useCallback((id) => {
         const int_id = parseInt(id, 10)
         updateGame(int_id)
-    }, [width])
+    }, [state.width])
     
-    if (width === 0 && height === 0 && players === null){
+    
+    if (state.width === 0 && state.height === 0 && state.players === null){
         return (<></>)
     }
 
     else if (playerData === null){
-        gameAPI.createGame(players, width, height, minMoves, disableSquares, gameType, difficulty)
+        gameAPI.createGame(state.players, state.width, state.height, state.minMoves, state.disableSquares, state.gameType, state.difficulty)
             .then(response => {
                 setGrid(response.data.grid)
                 index = response.data.grid.length * response.data.grid[0].length

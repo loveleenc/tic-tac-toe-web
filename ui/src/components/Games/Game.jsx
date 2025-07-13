@@ -86,7 +86,6 @@ const Game = () => {
     
     return (
         <div className="gameBackground">
-            <Navigation quitGame={quitGame} restartGame={restartGame}/>
             <div className="grid">
                 {gridy.map((row, i) => {
                     let squares = row.map(s => <Square id={s.count} key={s.count} getSquareId={getSquareId} text={s.text} />)
@@ -97,6 +96,7 @@ const Game = () => {
                     return squares
                 })}
             </div>
+            <Navigation quitGame={quitGame} restartGame={restartGame} style={{position: 'fixed', top: 0}}/>
             <CurrentPlayer playerData={playerData} />
         </div>
     )

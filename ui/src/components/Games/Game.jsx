@@ -87,7 +87,6 @@ const Game = () => {
     return (
         <div className="gameBackground">
             <Navigation quitGame={quitGame} restartGame={restartGame}/>
-            <p style={{position: 'absolute', top: '45px'}} className="pixelFontStyle">Current player: {playerData.find(p => p.turn === true).symbol}</p>
             <div className="grid">
                 {gridy.map((row, i) => {
                     let squares = row.map(s => <Square id={s.count} key={s.count} getSquareId={getSquareId} text={s.text} />)
@@ -98,8 +97,29 @@ const Game = () => {
                     return squares
                 })}
             </div>
+            <CurrentPlayer playerData={playerData} />
         </div>
     )
 }
+
+const CurrentPlayer = ({playerData}) => {
+
+    if(playerData.length > 1){
+        return (
+            <>
+                <p style={{position: 'absolute', top: '45px'}} className="pixelFontStyle">Current player: {playerData.find(p => p.turn === true).symbol}</p>
+            </>
+        )
+    }
+    return (
+        <div className="darkBackground">
+          <div className="loadingScreen pixelFontStyle">
+            Waiting for other players to join...
+          </div>
+      </div>
+    )
+
+}
+
 
 export default Game

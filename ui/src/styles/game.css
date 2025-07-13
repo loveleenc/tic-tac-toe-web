@@ -39,3 +39,41 @@
   background-color: #646cff;
   outline: 40px auto -webkit-focus-ring-color;
 }
+
+.darkBackground {
+  position: fixed; 
+  top: 45px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:rgba(0,0,0,0.5);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0%;
+  }
+  to{
+    opacity: 100%;
+  }
+}
+
+.loadingScreen {
+  position: fixed; 
+  top: 45px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: url('/assets/gameScreen/loadingPokeball.png');
+  background-repeat: no-repeat;
+  background-position:center;
+  border: 2px solid black;
+  animation-duration: 2s;
+  animation-name: fade-in;
+  animation-iteration-count:infinite;
+  animation-direction: alternate;
+
+}

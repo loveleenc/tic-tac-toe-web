@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import "./../../styles/setup.css";
-import Navigation from "../Common/Navigation";
 import Common from "../Common/Common";
 import types from "../../types/types";
 import Difficulty from "./Difficulty";

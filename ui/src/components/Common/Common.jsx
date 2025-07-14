@@ -38,8 +38,17 @@ const NavigationButton = (props) => {
   );
 };
 
-// style={{visibility: 'hidden'}}
+const MessageDialog = ({dialogRef, message}) => {
+    return (<dialog ref={dialogRef} style={{width: "60%", borderRadius: "3%"}}>
+        <div className="pixelFontStyle">{message}</div>
+        <form method="dialog">
+            <NavigationButton text="Okay" onClickEventHandler={() => dialogRef.current.close()}/>
+        </form>
+    </dialog>)
+}
+
 export default {
+  MessageDialog,
   FormInput,
   NavigationButton
 };

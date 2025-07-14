@@ -1,11 +1,12 @@
-import { useState, useCallback, useEffect } from "react"
+import { useState, useCallback, useEffect, useRef } from "react"
 import gameAPI from "../../services/gameAPI.js"
 import Square from "./Square.jsx"
 import Navigation from '../Common/Navigation.jsx'
 import './../../styles/game.css'
 import { useLocation, useNavigate } from "react-router-dom"
+import Common from "../Common/Common.jsx"
 
-
+const GAME_ID_MESSAGE = "Please share below game room id with other players to join the game:"
 const Game = () => {
     const {state} = useLocation(); 
     const navigate = useNavigate();
@@ -13,7 +14,8 @@ const Game = () => {
     const [gridy, setGrid] = useState([])
     const [playerData, setPlayerData] = useState(null)
     const [gameOver, setGameOver] = useState(false)
-
+    const [gameIdMessage, setGameIdMessage] = useState("")
+    const dialogRef = useRef(null);
     let index;
 
     const updateGame = (id) => {    
@@ -43,6 +45,12 @@ const Game = () => {
         }
     }, [gameOver])
 
+    useEffect(() => {
+        if(gameIdMessage !== ""){
+            dialogRef.current.showModal()
+        }
+    }, [gameIdMessage])
+
     const quitGame = () => {
         if(window.confirm("Do you want to quit the game?")){
             gameAPI.deleteGame()
@@ -68,8 +76,16 @@ const Game = () => {
         const int_id = parseInt(id, 10)
         updateGame(int_id)
     }, [state.width])
-    
-    
+
+    const getGameId = () => {
+        const regex = "gameId=[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+        const foundCookies = document.cookie.match(regex)
+        if(!foundCookies){
+            return ""
+        }
+        return foundCookies[0].split("gameId=")[1];
+    }
+
     if (state.width === 0 && state.height === 0 && state.players === null){
         return (<></>)
     }
@@ -80,10 +96,11 @@ const Game = () => {
                 setGrid(response.data.grid)
                 index = response.data.grid.length * response.data.grid[0].length
                 setPlayerData(response.data.playerData)
+                setGameIdMessage(`${GAME_ID_MESSAGE}\n${getGameId()}`)
             })
         return (<></>)
     }
-    
+
     return (
         <div className="gameBackground">
             <div className="grid">
@@ -98,6 +115,7 @@ const Game = () => {
             </div>
             <Navigation quitGame={quitGame} restartGame={restartGame} style={{position: 'fixed', top: 0}}/>
             <CurrentPlayer playerData={playerData} />
+            <Common.MessageDialog dialogRef={dialogRef} message={gameIdMessage}/>
         </div>
     )
 }

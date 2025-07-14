@@ -38,18 +38,9 @@ const Login = () => {
                     <input type="submit" className="hiddenButton"/>
                 </Common.NavigationButton>
             </form>
-            <MessageDialog dialogRef={dialogRef} message={notification}/>
+            <Common.MessageDialog dialogRef={dialogRef} message={notification}/>
         </div>
     )
-}
-
-const MessageDialog = ({dialogRef, message}) => {
-    return (<dialog ref={dialogRef} style={{width: "60%", borderRadius: "3%"}}>
-        <div className="pixelFontStyle">{message}</div>
-        <form method="dialog">
-            <Common.NavigationButton text="Okay" onClickEventHandler={() => dialogRef.current.close()}/>
-        </form>
-    </dialog>)
 }
 
 const ForgotPasswordDialog = ({dialogRef}) => {

@@ -1,9 +1,12 @@
 import { ObjectId } from "mongoose"
+import { accountType } from "./types"
 
 export interface UserModel{
     name: string,
     username: string,
-    passwordHash: string
+    passwordHash: string,
+    email: string,
+    status: accountType
 }
 
 export interface ScoreModel{

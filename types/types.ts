@@ -64,5 +64,17 @@ export interface Setup{
   difficulty: null | string,
 }
 
+export interface NewAccount{
+  username: string,
+  password: string,
+  name: string,
+  email: string
+}
+
+export enum accountType{
+  ACTIVE = 'active',
+  INACTIVE = 'inactive'
+}
+
 export type gameId = string
 export type Games = Record<gameId, Game>

@@ -1,4 +1,123 @@
-import { Game, GameDifficulty, GameType, playerSymbol, Setup } from "../types/types";
+import { Game, GameDifficulty, GameType, playerSymbol, Setup, NewAccount } from "../types/types";
+
+const isNewAccountData = (object: unknown): NewAccount => {
+  if(!object || typeof object !== "object"){
+    throw new Error("request body is not available");
+  }
+
+  if("username" in object &&
+    "password" in object &&
+    "name" in object &&
+    "email" in object
+  ){
+    const newAccount:NewAccount = {
+      username: parseUsername(object.username),
+      password: parsePassword(object.password),
+      name: parseName(object.name),
+      email: parseEmail(object.email),
+    }
+    return newAccount;
+  }
+  throw new Error("Account creation failed. Request missing a few details");
+}
+
+const parseEmail = (email:unknown):string => {
+  const emailFormat = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
+  if(isEmail(email) && emailFormat.test(email)){
+    return email;
+  }
+  throw new Error("Email is not in the correct format");
+}
+
+const isEmail = (email:unknown): email is string => {
+  return (
+    email !== null &&
+    (typeof email === "string" || email instanceof String) 
+  );
+}
+
+const parseName = (name:unknown): string => {
+  if(isName(name) && name.length > 2 && name.length < 40 && stringIsAlphanumeric(name)){
+    return name;
+  }
+  throw new Error("Name does not match the required criteria");
+}
+
+const isName = (name:unknown): name is string => {
+  return (
+    name !== null &&
+    (typeof name === "string" || name instanceof String) 
+  );
+}
+
+const stringIsAlphanumeric = (expectedString:string):boolean => {
+  for(let i = 0; i < expectedString.length; i++){
+    let c = expectedString.charAt(i);
+    if(!(c >= '0' && c <= '9') && !(c >= 'a' && c <= 'z') && !(c >= 'A' && c <= 'Z')){
+      return false;
+    }
+  }
+  return true;
+}
+
+const parseUsername = (username:unknown): string => {
+  if(isUsername(username) && username.length > 6 && username.length < 13 && stringIsAlphanumeric(username)){
+    return username;
+  }
+  throw new Error("Username does not match the required criteria");
+}
+
+const isUsername = (username:unknown): username is string => {
+  return (
+    username !== null &&
+    (typeof username === "string" || username instanceof String) 
+  );
+}
+
+const parsePassword = (password:unknown): string => {
+  if(isPassword(password) && password.length > 7 && password.length < 128 && passwordMatchesCriteria(password)){
+    return password;
+  }
+  throw new Error("Password does not match the required criteria");
+}
+
+const isPassword = (password: unknown): password is string => {
+  return (
+    password !== null &&
+    (typeof password === "string" || password instanceof String)
+  )
+}
+
+const passwordMatchesCriteria = (password: string): boolean => {
+  let lowerCaseFound = false;
+  let upperCaseFound = false;
+  let numberFound = false;
+  let specialCharacterFound = false;
+  const specialCharacters = /!^@#$%*/;
+
+  let criteriaMatched:boolean = true;
+  for(let i = 0; i < password.length; i++){
+    const c = password.charAt(i);
+    if(c >= 'a' && c <= 'z'){
+      lowerCaseFound = true;
+    }
+    else if(c >= 'A' && c <= 'Z'){
+      upperCaseFound = true;
+    }
+    else if(c >= '0' && c <= '9'){
+      numberFound = true;
+    }
+    else if(specialCharacters.test(c)){
+      specialCharacterFound = true;
+    }    
+    else{
+      criteriaMatched = false;
+      return criteriaMatched;
+    }
+  }
+  criteriaMatched = lowerCaseFound && upperCaseFound && numberFound && specialCharacterFound;
+  return criteriaMatched;
+}
 
 const isGameSetupData = (object: unknown): Setup => {
   if (!object || typeof object !== "object") {
@@ -142,5 +261,6 @@ const isdisableSquares = (
 export default {
   isGameSetupData,
   parseId,
-  parsePlayers
+  parsePlayers,
+  isNewAccountData
 };

@@ -22,6 +22,21 @@ const extractUser = async (request:LoggedInUserRequest, _response:Response, next
     next()
 }
 
+const parseNewAccount = async(request:Request, response:Response, next:NextFunction) => {
+    try{
+        parsers.isNewAccountData(request.body);
+        next()
+    }
+    catch(error:unknown){
+        let errorMessage = 'something went wrong with the new account details. '
+        if(error instanceof Error){
+            errorMessage += error.message
+        }
+        response.status(400).json({error: errorMessage})
+        next(error)
+    }
+}
+
 const parseGameSetup = (request:Request, response:Response, next:NextFunction) => {
     try{
         parsers.isGameSetupData(request.body)
@@ -60,6 +75,7 @@ const getGame = (request:ExistingGameRequest, response:Response, next:NextFuncti
     }
 }
 
+
 const errorHandler = (error:unknown, _request: ExistingGameRequest | LoggedInUserRequest, response:Response, next:NextFunction) => {
     if(error instanceof Error){
         if (error.name === 'JsonWebTokenError'){
@@ -79,5 +95,6 @@ export default {
     getGame,
     extractToken,
     extractUser,
+    parseNewAccount,
     errorHandler
 }

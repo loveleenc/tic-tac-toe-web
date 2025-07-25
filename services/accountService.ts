@@ -1,13 +1,15 @@
 import User from '../models/user'
-import { UserModel } from "../types/models"
+import { ReturnedUser, UserModel } from "../types/models"
 import Score from "../models/scores"
 import bcrypt from 'bcrypt'
 import { accountType } from '../types/types'
-
+import nodemailer from 'nodemailer'
+import jwt from 'jsonwebtoken'
+import { addAccountActivationId } from '../data/liveData'
 
 const SALT_ROUNDS = 10
 
-const createNewUser = async (name:UserModel["name"], username:UserModel["username"], password:string, email:UserModel["email"]) => {
+const createNewUser = async (name:UserModel["name"], username:UserModel["username"], password:string, email:UserModel["email"]):Promise<ReturnedUser> => {
     const user = new User({
         name: name,
         username: username,
@@ -24,7 +26,7 @@ const createNewUser = async (name:UserModel["name"], username:UserModel["usernam
         user: savedUser._id,
     })
     await score.save()
-    return savedUser
+    return savedUser as ReturnedUser
 }
 
 const createPassword = async (password:string):Promise<string> => {
@@ -32,7 +34,42 @@ const createPassword = async (password:string):Promise<string> => {
     return passwordHash
 }
 
+const activateAccount = async (newUserEmail:string, createdUser:ReturnedUser) => {
+    const userPayload = {
+        username: createdUser.username,
+        id: createdUser.id
+    }
+    if(typeof process.env.ACTIVATION_SECRET === 'string'){
+        const token = jwt.sign(userPayload, process.env.ACTIVATION_SECRET, {expiresIn: 7200 * 60})
+        
+        const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: process.env.GMAIL_USERNAME,
+                pass: process.env.GMAIL_PASS
+            },
+        });
+        transporter.sendMail({
+            from: `tic-tac-toe game<${process.env.GMAIL_USERNAME}>`,
+            to: newUserEmail,
+            subject: "Account activation: tic-tac-toe",
+            text: `Hello ${createdUser.name}! Here is the link to activate your account on the tic-tac-toe game website: ${process.env.CLIENT_URL}/account/verify/${token}`,
+        }, (error, _info) => {
+            if(error){
+                throw new Error(`Unable to send email with the activation link: ${error.message}`)
+            }
+            addAccountActivationId(token);
+            // console.log("Message sent: %s", info.messageId);
+            // console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+        })
+    }
+    else{
+        throw new Error("unable to create an account activation token for user")
+    }
+    
+}
 
 export default {
-    createNewUser
+    createNewUser,
+    activateAccount
 }

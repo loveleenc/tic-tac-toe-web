@@ -78,13 +78,18 @@ const getGame = (request:ExistingGameRequest, response:Response, next:NextFuncti
 
 const errorHandler = (error:unknown, _request: ExistingGameRequest | LoggedInUserRequest, response:Response, next:NextFunction) => {
     if(error instanceof Error){
+        console.log(`name of error is: ${error.name}`)
         if (error.name === 'JsonWebTokenError'){
-            response.status(401).json({error: 'token invalid'})
-            return
+            response.status(401).json({error: 'token invalid'});
+            return;
         }
         else if (error.name === 'TokenExpiredError'){
-            response.status(401).json({error: 'token expired'})
-            return
+            response.status(401).json({error: 'token expired'});
+            return;
+        }
+        else if(error.name === 'MongoServerError' && error.message.includes('E11000 duplicate key error')){
+            response.status(400).json({error: 'Please try another username'});
+            return;
         }
     }
     next(error)

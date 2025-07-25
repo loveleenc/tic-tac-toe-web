@@ -32,18 +32,4 @@ userRouter.get('/scores', async (_request: Request, response:Response) => {
     }
 })
 
-userRouter.post('/', async (request:Request, response:Response) => {
-    try{
-        const createdUser = await userService.createNewUser(request.body.name, request.body.username, request.body.password)
-        response.status(201).json(createdUser)
-    }
-    catch(error: unknown){
-        let errorMessage = 'something went wrong. '
-        if(error instanceof Error){
-            errorMessage += error.message
-        }
-        response.status(400).json({error: errorMessage})
-    }
-})
-
 export default userRouter

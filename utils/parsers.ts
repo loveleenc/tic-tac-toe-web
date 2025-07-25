@@ -93,7 +93,7 @@ const passwordMatchesCriteria = (password: string): boolean => {
   let upperCaseFound = false;
   let numberFound = false;
   let specialCharacterFound = false;
-  const specialCharacters = /!^@#$%*/;
+  const specialCharacters = /[!^@#$%*]/;
 
   let criteriaMatched:boolean = true;
   for(let i = 0; i < password.length; i++){

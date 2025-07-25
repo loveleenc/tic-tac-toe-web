@@ -3,10 +3,10 @@ import { UserModel } from "../types/models";
 import { accountType } from "../types/types";
 
 const userSchema = new mongoose.Schema<UserModel>({
-    username: {type: String, required: true},
+    username: {type: String, required: true, unique: true},
     passwordHash: {type: String, required: true},
     name: {type: String, required: true},
-    email: {type: String, required: true},
+    email: {type: String, required: true, unique: true},
     status: {type: String, enum: accountType, default: accountType.INACTIVE}
 })
 

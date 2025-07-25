@@ -1,4 +1,4 @@
-const FormInput = ({ text, fieldName, type }) => {
+const FormInput = ({ text, fieldName, type, customStyle }) => {
   if (type === "number") {
     return (
       <p className="pixelFontStyle">
@@ -15,7 +15,7 @@ const FormInput = ({ text, fieldName, type }) => {
   }
 
   return (
-    <p className="pixelFontStyle">
+    <p className="pixelFontStyle" style={customStyle}>
       {text}
       <input type={type} className="formInput" name={fieldName} />
     </p>

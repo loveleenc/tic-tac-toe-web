@@ -39,12 +39,17 @@
     }
 }
 
-.loginForm{
+.accountForm{
     margin-right: auto;
     margin-left: auto;
     padding-top: 25px;
     padding-bottom: 10px;
     width:fit-content;
+}
+
+.createAccountForm{
+    margin-right: auto;
+    margin-left: auto;
 }
 
 .loginButton{

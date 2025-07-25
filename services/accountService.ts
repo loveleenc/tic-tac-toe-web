@@ -4,7 +4,7 @@ import Score from "../models/scores"
 import bcrypt from 'bcrypt'
 import { accountType } from '../types/types'
 import nodemailer from 'nodemailer'
-import jwt from 'jsonwebtoken'
+import jwt, { JwtPayload } from 'jsonwebtoken'
 import { addAccountActivationId } from '../data/liveData'
 
 const SALT_ROUNDS = 10
@@ -34,7 +34,7 @@ const createPassword = async (password:string):Promise<string> => {
     return passwordHash
 }
 
-const activateAccount = async (newUserEmail:string, createdUser:ReturnedUser) => {
+const sendActivationLinkViaEmail = async (newUserEmail:string, createdUser:ReturnedUser) => {
     const userPayload = {
         username: createdUser.username,
         id: createdUser.id
@@ -66,10 +66,28 @@ const activateAccount = async (newUserEmail:string, createdUser:ReturnedUser) =>
     else{
         throw new Error("unable to create an account activation token for user")
     }
-    
+}
+
+
+const activateAccount = async (token:string, userProvidedUsername:string) => {
+    if(typeof process.env.ACTIVATION_SECRET === 'string'){
+        const decodedToken = jwt.verify(token, process.env.ACTIVATION_SECRET) as JwtPayload
+        if(decodedToken?.username){
+            if(decodedToken.username === userProvidedUsername){
+                await User.findOneAndUpdate({id: decodedToken.id}, {status: accountType.ACTIVE});
+            }
+            else{
+                throw new Error("Entered username is incorrect. Please try again.")
+            }
+        }
+    }
+    else{
+        throw new Error("Unable to activate account. Please try again later.")
+    }
 }
 
 export default {
     createNewUser,
+    sendActivationLinkViaEmail,
     activateAccount
 }

@@ -13,7 +13,7 @@
     "test": "NODE_ENV=test node --test",
     "tsc": "tsc",
     "backend-js": "node ./build/index.js",
-    "backend": "tsc && npm run backend-js",
+    "backend": "tsc && npm run backend-js"
   },
   "dependencies": {
     "@types/dotenv": "^6.1.1",

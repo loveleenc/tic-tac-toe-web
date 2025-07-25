@@ -78,7 +78,6 @@ const getGame = (request:ExistingGameRequest, response:Response, next:NextFuncti
 
 const errorHandler = (error:unknown, _request: ExistingGameRequest | LoggedInUserRequest, response:Response, next:NextFunction) => {
     if(error instanceof Error){
-        console.log(`name of error is: ${error.name}`)
         if (error.name === 'JsonWebTokenError'){
             response.status(401).json({error: 'token invalid'});
             return;
@@ -88,8 +87,25 @@ const errorHandler = (error:unknown, _request: ExistingGameRequest | LoggedInUse
             return;
         }
         else if(error.name === 'MongoServerError' && error.message.includes('E11000 duplicate key error')){
-            response.status(400).json({error: 'Please try another username'});
+            if("errorResponse" in error && 
+                error.errorResponse instanceof Object && 
+                "keyPattern" in error.errorResponse && 
+                error.errorResponse.keyPattern instanceof Object){
+                    if(Object.keys(error.errorResponse.keyPattern).includes("email")){
+                        response.status(400).json({error: 'Account with this email already exists. Please use another email.'});
+                        return;
+                    }
+                    else if(Object.keys(error.errorResponse.keyPattern).includes("username")){
+                        response.status(400).json({error: 'Username already taken. Please try another username.'});
+                        return;
+                    }
+            }
+            response.status(400).json({error: "Unable to create an account. Please try again"});
             return;
+        }
+        else{
+            //TODO: make app errors less generic.
+            response.status(400).json({error: error.message})
         }
     }
     next(error)

@@ -5,4 +5,14 @@ class AuthenticationError extends Error{
     }
 }
 
-export default AuthenticationError
+class DeactivatedAccountError extends Error{
+    constructor(){
+        super('Unable to login. Account is still inactive. Please activate your account using the activation link sent to your e-mail.')
+        this.name = 'DeactivatedAccountError'
+    }
+}
+
+export default {
+    AuthenticationError,
+    DeactivatedAccountError
+}

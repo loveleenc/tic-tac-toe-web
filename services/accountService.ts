@@ -74,7 +74,7 @@ const activateAccount = async (token:string, userProvidedUsername:string) => {
         const decodedToken = jwt.verify(token, process.env.ACTIVATION_SECRET) as JwtPayload
         if(decodedToken?.username){
             if(decodedToken.username === userProvidedUsername){
-                await User.findOneAndUpdate({id: decodedToken.id}, {status: accountType.ACTIVE});
+                await User.findOneAndUpdate({username: userProvidedUsername}, {status: accountType.ACTIVE});
             }
             else{
                 throw new Error("Entered username is incorrect. Please try again.")

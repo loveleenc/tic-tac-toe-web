@@ -1,20 +1,24 @@
 import User from "../models/user"
 import bcrypt from 'bcrypt'
-import AuthenticationError from "../utils/errors"
+import errors from "../utils/errors"
 import jwt from 'jsonwebtoken'
+import { accountType } from "../types/types"
 
 
 const validateLogin = async (username: string, password: string) => {
     const user = await User.findOne({username: username})
     if(!user){
-        throw new AuthenticationError()
+        throw new errors.AuthenticationError()
     }
     const passwordIsCorrect = await bcrypt.compare(password, user.passwordHash)
     
     if(!(user && passwordIsCorrect)){
-        throw new AuthenticationError()
+        throw new errors.AuthenticationError()
     }
-    
+    if(user.status === accountType.INACTIVE){
+        throw new errors.DeactivatedAccountError()
+    }
+
     const userPayload = {
         username: user.username,
         id: user._id

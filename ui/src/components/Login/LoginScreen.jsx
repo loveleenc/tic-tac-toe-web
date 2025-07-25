@@ -17,8 +17,13 @@ const Login = () => {
             .then(response => {
                 navigate('/main')
             })
-            .catch(error => {
-                setNotification(`Unable to login. Please check username or password.`)
+            .catch(response => {
+                if(response.response.data.error.includes("Account is still inactive")){
+                    setNotification(response.response.data.error)
+                }
+                else{
+                    setNotification(`Unable to login. Please check username or password.`)
+                }
                 dialogRef.current.showModal()
             })
     }

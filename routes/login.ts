@@ -1,6 +1,6 @@
 import { Request, Response, Router } from "express";
 import userService from "../services/userService";
-import AuthenticationError from "../utils/errors";
+import errors from "../utils/errors";
 import { LoggedInUserRequest } from "../types/express/request";
 import middleware from "../utils/middleware";
 
@@ -56,7 +56,7 @@ loginRouter.post("/", async (request: Request, response: Response) => {
     response.status(201).json(userInfoFiltered);
   } catch (error: unknown) {
     let errorMessage = "something went wrong. ";
-    if (error instanceof AuthenticationError) {
+    if (error instanceof errors.AuthenticationError || error instanceof errors.DeactivatedAccountError) {
       errorMessage += error.message;
       response.status(401).json({ error: errorMessage });
       return;

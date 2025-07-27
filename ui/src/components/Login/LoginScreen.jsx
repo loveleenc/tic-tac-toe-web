@@ -31,7 +31,7 @@ const Login = () => {
     useEffect(() => {
         loginAPI.whoami()
             .then(response => {
-                navigate('/')
+                navigate('/main')
             })
     }, [])
 

@@ -18,15 +18,19 @@ const createNewUser = async (name:UserModel["name"], username:UserModel["usernam
         status: accountType.INACTIVE
     })
     const savedUser = await user.save()
-    
+    const filteredUser:ReturnedUser = {
+        id: savedUser._id.toString(),
+        username: savedUser.username,
+        name: savedUser.name
+    }
     const score = new Score({
         wins: 0,
         losses: 0,
         ties: 0,
         user: savedUser._id,
     })
-    await score.save()
-    return savedUser as ReturnedUser
+    await score.save();
+    return filteredUser;
 }
 
 const createPassword = async (password:string):Promise<string> => {

@@ -3,7 +3,17 @@ import User from "../models/user";
 
 const getScoreForAllUsers = async () => {
     const scores = await Score.find({}).populate('user', { name: 1 });
-    return scores;
+    const filteredScores = scores.map(score => {
+        const filteredScore = {
+            id: score._id.toString(),
+            wins: score.wins,
+            losses: score.losses,
+            ties: score.ties,
+            user: score.user,
+        }
+        return filteredScore;
+    })
+    return filteredScores;
 }
 
 const getScore = async (username: string | null) => {   //todo: add expected type for returned mongoose object

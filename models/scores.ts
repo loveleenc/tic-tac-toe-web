@@ -11,13 +11,6 @@ const scoreSchema = new mongoose.Schema<ScoreModel>({
     }
 })
 
-scoreSchema.set('toJSON', {
-    transform: (_document, returnedObject) => {
-        delete returnedObject._id
-        delete returnedObject.__v
-    }
-})
-
 const Score = mongoose.model('Score', scoreSchema)
 
 export default Score

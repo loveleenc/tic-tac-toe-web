@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt'
 import errors from "../utils/errors"
 import jwt from 'jsonwebtoken'
 import { accountType } from "../types/types"
+import { ReturnedUser } from "../types/models"
 
 
 const validateLogin = async (username: string, password: string) => {
@@ -34,7 +35,15 @@ const validateLogin = async (username: string, password: string) => {
 
 const getAllUsers = async () => {
     const users = await User.find({})
-    return users
+    const filteredUsers = users.map(user => {
+        const filteredUser:ReturnedUser = {
+            username: user.username,
+            id: user._id.toString(),
+            name: user.name
+        }
+        return filteredUser;
+    })
+    return filteredUsers;
 }
 
 export default {

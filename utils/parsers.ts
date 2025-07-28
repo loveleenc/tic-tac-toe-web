@@ -262,5 +262,7 @@ export default {
   isGameSetupData,
   parseId,
   parsePlayers,
-  isNewAccountData
+  isNewAccountData,
+  parsePassword,
+  parseEmail
 };

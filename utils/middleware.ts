@@ -22,6 +22,25 @@ const extractUser = async (request:LoggedInUserRequest, _response:Response, next
     next()
 }
 
+const parseEmail = async (request:Request, response:Response, next:NextFunction) => {
+    try{
+        if(!request.body.email){
+            response.status(400).json({error: 'email not available'});
+            return;
+        }
+        parsers.parseEmail(request.body.email);
+        next()
+    }
+    catch(error: unknown){
+        let errorMessage = 'something went wrong with the entered email. E-mail does not seem to be correct'
+        if(error instanceof Error){
+            errorMessage += error.message
+        }
+        response.status(400).json({error: errorMessage})
+        next(error)
+    }
+}
+
 const parseNewAccount = async(request:Request, response:Response, next:NextFunction) => {
     try{
         parsers.isNewAccountData(request.body);
@@ -117,5 +136,6 @@ export default {
     extractToken,
     extractUser,
     parseNewAccount,
-    errorHandler
+    errorHandler,
+    parseEmail
 }

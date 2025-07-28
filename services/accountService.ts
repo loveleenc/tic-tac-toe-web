@@ -6,6 +6,7 @@ import { accountType } from '../types/types'
 import nodemailer from 'nodemailer'
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import { addAccountActivationId } from '../data/liveData'
+import parsers from '../utils/parsers'
 
 const SALT_ROUNDS = 10
 
@@ -90,8 +91,65 @@ const activateAccount = async (token:string, userProvidedUsername:string) => {
     }
 }
 
+const sendResetPasswordLinkViaEmail = async (userEmail:string) => {
+    const user = await User.findOne({email: userEmail});
+    if(user){
+        const usernamePayload = {
+            username: user.username,
+            id: user._id.toString()
+        }
+        if(typeof process.env.RESET_SECRET === "string"){
+            const token = jwt.sign(usernamePayload, process.env.RESET_SECRET, {expiresIn: 15 * 60});
+            const transporter = nodemailer.createTransport({
+                service: "gmail",
+                auth: {
+                    user: process.env.GMAIL_USERNAME,
+                    pass: process.env.GMAIL_PASS
+                },
+            });
+            
+            transporter.sendMail({
+            from: `tic-tac-toe game<${process.env.GMAIL_USERNAME}>`,
+            to: userEmail,
+            subject: "Account activation: tic-tac-toe",
+            text: `Hello ${user.name}! Here is the link to reset your password on the tic-tac-toe game website: ${process.env.CLIENT_URL}/account/reset/${token}`,
+            }, (error, _info) => {
+                if(error){
+                    throw new Error(`Unable to send email with the reset password link: ${error.message}`)
+                }
+                addAccountActivationId(token);
+            })
+        }
+        else{
+            throw new Error("Couldn't find e-mail with ")
+        }
+    }
+    else{
+        throw new Error("unable to find an account associated with this e-mail")
+    }
+}
+
+const resetPassword = async(token:string, newPassword:string) => {
+    if(typeof process.env.RESET_SECRET === 'string'){
+        const decodedToken = jwt.verify(token, process.env.RESET_SECRET) as JwtPayload
+        if(decodedToken?.username){
+            parsers.parsePassword(newPassword);
+            const passwordHash = createPassword(newPassword);
+            await User.findOneAndUpdate({username: decodedToken.username}, {passwordHash: passwordHash});
+        }
+        else{
+            throw new Error("Unable to find username. Token is invalid")
+        }
+    }
+    else{
+        throw new Error("Unable to reset password. Please try again later.")
+    }
+}
+
 export default {
     createNewUser,
     sendActivationLinkViaEmail,
-    activateAccount
+    activateAccount,
+    sendResetPasswordLinkViaEmail,
+    resetPassword
 }

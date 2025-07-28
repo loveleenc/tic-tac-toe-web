@@ -2,7 +2,7 @@ import { Game } from "../types/types";
 
 
 const easyMode = (game: Game):number => {
-    let move;
+  let move;
   const all_moves = game.playerData
     .map((p) => p.moves)
     .reduce((a, c) => a.concat(c), new Array())

@@ -4,6 +4,7 @@ import GameScreen from './components/Games/GameScreen'
 import LoginScreen from './components/Login/LoginScreen'
 import Game from './components/Games/Game'
 import ActivateAccount from './components/AccountManagement/Activate'
+import ResetAccount from './components/AccountManagement/Reset'
 
 function App() {
   return (
@@ -15,7 +16,7 @@ function App() {
         <Route path="/setup" element={<GameScreen />}/>
         <Route path="/game" element={<Game />}/>
         <Route path="/account/verify/:id" element={<ActivateAccount />} />
-        <Route path="/account/reset/:id" element={<div>reset blah</div>} />
+        <Route path="/account/reset/:id" element={<ResetAccount />} />
       </Routes>
     </Router>
     </>

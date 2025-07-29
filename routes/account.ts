@@ -22,7 +22,7 @@ accountRouter.get('/verify/:id', async (_request:Request, response:Response) => 
 })
 
 accountRouter.get('/reset/:id', async (_request:Request, response:Response) => {
-    response.status(200).sendFile(path.resolve(__dirname, '..', '..', 'ui/dist/index.html'));
+    response.status(200).sendFile(path.resolve(__dirname, '..', 'ui/dist/index.html'));
     return;
 })
 

@@ -101,6 +101,10 @@
     transition: 0.3s;
 }
 
+.boldFont{
+    font-weight: bold;
+}
+
 .aboutSection{
     position: absolute;
     left: 0;

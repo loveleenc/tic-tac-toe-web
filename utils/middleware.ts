@@ -124,7 +124,8 @@ const errorHandler = (error:unknown, _request: ExistingGameRequest | LoggedInUse
         }
         else{
             //TODO: make app errors less generic.
-            response.status(400).json({error: error.message})
+            console.log(error.message);
+            response.status(400).json({error: "Something went wrong. Please try again later."})
         }
     }
     next(error)

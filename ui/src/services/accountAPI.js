@@ -6,6 +6,14 @@ const sendAccountActivationRequest = (token, username) => {
     return axios.patch(`${baseUrl}/verifyAccount/${token}`, {username: username});
 }
 
+const requestResetPasswordEmail = (email) => {
+    return axios.post(`${baseUrl}/reset`, {email: email});
+}
+
+const sendResetPasswordRequest = (token, password) => {
+    return axios.patch(`${baseUrl}/resetPassword/${token}`, {password: password})
+}
+
 const createAccount = (username, password, name, email) => {
     const newAccount = {
         username: username,
@@ -19,5 +27,7 @@ const createAccount = (username, password, name, email) => {
 
 export default {
     sendAccountActivationRequest,
-    createAccount
+    createAccount,
+    requestResetPasswordEmail,
+    sendResetPasswordRequest
 }

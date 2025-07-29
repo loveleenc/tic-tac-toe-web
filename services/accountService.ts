@@ -111,17 +111,18 @@ const sendResetPasswordLinkViaEmail = async (userEmail:string) => {
             transporter.sendMail({
             from: `tic-tac-toe game<${process.env.GMAIL_USERNAME}>`,
             to: userEmail,
-            subject: "Account activation: tic-tac-toe",
+            subject: "Password reset: tic-tac-toe",
             text: `Hello ${user.name}! Here is the link to reset your password on the tic-tac-toe game website: ${process.env.CLIENT_URL}/account/reset/${token}`,
             }, (error, _info) => {
                 if(error){
-                    throw new Error(`Unable to send email with the reset password link: ${error.message}`)
+                    console.log(error.message);
+                    throw new Error(`Unable to send email with the reset password link. Please try again later.`);
                 }
                 addAccountActivationId(token);
             })
         }
         else{
-            throw new Error("Couldn't find e-mail with ")
+            throw new Error("Unable to send an email with the reset password link. Please try again later");
         }
     }
     else{
@@ -129,12 +130,12 @@ const sendResetPasswordLinkViaEmail = async (userEmail:string) => {
     }
 }
 
-const resetPassword = async(token:string, newPassword:string) => {
+const resetPassword = async (token:string, newPassword:string) => {
     if(typeof process.env.RESET_SECRET === 'string'){
         const decodedToken = jwt.verify(token, process.env.RESET_SECRET) as JwtPayload
         if(decodedToken?.username){
             parsers.parsePassword(newPassword);
-            const passwordHash = createPassword(newPassword);
+            const passwordHash = await createPassword(newPassword);
             await User.findOneAndUpdate({username: decodedToken.username}, {passwordHash: passwordHash});
         }
         else{

@@ -1,4 +1,4 @@
-import { Game } from "../types/types";
+import { Game, Player } from "../types/types";
 import gameService from "./gameService";
 
 function getRandomInt(max:number) {
@@ -11,25 +11,23 @@ const easyMode = (game: Game):number => {
 }
 
 const mediumMode = (game:Game): number => {
-  const randomMove = getRandomInt(2) === 1 ? true : false
+  // const randomMove = getRandomInt(2) === 1 ? true : false
 
-  if(gameService.firstPlayerIsComputer(game) || randomMove){
+  if(gameService.firstPlayerIsComputer(game)){ //|| randomMove){
     return easyMode(game);
   }
-
   const availableMoves = gameService.getAvailableMoves(game);
   let bestMove = -1;
   let bestScore = -1;
   for(const move of availableMoves){
     const updatedGame = playMove(move, game);
     const score = minimax(move, updatedGame); 
-    if(score > bestScore){
+    if(score >= bestScore){
       bestScore = score;
       bestMove = move;
     }
   }
   return bestMove;
-    //TODO: update this later
 }
 
 const isGameOver = (move:number, game:Game):number | null => {
@@ -73,8 +71,20 @@ const playMove = (move:number, game:Game):Game => {
 const createGameCopy = (game:Game):Game => {
   const gameCopy:Game = {
     ...game,
+    playerData: createPlayerDataCopy(game.playerData),
   }
   return gameCopy;
+}
+
+const createPlayerDataCopy = (playerData:Player[]):Player[] => {
+  const playerDataCopy = new Array();
+  playerData.forEach(player => {
+    playerDataCopy.push({
+      ...player,
+      moves: player.moves.slice()
+    })
+  })
+  return playerDataCopy;
 }
 
 const hardMode = (game:Game): number => {

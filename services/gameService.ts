@@ -156,7 +156,6 @@ const playAsComputer = (game:Game):number => {
     case (GameDifficulty.EASY):
       return computerService.easyMode(game);
     case (GameDifficulty.MEDIUM):
-      console.log("playing game with medium difficulty")
       return computerService.mediumMode(game);
     case (GameDifficulty.HARD):
       return computerService.hardMode(game);

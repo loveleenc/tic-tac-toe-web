@@ -3,6 +3,25 @@ import { Game, Player, playerSymbol, Grid, Row, Cell, GameStatus, OutgoingGameDa
 import computerService from "./computerService";
 import scoreService from "./scoreService";
 
+const getUnavailableMoves = (game:Game):Set<number> => {
+  const all_moves = game.playerData
+    .map((player) => player.moves)
+    .reduce((a, c) => a.concat(c), new Array())
+    .concat(game.squares);
+  return new Set(all_moves);
+} 
+
+const getAvailableMoves = (game:Game):Array<number> => {
+  const allUnavailableMoves = getUnavailableMoves(game);
+  const availableMoves = new Array();
+  for(let i = 0; i < game.width * game.height; i++){
+    if(!allUnavailableMoves.has(i)){
+      availableMoves.push(i);
+    }
+  }
+  return availableMoves;
+}
+
 
 const createComputerPlayer = (players:string[]):playerSymbol => {
   let computer = '';
@@ -95,8 +114,15 @@ const filterPlayerData = (playerData:Player[]):NonSensitivePlayer[] => {
   return filteredPlayers
 }
 
+const firstPlayerIsComputer = (game: Game):boolean => {
+  if(getUnavailableMoves(game).size === 0 && game.playerData.find(p => p.turn === true && p.isComputer === true) !== undefined){
+    return true;
+  }
+  return false;
+}
+
 const playFirstMove = (game:Game):void => {
-  if(game.playerData.find(p => p.turn === true && p.isComputer === true)){
+  if(firstPlayerIsComputer(game)){
       const id = playAsComputer(game)
       game.playerData = updateMoveInPlayerData(game.playerData, id)
       selectNextPlayer(game.playerData)
@@ -130,6 +156,7 @@ const playAsComputer = (game:Game):number => {
     case (GameDifficulty.EASY):
       return computerService.easyMode(game);
     case (GameDifficulty.MEDIUM):
+      console.log("playing game with medium difficulty")
       return computerService.mediumMode(game);
     case (GameDifficulty.HARD):
       return computerService.hardMode(game);
@@ -359,7 +386,7 @@ const verifyAndUpdateGameState = async (id:number, game:Game):Promise<OutgoingGa
     }
     else if (nobodyWins(game)){
       updatedGame.status = GameStatus.END
-      updatedGame.winner= null
+      updatedGame.winner = null
       game.playerData.forEach(async (player) => {
         await scoreService.addTieToUserScore(player.username);
       })
@@ -375,6 +402,7 @@ const verifyAndUpdateGameState = async (id:number, game:Game):Promise<OutgoingGa
 }
 
 export default {
+  getAvailableMoves,
   restartGame,
   updateGameState,
   verifyAndUpdateGameState,
@@ -389,5 +417,6 @@ export default {
   currentPlayerHasSentTheRequest,
   playerAlreadyExistsInGame,
   playerSymbolAlreadyChosen,
-  addNewPlayer
+  addNewPlayer,
+  firstPlayerIsComputer
 };

@@ -6,6 +6,7 @@ import './../../styles/game.css'
 import { useLocation, useNavigate } from "react-router-dom"
 import Common from "../Common/Common.jsx"
 import types from "../../types/types.js"
+import LoadingScreen from "./LoadingScreen.jsx"
 
 const GAME_ID_MESSAGE = "Please share below game room id with other players to join the game:"
 const Game = () => {
@@ -17,11 +18,14 @@ const Game = () => {
     const [gameOver, setGameOver] = useState(false)
     const [gameIdMessage, setGameIdMessage] = useState("")
     const dialogRef = useRef(null);
+    const [displayLoadingDialog, setLoadingDialogOnDisplay] = useState(false)
     let index;
 
-    const updateGame = (id) => {    
+    const updateGame = (id) => {
+        setLoadingDialogOnDisplay(true);
         gameAPI.playMove(id)
                 .then(response => {
+                    setLoadingDialogOnDisplay(false);
                     const game = response.data
                     if(game.status === 'END' && game.winner !== null){
                         alert(`Game over! Player ${game.winner} has won!`)
@@ -40,9 +44,10 @@ const Game = () => {
 
     useEffect(() => {
         if (gameOver){
-            setPlayerData(null)
-            setGrid([])
-            navigate("/")
+            setTimeout(() => {
+                navigate("/")
+            }, 5000)
+            
         }
     }, [gameOver])
 
@@ -117,12 +122,12 @@ const Game = () => {
             <Navigation quitGame={quitGame} restartGame={restartGame} style={{position: 'fixed', top: 0}}/>
             <CurrentPlayer playerData={playerData} />
             <Common.MessageDialog dialogRef={dialogRef} message={gameIdMessage}/>
+            <LoadingScreen message="Computer is playing..." display={displayLoadingDialog} />
         </div>
     )
 }
 
 const CurrentPlayer = ({playerData}) => {
-
     if(playerData.length > 1){
         return (
             <>
@@ -130,13 +135,8 @@ const CurrentPlayer = ({playerData}) => {
             </>
         )
     }
-    return (
-        <div className="darkBackground">
-          <div className="loadingScreen pixelFontStyle">
-            Waiting for other players to join...
-          </div>
-      </div>
-    )
+    return (<LoadingScreen message="Waiting for other players to join..." display={true}/>)
+
 
 }
 

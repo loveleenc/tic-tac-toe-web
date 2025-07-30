@@ -24,6 +24,7 @@ const Square = memo(({id, getSquareId, text}) => {
     //         <img className='playerSprite' src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" onClick={handleImgClick}/>
     //     </button>
     // </>)
+    console.log(`rendering square with id: ${id}`);
     if (text === null){
         return (<>
                 <button id={id} className='block' style={{backgroundColor: "gray"}} disabled={true} onClick={handleButtonClick}>{text}</button>

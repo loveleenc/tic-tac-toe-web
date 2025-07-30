@@ -205,11 +205,19 @@ const hasWon = (ids:number[], playerData:Player[], minMoves:number):boolean => {
   if(!currentPlayer){
     throw new Error("Unable to find current player")
   }
+  ids = ids.sort();
   const moves = currentPlayer.moves;
+  console.log(`player is: ${currentPlayer.symbol}`)
+  console.log(`moves: ${moves.join(",")}`)
+  console.log(`ids: ${ids.join(",")}`)
+  console.log("===============================")
   let count = 0;
   for (const id of ids) {
     if (moves.includes(id)) {
       count += 1;
+    }
+    else{
+      count = 0;
     }
     if (count === minMoves) {
       return true;
@@ -221,15 +229,20 @@ const hasWon = (ids:number[], playerData:Player[], minMoves:number):boolean => {
 const hasCurrentPlayerHasWon = (game:Game):boolean => {
   const currentPlayer = game.playerData.find(player => player.turn === true) as Player;
   const id = currentPlayer.moves[currentPlayer.moves.length - 1];
+  if(!currentPlayer.isComputer){
+    // console.log(`latest move is: ${id}`);
+  }
   const maxCount = game.width * game.height - 1;
-  const leftList = [0];
-  const rightList = [game.width - 1];
+  const leftList = new Array();
+  leftList.push(0);
+  const rightList = new Array();
+  rightList.push(game.width - 1);
   for (let i = 1; i < game.height; i++) {
     leftList.push(leftList.slice(-1)[0] + game.width);
     rightList.push(rightList.slice(-1)[0] + game.width);
   }
 
-  const vertical = [];
+  const vertical = new Array();
   for (let i of range(id - (game.minMoves - 1) * game.width, id + game.width, game.width)) {
     if (i < 0) {
       continue;
@@ -243,7 +256,7 @@ const hasCurrentPlayerHasWon = (game:Game):boolean => {
     vertical.push(i);
   }
 
-  const horizontal = [];
+  const horizontal = new Array();
   for (let i of range(id, id - game.minMoves, -1)) {
     if (i == id) {
       horizontal.push(i);
@@ -263,7 +276,7 @@ const hasCurrentPlayerHasWon = (game:Game):boolean => {
   }
   horizontal.sort();
 
-  const diagonal1 = [];
+  const diagonal1 = new Array();
   for (let i of range(id, id - game.minMoves * (game.width + 1), -(game.width + 1))) {
     if (i == id) {
       diagonal1.push(i);
@@ -283,7 +296,7 @@ const hasCurrentPlayerHasWon = (game:Game):boolean => {
   }
   diagonal1.sort();
 
-  const diagonal2 = [];
+  const diagonal2 = new Array();
   for (let i of range(id - (game.width - 1) * (game.minMoves - 1), id, game.width - 1)) {
     if (leftList.includes(i) || i < 0) {
       continue;
@@ -365,11 +378,18 @@ const playerSymbolAlreadyChosen = (symbol:playerSymbol, game:Game):boolean => {
 }
 
 const verifyAndUpdateGameState = async (id:number, game:Game):Promise<OutgoingGameData> => {
+    const CP = game.playerData.find(player => player.turn === true) as Player;
+    if(CP.isComputer){
+      // console.log("update move in game data")
+    }
     game.playerData = updateMoveInPlayerData(game.playerData, id)
     const updatedGame:OutgoingGameData = {
       status: GameStatus.ONGOING,
       winner: null,
       playerData: filterPlayerData(game.playerData)
+    }
+    if(CP.isComputer){
+    // console.log("checking if player has won")
     }
     if(hasCurrentPlayerHasWon(game)){
         const winner = game.playerData.find(player => player.turn === true)
@@ -419,5 +439,5 @@ export default {
   playerAlreadyExistsInGame,
   playerSymbolAlreadyChosen,
   addNewPlayer,
-  firstPlayerIsComputer
+  firstPlayerIsComputer,
 };

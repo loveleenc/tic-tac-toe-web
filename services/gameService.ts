@@ -205,12 +205,8 @@ const hasWon = (ids:number[], playerData:Player[], minMoves:number):boolean => {
   if(!currentPlayer){
     throw new Error("Unable to find current player")
   }
-  ids = ids.sort();
+  ids = ids.sort((a, b) => a - b);
   const moves = currentPlayer.moves;
-  console.log(`player is: ${currentPlayer.symbol}`)
-  console.log(`moves: ${moves.join(",")}`)
-  console.log(`ids: ${ids.join(",")}`)
-  console.log("===============================")
   let count = 0;
   for (const id of ids) {
     if (moves.includes(id)) {
@@ -229,9 +225,6 @@ const hasWon = (ids:number[], playerData:Player[], minMoves:number):boolean => {
 const hasCurrentPlayerHasWon = (game:Game):boolean => {
   const currentPlayer = game.playerData.find(player => player.turn === true) as Player;
   const id = currentPlayer.moves[currentPlayer.moves.length - 1];
-  if(!currentPlayer.isComputer){
-    // console.log(`latest move is: ${id}`);
-  }
   const maxCount = game.width * game.height - 1;
   const leftList = new Array();
   leftList.push(0);
@@ -378,18 +371,11 @@ const playerSymbolAlreadyChosen = (symbol:playerSymbol, game:Game):boolean => {
 }
 
 const verifyAndUpdateGameState = async (id:number, game:Game):Promise<OutgoingGameData> => {
-    const CP = game.playerData.find(player => player.turn === true) as Player;
-    if(CP.isComputer){
-      // console.log("update move in game data")
-    }
     game.playerData = updateMoveInPlayerData(game.playerData, id)
     const updatedGame:OutgoingGameData = {
       status: GameStatus.ONGOING,
       winner: null,
       playerData: filterPlayerData(game.playerData)
-    }
-    if(CP.isComputer){
-    // console.log("checking if player has won")
     }
     if(hasCurrentPlayerHasWon(game)){
         const winner = game.playerData.find(player => player.turn === true)

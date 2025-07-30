@@ -218,7 +218,9 @@ const hasWon = (ids:number[], playerData:Player[], minMoves:number):boolean => {
   return false;
 };
 
-const hasCurrentPlayerHasWon = (id:number, game:Game):boolean => {
+const hasCurrentPlayerHasWon = (game:Game):boolean => {
+  const currentPlayer = game.playerData.find(player => player.turn === true) as Player;
+  const id = currentPlayer.moves[currentPlayer.moves.length - 1];
   const maxCount = game.width * game.height - 1;
   const leftList = [0];
   const rightList = [game.width - 1];
@@ -369,7 +371,7 @@ const verifyAndUpdateGameState = async (id:number, game:Game):Promise<OutgoingGa
       winner: null,
       playerData: filterPlayerData(game.playerData)
     }
-    if(hasCurrentPlayerHasWon(id, game)){
+    if(hasCurrentPlayerHasWon(game)){
         const winner = game.playerData.find(player => player.turn === true)
         if(!winner){
           throw new Error("unable to find the current player who has won")

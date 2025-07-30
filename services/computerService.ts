@@ -16,12 +16,13 @@ const mediumMode = (game:Game): number => {
   if(gameService.firstPlayerIsComputer(game)){ //|| randomMove){
     return easyMode(game);
   }
+
   const availableMoves = gameService.getAvailableMoves(game);
   let bestMove = -1;
   let bestScore = -1;
   for(const move of availableMoves){
     const updatedGame = playMove(move, game);
-    const score = minimax(move, updatedGame); 
+    const score = minimax(updatedGame); 
     if(score >= bestScore){
       bestScore = score;
       bestMove = move;
@@ -30,8 +31,8 @@ const mediumMode = (game:Game): number => {
   return bestMove;
 }
 
-const isGameOver = (move:number, game:Game):number | null => {
-  if(gameService.hasCurrentPlayerHasWon(move, game)){
+const isGameOver = (game:Game):number | null => {
+  if(gameService.hasCurrentPlayerHasWon(game)){
     const winner = game.playerData.find(player => player.turn === true)
     if(winner?.isComputer === true){
       return 1;
@@ -39,24 +40,33 @@ const isGameOver = (move:number, game:Game):number | null => {
      return -1;
   }
   else if(gameService.nobodyWins(game)){
-    return 0
+    return 0;
   }
   return null;
 }
 
-const minimax = (move:number, game:Game) => {
-  const gameScore = isGameOver(move, game)
+const minimax = (game:Game) => {
+  const gameScore = isGameOver(game)
   if(gameScore !== null){
     return gameScore;
   }
   gameService.selectNextPlayer(game.playerData);
   const availableMoves = gameService.getAvailableMoves(game);
-  let bestScore = -1;
+  let bestScore;
+  if(game.playerData.find(player => player.isComputer === true && player.turn === true) !== undefined){
+    bestScore = -1;
+  }
+  else{
+    bestScore = 1;
+  }
   for(const move of availableMoves){
     const updatedGame = playMove(move, game);
-    const score = minimax(move, updatedGame);
-    if(score > bestScore){
-      bestScore = score;
+    const score = minimax(updatedGame);
+    if(updatedGame.playerData.find(player => player.isComputer === true && player.turn === true) !== undefined){
+      bestScore = Math.max(score, bestScore);
+    }
+    else{
+      bestScore = Math.min(score, bestScore);
     }
   }
   return bestScore;

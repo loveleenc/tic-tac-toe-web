@@ -12,7 +12,15 @@ class DeactivatedAccountError extends Error{
     }
 }
 
+class NotCurrentPlayerError extends Error{
+    constructor(){
+        super('You are not the current player in the game. Please wait your turn.')
+        this.name = 'NotCurrentPlayerError';
+    }
+}
+
 export default {
     AuthenticationError,
-    DeactivatedAccountError
+    DeactivatedAccountError,
+    NotCurrentPlayerError
 }

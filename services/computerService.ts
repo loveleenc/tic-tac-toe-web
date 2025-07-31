@@ -6,20 +6,20 @@ function getRandomInt(max:number) {
 }
 
 const easyMode = (game: Game):number => {
-  const availableMoves = gameService.getAvailableMoves(game);
+  const availableMoves = getAvailableMoves(game);
   return availableMoves[getRandomInt(availableMoves.length - 1)];
 }
 
 const mediumMode = (game:Game): number => {
   const randomMove = getRandomInt(2) === 1 ? true : false
-  if(gameService.firstPlayerIsComputer(game) || randomMove){
+  if(firstPlayerIsComputer(game) || randomMove){
     return easyMode(game);
   }
   return playUsingMinimax(game);
 }
 
 const hardMode = (game:Game): number => {
-  if(gameService.firstPlayerIsComputer(game)){
+  if(firstPlayerIsComputer(game)){
     const move1 = easyMode(game);
     return move1;
   }
@@ -28,7 +28,7 @@ const hardMode = (game:Game): number => {
 }
 
 const playUsingMinimax = (game:Game): number => {
-  const availableMoves = gameService.getAvailableMoves(game);
+  const availableMoves = getAvailableMoves(game);
   let bestMove = -1;
   let bestScore = -10;
   let alpha = -Infinity;
@@ -71,7 +71,7 @@ const minimax = (game:Game, depth:number, alpha:number, beta:number) => {
   
   
   gameService.selectNextPlayer(game.playerData);
-  const availableMoves = gameService.getAvailableMoves(game);
+  const availableMoves = getAvailableMoves(game);
   let bestScore;
   if(game.playerData.find(player => player.isComputer === true && player.turn === true) !== undefined){
     bestScore = 10-depth;
@@ -123,6 +123,32 @@ const createPlayerDataCopy = (playerData:Player[]):Player[] => {
     })
   })
   return playerDataCopy;
+}
+
+const firstPlayerIsComputer = (game: Game):boolean => {
+  if(getUnavailableMoves(game).size === 0 && game.playerData.find(p => p.turn === true && p.isComputer === true) !== undefined){
+    return true;
+  }
+  return false;
+}
+
+const getUnavailableMoves = (game:Game):Set<number> => {
+  const all_moves = game.playerData
+    .map((player) => player.moves)
+    .reduce((a, c) => a.concat(c), new Array())
+    .concat(game.squares);
+  return new Set(all_moves);
+} 
+
+const getAvailableMoves = (game:Game):Array<number> => {
+  const allUnavailableMoves = getUnavailableMoves(game);
+  const availableMoves = new Array();
+  for(let i = 0; i < game.width * game.height; i++){
+    if(!allUnavailableMoves.has(i)){
+      availableMoves.push(i);
+    }
+  }
+  return availableMoves;
 }
 
 export default {

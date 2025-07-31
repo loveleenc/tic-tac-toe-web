@@ -1,5 +1,6 @@
 import { Game, GameDifficulty, GameType, playerSymbol, Setup, NewAccount } from "../types/types";
 
+
 const isNewAccountData = (object: unknown): NewAccount => {
   if(!object || typeof object !== "object"){
     throw new Error("request body is not available");
@@ -61,7 +62,11 @@ const stringIsAlphanumeric = (expectedString:string):boolean => {
 }
 
 const parseUsername = (username:unknown): string => {
-  if(isUsername(username) && username.length > 6 && username.length < 13 && stringIsAlphanumeric(username)){
+  if(isUsername(username) && 
+      username.length > 6 && 
+      username.length < 13 && 
+      stringIsAlphanumeric(username) && 
+      !username.startsWith("Guest_")){
     return username;
   }
   throw new Error("Username does not match the required criteria");

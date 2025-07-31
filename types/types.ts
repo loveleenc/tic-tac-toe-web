@@ -11,6 +11,16 @@ export interface Player{
 
 export type NonSensitivePlayer = Omit<Player, 'username'>
 
+export interface NewGameData{
+  width:number,
+  height:number,
+  disableSquares:boolean,
+  minMoves:number,
+  gameType: GameType,
+  difficulty: null | GameDifficulty,
+  players: playerSymbol[],
+}
+
 export interface Game{
   playerData:Player[],
   width: number,

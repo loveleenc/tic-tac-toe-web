@@ -17,7 +17,7 @@ const getScoreForAllUsers = async () => {
 }
 
 const getScore = async (username: string | null) => {   //todo: add expected type for returned mongoose object
-    if(username === null){
+    if(username === null || username.startsWith("Guest_")){
         return null;
     }
     const user = await User.findOne({ username: username });
@@ -37,7 +37,6 @@ const addWinToUserScore = async (username: string | null):Promise<boolean> => {
         return true;
     }
     return false;
-    
 }
 
 const addLossToUserScore = async (username: string | null) => {

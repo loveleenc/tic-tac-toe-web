@@ -1,9 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import parsers from "./parsers";
-import getGames from "../data/liveData";
+import { getGameWithId } from "../data/liveData";
 import { ExistingGameRequest, LoggedInUserRequest } from "../types/express/request";
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import User from "../models/user";
+import errors from "./errors";
 
 const extractToken = (request:LoggedInUserRequest, _response:Response, next:NextFunction) => {
     if(request.cookies.token !== undefined){
@@ -79,13 +80,13 @@ const parseGameSetup = (request:Request, response:Response, next:NextFunction) =
 
 
 const getGame = (request:ExistingGameRequest, response:Response, next:NextFunction) => {
-    const games = getGames()
     const gameId = request.cookies.gameId
+    request.game = getGameWithId(gameId);
+    
     try{
-        if(!games[gameId]){
+        if(request.game === undefined){
             throw new Error(`Game with id ${gameId} does not exist`)
         }
-        request.game = games[gameId]
         next()
     }
     catch(error){
@@ -120,6 +121,10 @@ const errorHandler = (error:unknown, _request: ExistingGameRequest | LoggedInUse
                     }
             }
             response.status(400).json({error: "Unable to create an account. Please try again"});
+            return;
+        }
+        else if(error.name === errors.NotCurrentPlayerError.name){
+            response.status(400).json({error: error.message});
             return;
         }
         else{

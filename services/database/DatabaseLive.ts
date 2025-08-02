@@ -3,7 +3,7 @@ import Database from "./Database";
 import User from "../../models/user";
 import Score from "../../models/scores";
 import { accountType } from "../../types/types";
-import mongoose, { HydratedDocument } from "mongoose";
+import mongoose, { HydratedDocument, ObjectId } from "mongoose";
 
 class DatabaseLive extends Database{
     constructor(){
@@ -128,8 +128,8 @@ class DatabaseLive extends Database{
         }
     }
 
-    isUsernameOfUser(x: any): x is UserModel{
-        return x.name !== undefined && typeof x.name === "string"
+    isUser(x: any): x is {_id: ObjectId} & {username: string}{
+        return typeof x === "object" && "username" in x;
     }
 
     async getAllScores() {
@@ -139,7 +139,7 @@ class DatabaseLive extends Database{
                 wins: score.wins,
                 losses: score.losses,
                 ties: score.ties,
-                user: this.isUsernameOfUser(score.user) ? score.user.username : "unknown",
+                user: this.isUser(score.user) ? score.user.username : "unknown",
             }
             return filteredScore;
         })

@@ -1,11 +1,9 @@
 import { HydratedDocument } from "mongoose";
 import { ReturnedUser, UserModel, UserModelId, ScoreModel, ScoreModelPopulated } from "../../types/models";
 import { accountType } from "../../types/types";
-import errors from "../../utils/errors";
 
 abstract class Database {
     constructor(){
-        throw new errors.AbstractClassError();
     }
 
     abstract createNewUser(userData:UserModel): Promise<ReturnedUser>;

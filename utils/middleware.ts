@@ -17,7 +17,7 @@ const extractUser = async (request:LoggedInUserRequest, _response:Response, next
     if(typeof process.env.SECRET === 'string'){
     const decodedToken = jwt.verify(request.token, process.env.SECRET) as JwtPayload
     if(decodedToken?.id){
-        request.user = await database.getUserById(decodedToken.id);
+        request.user = await database().getUserById(decodedToken.id);
         }
     }
     next()

@@ -6,7 +6,7 @@ import { database } from "./databaseService"
 
 
 const validateLogin = async (username: string, password: string) => {
-    const user = await database.getUserByUsername(username);
+    const user = await database().getUserByUsername(username);
     if(!user){
         throw new errors.AuthenticationError()
     }
@@ -33,7 +33,7 @@ const validateLogin = async (username: string, password: string) => {
 }
 
 const getAllUsers = async () => {
-    const users = await database.getAllUsers();
+    const users = await database().getAllUsers();
     return users;
 }
 

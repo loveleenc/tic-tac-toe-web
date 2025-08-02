@@ -10,7 +10,7 @@ import {database} from './databaseService'
 const SALT_ROUNDS = 10
 
 const createNewUser = async (name:UserModel["name"], username:UserModel["username"], password:string, email:UserModel["email"]):Promise<ReturnedUser> => {
-    return database.createNewUser({
+    return database().createNewUser({
                             name: name,
                             username: username,
                             passwordHash: await createPassword(password),
@@ -64,7 +64,7 @@ const activateAccount = async (token:string, userProvidedUsername:string) => {
         const decodedToken = jwt.verify(token, process.env.ACTIVATION_SECRET) as JwtPayload
         if(decodedToken?.username){
             if(decodedToken.username === userProvidedUsername){
-                await database.findUserAndUpdateStatus(userProvidedUsername, accountType.ACTIVE);
+                await database().findUserAndUpdateStatus(userProvidedUsername, accountType.ACTIVE);
             }
             else{
                 throw new Error("Entered username is incorrect. Please try again.")
@@ -77,7 +77,7 @@ const activateAccount = async (token:string, userProvidedUsername:string) => {
 }
 
 const sendResetPasswordLinkViaEmail = async (userEmail:string) => {
-    const user = await database.getUserByEmail(userEmail);
+    const user = await database().getUserByEmail(userEmail);
     const usernamePayload = {
         username: user.username,
         id: user.id
@@ -116,7 +116,7 @@ const resetPassword = async (token:string, newPassword:string) => {
         if(decodedToken?.username){
             parsers.parsePassword(newPassword);
             const passwordHash = await createPassword(newPassword);
-            await database.findUserAndUpdatePassword(decodedToken.username, passwordHash);
+            await database().findUserAndUpdatePassword(decodedToken.username, passwordHash);
         }
         else{
             throw new Error("Unable to find username. Token is invalid")

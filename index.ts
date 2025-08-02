@@ -11,7 +11,7 @@ import accountRouter from './routes/account';
 
 const app = express()
 
-const url = config.MONGODB_URI ? config.MONGODB_URI : ""
+const url = config.MONGODB_URI
 mongoose.connect(url)
     .then(() => {
         console.log('connected to mongoDB')

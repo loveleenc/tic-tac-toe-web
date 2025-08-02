@@ -19,8 +19,16 @@ class NotCurrentPlayerError extends Error{
     }
 }
 
+class AbstractClassError extends Error{
+    constructor(){
+        super("Abstract classes can't be instantiated or this method need to be implemented.")
+        this.name = 'AbstractClassError';
+    }
+}
+
 export default {
     AuthenticationError,
     DeactivatedAccountError,
-    NotCurrentPlayerError
+    NotCurrentPlayerError,
+    AbstractClassError
 }

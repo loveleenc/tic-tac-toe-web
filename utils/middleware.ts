@@ -3,8 +3,8 @@ import parsers from "./parsers";
 import { getGameWithId } from "../data/liveData";
 import { ExistingGameRequest, LoggedInUserRequest } from "../types/express/request";
 import jwt, { JwtPayload } from 'jsonwebtoken'
-import User from "../models/user";
 import errors from "./errors";
+import { database } from "../services/databaseService";
 
 const extractToken = (request:LoggedInUserRequest, _response:Response, next:NextFunction) => {
     if(request.cookies.token !== undefined){
@@ -17,7 +17,7 @@ const extractUser = async (request:LoggedInUserRequest, _response:Response, next
     if(typeof process.env.SECRET === 'string'){
     const decodedToken = jwt.verify(request.token, process.env.SECRET) as JwtPayload
     if(decodedToken?.id){
-        request.user = await User.findById(decodedToken.id)
+        request.user = await database.getUserById(decodedToken.id);
         }
     }
     next()

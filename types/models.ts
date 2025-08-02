@@ -9,12 +9,16 @@ export interface UserModel{
     status: accountType
 }
 
+export type UserModelId = UserModel & {id: string};
+
 export interface ScoreModel{
     wins: number,
     losses: number,
     ties: number,
     user: ObjectId,
 }
+
+export type ScoreModelPopulated = Omit<ScoreModel, 'user'> & {user: UserModel["username"]};
 
 export interface ReturnedUser{
     name: string,

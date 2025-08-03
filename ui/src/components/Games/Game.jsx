@@ -7,6 +7,7 @@ import { useLocation, useNavigate } from "react-router-dom"
 import Common from "../Common/Common.jsx"
 import types from "../../types/types.js"
 import LoadingScreen from "./LoadingScreen.jsx"
+import { io } from "socket.io-client"
 
 const GAME_ID_MESSAGE = "Please share below game room id with other players to join the game:"
 const Game = () => {
@@ -102,7 +103,10 @@ const Game = () => {
                 setGrid(response.data.grid)
                 index = response.data.grid.length * response.data.grid[0].length
                 setPlayerData(response.data.playerData)
-                state.gameType === types.GameType.MULTIPLAYER ? setGameIdMessage(`${GAME_ID_MESSAGE}\n${getGameId()}`) : "";
+                if(state.gameType === types.GameType.MULTIPLAYER){
+                    setGameIdMessage(`${GAME_ID_MESSAGE}\n${getGameId()}`)
+                    const socket = io();
+                }
             })
         return (<></>)
     }

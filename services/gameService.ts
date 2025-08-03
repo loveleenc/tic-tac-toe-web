@@ -156,24 +156,39 @@ const verifyAndUpdateGameState = async (id:number, game:Game):Promise<OutgoingGa
     return updatedGame
 }
 
-const addNewPlayer = (playerSymbol:playerSymbol, user_name:string, game:Game):NonSensitivePlayer => {
+const addNewPlayer = (playerSymbol:playerSymbol, user:ReturnedUser, game:Game): {symbol: string} & {game: OutgoingGameData} => {
+  const player = playerAlreadyExistsInGame(user, game)
+  if(player !== undefined){
+    const outgoingGameData:OutgoingGameData = {
+      winner: null,
+      status: GameStatus.ONGOING,
+      playerData: filterPlayerData(game.playerData),
+    }
+    return {symbol: player.symbol, game: outgoingGameData};
+  }
+
   const template:Player = {
     symbol: playerSymbol,
     moves: [],
     turn: false,
     isComputer: false,
-    username: user_name
+    username: user.username
   };
+
   game.playerData.push(template);
   if(!game.hasStarted){
     game.hasStarted = true;
   }
-  const {username, ...remainingData} = template
 
-  const filteredPlayer:NonSensitivePlayer = {
-    ...remainingData
+  if(game.playerData.length === 2){
+    selectNextPlayer(game.playerData);
   }
-  return filteredPlayer;
+  const outgoingGameData:OutgoingGameData = {
+      winner: null,
+      status: GameStatus.ONGOING,
+      playerData: filterPlayerData(game.playerData),
+    }
+  return {symbol: playerSymbol, game: outgoingGameData};
 }
 
 const createAllPlayerData = (players:playerSymbol[], username:string, game:Game):NonSensitivePlayer[] => {
@@ -421,9 +436,9 @@ const currentPlayerHasSentTheRequest = (user:ReturnedUser, game:Game):boolean =>
   return user.username === currentPlayer.username
 }
 
-const playerAlreadyExistsInGame = (user:ReturnedUser, game: Game):boolean => {
+const playerAlreadyExistsInGame = (user:ReturnedUser, game: Game):Player | undefined => {
   const player = game.playerData.find(player => player.username === user.username)
-  return player !== undefined;
+  return player;
 }
 
 const playerSymbolAlreadyChosen = (symbol:playerSymbol, game:Game):boolean => {

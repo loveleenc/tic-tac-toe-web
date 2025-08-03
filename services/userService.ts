@@ -1,9 +1,19 @@
 import bcrypt from 'bcrypt'
 import errors from "../utils/errors"
-import jwt from 'jsonwebtoken'
+import jwt, { JwtPayload } from 'jsonwebtoken'
 import { accountType } from "../types/types"
 import { database } from "./databaseService"
 
+const extractUserFromToken = async (token:string | undefined) => {
+    let user = null;
+    if(typeof process.env.SECRET === 'string' && token !== undefined){
+        const decodedToken = jwt.verify(token, process.env.SECRET) as JwtPayload
+        if(decodedToken?.id){
+            user = await database().getUserById(decodedToken.id);
+        }
+    }
+    return user;
+}
 
 const validateLogin = async (username: string, password: string) => {
     const user = await database().getUserByUsername(username);
@@ -39,5 +49,6 @@ const getAllUsers = async () => {
 
 export default {
     getAllUsers,
-    validateLogin
+    validateLogin,
+    extractUserFromToken
 }

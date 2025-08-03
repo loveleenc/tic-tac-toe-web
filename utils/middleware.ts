@@ -2,25 +2,24 @@ import { NextFunction, Request, Response } from "express";
 import parsers from "./parsers";
 import { getGameWithId } from "../data/liveData";
 import { ExistingGameRequest, LoggedInUserRequest } from "../types/express/request";
-import jwt, { JwtPayload } from 'jsonwebtoken'
 import errors from "./errors";
-import { database } from "../services/databaseService";
+import userService from "../services/userService";
 
 const extractToken = (request:LoggedInUserRequest, _response:Response, next:NextFunction) => {
     if(request.cookies.token !== undefined){
         request.token = request.cookies.token
     }
-    next()
+    next();
 }
 
 const extractUser = async (request:LoggedInUserRequest, _response:Response, next:NextFunction) => {
-    if(typeof process.env.SECRET === 'string'){
-    const decodedToken = jwt.verify(request.token, process.env.SECRET) as JwtPayload
-    if(decodedToken?.id){
-        request.user = await database().getUserById(decodedToken.id);
-        }
+    try{
+        request.user = await userService.extractUserFromToken(request.token);
+        next();
     }
-    next()
+    catch(error: unknown){
+        next(error);
+    }
 }
 
 const parseEmail = async (request:Request, response:Response, next:NextFunction) => {
@@ -60,12 +59,6 @@ const parseNewAccount = async(request:Request, response:Response, next:NextFunct
 const parseGameSetup = (request:Request, response:Response, next:NextFunction) => {
     try{
         parsers.isGameSetupData(request.body)
-        if(request.body.width < 3 || request.body.height < 3){
-            throw new Error('both width and height of the grid should be greater than or equal to 3')
-        }
-        if(request.body.minMoves < 3 || request.body.minMoves > Math.max(request.body.width, request.body.height)){
-            throw new Error('min number of moves needed to win should be greater than or equal to 3 and less than or equal to the width/height (whichever is bigger)')
-        }
         next()
     }
     catch(error: unknown){

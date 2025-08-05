@@ -1,11 +1,18 @@
-.gameBackground{
-    height: 100vh; 
+.gameBackground{ 
     width: 100vw;
     background-image: url('/assets/gameScreen/pokeball_background.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     overflow:scroll;
+}
+
+.gameBackgroundHeightSingleplayer{
+  height: 100vh;
+}
+
+.gameBackgroundHeightMultiplayer{
+  height: 100vh;
 }
 
 .grid {
@@ -23,6 +30,19 @@
     top: 100px;
     left: 0;
     right: 0;
+}
+
+.gameStatusWindow{
+  background-color: #fbbc17;
+  margin: auto;
+  text-align: center;
+  border: 5px black;
+  border-style: outset;
+  position: absolute;
+  bottom: 0px;
+  height: 18vh;
+  width: 99.5%;
+  background-size: cover;
 }
 
 .block {

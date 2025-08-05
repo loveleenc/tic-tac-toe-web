@@ -5,6 +5,7 @@
     background-position: center;
     background-repeat: no-repeat;
     background-image: url('/assets/mainScreen/pika_bckgnd.jpg');
+    background-size: cover;
 }
 
 .gameTitle img{

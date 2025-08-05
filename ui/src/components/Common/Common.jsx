@@ -1,3 +1,5 @@
+import LoadingScreen from "../Games/LoadingScreen";
+
 const FormInput = ({ text, fieldName, type, customStyle }) => {
   if (type === "number") {
     return (
@@ -47,8 +49,20 @@ const MessageDialog = ({dialogRef, message}) => {
     </dialog>)
 }
 
+const CurrentPlayer = ({playerData}) => {   
+    if(playerData.length > 1){
+        return (
+            <>
+                <p style={{position: 'absolute', top: '45px'}} className="pixelFontStyle">Current player: {playerData.find(p => p.turn === true).symbol}</p>
+            </>
+        )
+    }
+    return (<LoadingScreen message="Waiting for other players to join..." display={true}/>)
+}
+
 export default {
   MessageDialog,
   FormInput,
-  NavigationButton
+  NavigationButton,
+  CurrentPlayer
 };

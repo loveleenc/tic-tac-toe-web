@@ -101,6 +101,9 @@ const selectFirstPlayer = (data:Player[]):void => {
 
 const playGame = async (user:ReturnedUser, game:Game, gridSquareId:number):Promise<OutgoingGameData> => {
   const id = parsers.parseId(gridSquareId, game);
+  if(gameHasNotStarted(game)){
+    throw new errors.GameNotStartedError();
+  }
   if(!currentPlayerHasSentTheRequest(user, game)){
     throw new errors.NotCurrentPlayerError();
   }
@@ -444,6 +447,10 @@ const playerAlreadyExistsInGame = (user:ReturnedUser, game: Game):Player | undef
 const playerSymbolAlreadyChosen = (symbol:playerSymbol, game:Game):boolean => {
   const player = game.playerData.find(player => player.symbol.toLowerCase() === symbol.toLowerCase())
   return player !== undefined;
+}
+
+const gameHasNotStarted = (game:Game) => {
+  return game.playerData.length < 2 && game.hasStarted === false;
 }
 
 export default {

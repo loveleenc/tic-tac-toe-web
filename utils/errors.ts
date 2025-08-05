@@ -26,7 +26,15 @@ class AbstractClassError extends Error{
     }
 }
 
+class GameNotStartedError extends Error{
+    constructor(){
+        super("Game has not started yet. Please wait for other players to join before the game begins.")
+        this.name = 'GameNotStartedError'
+    }
+}
+
 export default {
+    GameNotStartedError,
     AuthenticationError,
     DeactivatedAccountError,
     NotCurrentPlayerError,

@@ -116,13 +116,12 @@ const errorHandler = (error:unknown, _request: ExistingGameRequest | LoggedInUse
             response.status(400).json({error: "Unable to create an account. Please try again"});
             return;
         }
-        else if(error.name === errors.NotCurrentPlayerError.name){
+        else if(error.name === errors.NotCurrentPlayerError.name || error.name === errors.GameNotStartedError.name){
             response.status(400).json({error: error.message});
             return;
         }
         else{
             //TODO: make app errors less generic.
-            console.log(error.message);
             response.status(400).json({error: "Something went wrong. Please try again later."})
         }
     }

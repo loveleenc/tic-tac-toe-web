@@ -42,12 +42,17 @@ gameRouter.patch(
     response: Response,
     next: NextFunction
   ) => {
-
-    const outgoingGameData = await gameService.playGame(request.user, request.game, request.body.id);
-    if (outgoingGameData.status === GameStatus.END) {
-      deleteGame(request.cookies.gameId);
+    try{
+        const outgoingGameData = await gameService.playGame(request.user, request.game, request.body.id);
+      if (outgoingGameData.status === GameStatus.END) {
+        deleteGame(request.cookies.gameId);
+      }
+      response.json(outgoingGameData);
     }
-    response.json(outgoingGameData);
+    catch(error:unknown){
+      next(error);
+    }
+    
     next();
   }
 );

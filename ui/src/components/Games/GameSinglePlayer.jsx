@@ -22,8 +22,6 @@ const GameSinglePlayer = () => {
         if(window.confirm("Do you want to quit the game?")){
             gameAPI.deleteGame()
                 .then(() => {
-                    setPlayerData(null)
-                    setGrid([])
                     navigate("/")
                 })
         }
@@ -69,7 +67,7 @@ const GameSinglePlayer = () => {
         if (gameOver){
             setTimeout(() => {
                 navigate("/")
-            }, 3000)
+            }, 1000)
             
         }
     }, [gameOver])
@@ -86,7 +84,10 @@ const GameSinglePlayer = () => {
     return (   
         <div className="gameBackground gameBackgroundHeightSingleplayer">
             <Grid grid={grid} getSquareId={getSquareId} />
-            <Navigation quitGame={quitGame} restartGame={restartGame} style={{position: 'fixed', top: 0}}/>
+            <Navigation buttons={[
+                {text: 'Quit', action: quitGame},
+                {text: 'Restart', action: restartGame}
+            ]} quitGame={quitGame} restartGame={restartGame} style={{position: 'fixed', top: 0}}/>
             <Common.CurrentPlayer playerData={playerData} />
             <LoadingScreen message="Computer is playing..." display={displayLoadingDialog} />
         </div>

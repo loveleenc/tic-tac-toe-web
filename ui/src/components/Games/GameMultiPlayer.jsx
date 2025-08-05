@@ -56,10 +56,16 @@ const GameMultiPlayer = () => {
         if (gameOver){
             setTimeout(() => {
                 navigate("/")
-            }, 3000)
+            }, 1000)
             
         }
     }, [gameOver])
+
+    const exitGame = () => {
+        if(window.confirm("Do you want to quit the game?")){
+            navigate("/")
+        }
+    }
 
     if (playerData === null){
         gameAPI.createGame(state.players, state.width, state.height, state.minMoves, state.disableSquares, state.gameType, state.difficulty)
@@ -75,7 +81,10 @@ const GameMultiPlayer = () => {
         <>
             <div className="gameBackground gameBackgroundHeightMultiplayer">
                 <Grid grid={grid} getSquareId={getSquareId} />
-                <Navigation style={{position: 'fixed', top: 0}}/>
+                <Navigation buttons={[
+                    {text: 'Exit',
+                    action: exitGame}
+                ]} style={{position: 'fixed', top: 0}}/>
                 <Common.MessageDialog dialogRef={dialogRef} message={gameIdMessage}/>
                 <p style={{left: '5px', bottom: '15px', position: 'absolute', padding: '5px'}} className="pixelFontStyle">player updates go here blah blah blah</p>
                 <CurrentPlayerTimer seconds="5" />

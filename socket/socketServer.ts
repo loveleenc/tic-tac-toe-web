@@ -44,6 +44,16 @@ class SocketServer{
                 socket.emit('joinGame', {error: `Game with id ${gameId} does not exist`});
                 socket.disconnect();
             }
+            else if(gameService.playerAlreadyExistsInGame(socket.user, game)){
+                const existingPlayer = gameService.playerAlreadyExistsInGame(socket.user, game);
+                const gameAndPlayerData = {
+                    symbol: existingPlayer?.symbol,
+                    game: gameService.createOutgoingDataFromGameData(game, null),
+                }
+                socket.to(gameId).emit('playerJoined', gameAndPlayerData, socket.user.username);
+                socket.emit('joinedGame', gameAndPlayerData);
+                socket.gameId = gameId;
+            }
             else if(gameService.playerSymbolAlreadyChosen(symbol, game)){
                 socket.emit('joinGame', {error: `Symbol already chosen. Please select another. Already selected symbols are: ${game.playerData.map(p => p.symbol).join(", ")}`})
                 socket.disconnect();

@@ -161,6 +161,16 @@ const verifyAndUpdateGameState = async (id:number, game:Game):Promise<OutgoingGa
     return updatedGame
 }
 
+const createOutgoingDataFromGameData = (game:Game, gameStatus:GameStatus|null):OutgoingGameData => {
+  const outgoingGameData:OutgoingGameData = {
+    winner: null,
+    status: gameStatus === null ? GameStatus.ONGOING : gameStatus,
+    playerData: filterPlayerData(game.playerData),
+    grid: createGridArray(game),
+  }
+  return outgoingGameData;
+}
+
 const addNewPlayer = (playerSymbol:playerSymbol, user:ReturnedUser, game:Game): {symbol: string} & {game: OutgoingGameData} => {
   const player = playerAlreadyExistsInGame(user, game)
   if(player !== undefined){
@@ -473,6 +483,7 @@ export default {
 
   updateMoveInPlayerData, //Does this need to be in this file?
 
-  playerAlreadyExistsInGame,  //TODO: Placeholder, func to be removed or used later
+  playerAlreadyExistsInGame,
   playerSymbolAlreadyChosen, //TODO: Placeholder, func to be removed or used later
+  createOutgoingDataFromGameData,
 };

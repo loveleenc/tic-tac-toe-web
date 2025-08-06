@@ -16,7 +16,7 @@ function App() {
         <Route path="/main" element={<MainScreen/>} />
         <Route path="/setup" element={<GameScreen />}/>
         <Route path="/gamesingle" element={<GameSinglePlayer />}/>
-        <Route path="/gamemulti" element={<GameMultiPlayer />}/>
+        <Route path="/gamemulti/:multiGameType" element={<GameMultiPlayer />}/>
         <Route path="/account/verify/:id" element={<ActivateAccount />} />
         <Route path="/account/reset/:id" element={<ResetAccount />} />
       </Routes>

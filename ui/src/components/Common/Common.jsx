@@ -49,7 +49,14 @@ const MessageDialog = ({dialogRef, message}) => {
     </dialog>)
 }
 
-const CurrentPlayer = ({playerData}) => {   
+const CurrentPlayer = ({playerData, isSocketConnected, socketDisconnectedReason}) => {
+    if(socketDisconnectedReason === null){
+      socketDisconnectedReason = "Disconnected. Please check your internet connection or rejoin the game."
+    }   
+    if(isSocketConnected === false){
+        return (<LoadingScreen message={socketDisconnectedReason} display={true}/>)
+    }
+
     if(playerData.length > 1){
         return (
             <>
@@ -57,7 +64,10 @@ const CurrentPlayer = ({playerData}) => {
             </>
         )
     }
-    return (<LoadingScreen message="Waiting for other players to join..." display={true}/>)
+    else{
+      return (<LoadingScreen message="Waiting for other players to join..." display={true}/>)
+    }
+    
 }
 
 export default {

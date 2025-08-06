@@ -8,7 +8,7 @@ import userRouter from './routes/user';
 import middleware from './utils/middleware';
 import logoutRouter from './routes/logout';
 import accountRouter from './routes/account';
-import SocketServer from './socketEvents/connection';
+import SocketServer from './socket/socketServer';
 
 const app = express()
 

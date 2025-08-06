@@ -2,6 +2,7 @@ import Setup from "../Setup/Setup.jsx";
 import { useNavigate } from "react-router-dom";
 import Navigation from "../Common/Navigation.jsx";
 import Togglable from "../Common/Togglable.jsx";
+import JoinGame from "../Setup/Join.jsx";
 
 const GameScreen = () => {
   const navigate = useNavigate();
@@ -28,7 +29,7 @@ const GameScreen = () => {
               <Togglable
                 buttonLabel="Join ongoing game"
                 buttonClassName="pixelFontStyle difficultyNavButton">
-                <div>blah</div>
+                <JoinGame />
               </Togglable>
           </div>
         </div>

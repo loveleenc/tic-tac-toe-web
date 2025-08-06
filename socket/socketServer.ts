@@ -7,9 +7,6 @@ import gameService from "../services/gameService";
 import { getGameWithId } from "../data/liveData";
 import http from 'node:http';
 
-// import parsers from "../utils/parsers";
-// import {NewGameData}from "../types/types";
-
 class SocketServer{
     socketServer:Server;
     constructor(server:http.Server){
@@ -24,7 +21,6 @@ class SocketServer{
             }
             catch(error: unknown){
                 if(error instanceof Error){
-                    console.log(`error thrown: ${error.message}` )
                     next(error);
                 }
             }
@@ -36,38 +32,13 @@ class SocketServer{
 
 
     this.socketServer.on('connection', (socket:LoggedInUserSocketRequest) => {
-        console.log('blahhhhh');
+        socket.on('newGame', (gameId:string) => {
+            socket.join(gameId);
+            socket.gameId = gameId;
+        });
 
-        socket.on('disconnect', () => {
-            console.log('user disconnected')
-        })
-        // socket.on('createGame', async (gameData:NewGameData) => {
-        //     try{
-        //         parsers.isGameSetupData(gameData);
-        //     }
-        //     catch(error: unknown){
-        //         let errorMessage = 'something went wrong. '
-        //         if(error instanceof Error){
-        //             errorMessage += error.message
-        //         }
-        //         socket.emit('createGame', {error: errorMessage});
-        //         return;
-        //     }
-        //     const newGameData:NewGameData = {
-        //         width: gameData.width,
-        //         height: gameData.height,
-        //         minMoves: gameData.minMoves,
-        //         disableSquares: gameData.disableSquares,
-        //         difficulty: gameData.difficulty,
-        //         gameType: gameData.gameType,
-        //         players: gameData.players,
-        //     };
-        //     const data = gameService.createNewGame(newGameData, socket.user);
-        //     socket.join(data.gameId);
-        //     socket.to(data.gameId).emit('createGame', data.outgoingGameData, data.gameId);
-        // })
-
-        socket.on('joinGame', async (gameId:string, symbol:Player["symbol"]) => {
+        socket.on('joinGame', (gameId:string, symbol:Player["symbol"]) => {
+            socket.join(gameId);
             const game = getGameWithId(gameId);
             if(game === undefined){
                 socket.emit('joinGame', {error: `Game with id ${gameId} does not exist`});
@@ -79,9 +50,17 @@ class SocketServer{
             }
             else{
                 const gameAndPlayerData = gameService.addNewPlayer(symbol, socket.user, game);
-                socket.to(gameId).emit('joinGame', gameAndPlayerData);
+                socket.to(gameId).emit('playerJoined', gameAndPlayerData, socket.user.username);
+                socket.emit('joinedGame', gameAndPlayerData);
+                socket.gameId = gameId;
             }
         });
+
+
+        socket.on('disconnect', (reason:string) => {
+            console.log(`socket disconnected: ${reason}`);
+            socket.to(socket.gameId).emit('playerLeft', socket.user.username);
+        })
     })
 
 }

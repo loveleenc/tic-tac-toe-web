@@ -137,7 +137,7 @@ const Setup = () => {
         });
       }
       else if(gameType === types.GameType.MULTIPLAYER){
-        navigate("/gamemulti", {
+        navigate(`/gamemulti/${types.MultiplayerGameTypes.CREATE}`, {
           state: gameData,
         });
       }

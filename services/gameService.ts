@@ -63,8 +63,10 @@ const createInitialPlayerData = (players:playerSymbol[], username: string, gameT
     });
   }
 
+  if(gameType === GameType.SINGLEPLAYER || gameType === GameType.MULTIPLAYER){
+    data[0].username = username;
+  }
   if (gameType === GameType.SINGLEPLAYER) {
-    data[0].username = username
     const computerSymbol:playerSymbol = createComputerPlayer(players);
     data.push({ ...template, symbol: computerSymbol, isComputer: true });
     selectFirstPlayer(data);
@@ -166,6 +168,7 @@ const addNewPlayer = (playerSymbol:playerSymbol, user:ReturnedUser, game:Game): 
       winner: null,
       status: GameStatus.ONGOING,
       playerData: filterPlayerData(game.playerData),
+      grid: createGridArray(game),
     }
     return {symbol: player.symbol, game: outgoingGameData};
   }
@@ -190,6 +193,7 @@ const addNewPlayer = (playerSymbol:playerSymbol, user:ReturnedUser, game:Game): 
       winner: null,
       status: GameStatus.ONGOING,
       playerData: filterPlayerData(game.playerData),
+      grid: createGridArray(game),
     }
   return {symbol: playerSymbol, game: outgoingGameData};
 }
@@ -245,6 +249,10 @@ const selectNextPlayer = (playerData:Player[]):void  => {
   const currentPlayerIndex = playerData.findIndex(
     (player) => player.turn === true
   );
+  if(currentPlayerIndex === -1){
+    playerData[0].turn = true;
+    return;
+  }
   if (currentPlayerIndex + 1 === playerData.length) {
     playerData[0].turn = true;
   } else {
@@ -445,8 +453,8 @@ const playerAlreadyExistsInGame = (user:ReturnedUser, game: Game):Player | undef
 }
 
 const playerSymbolAlreadyChosen = (symbol:playerSymbol, game:Game):boolean => {
-  const player = game.playerData.find(player => player.symbol.toLowerCase() === symbol.toLowerCase())
-  return player !== undefined;
+  const playerWithMatchingSymbol = game.playerData.find(player => player.symbol.toLowerCase() === symbol.toLowerCase())
+  return playerWithMatchingSymbol !== undefined;
 }
 
 const gameHasNotStarted = (game:Game) => {

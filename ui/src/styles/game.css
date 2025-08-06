@@ -12,7 +12,7 @@
 }
 
 .gameBackgroundHeightMultiplayer{
-  height: 100vh;
+  height: 80vh;
 }
 
 .grid {
@@ -34,8 +34,6 @@
 
 .gameStatusWindow{
   background-color: #fbbc17;
-  margin: auto;
-  text-align: center;
   border: 5px black;
   border-style: outset;
   position: absolute;
@@ -43,6 +41,7 @@
   height: 18vh;
   width: 99.5%;
   background-size: cover;
+  overflow: auto;
 }
 
 .block {

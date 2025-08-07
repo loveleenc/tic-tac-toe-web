@@ -1,8 +1,78 @@
 import { ReturnedUser } from "../types/models";
-import { Game, Player, playerSymbol, Grid, Row, Cell, GameStatus, OutgoingGameData, NonSensitivePlayer, GameType, GameDifficulty} from "../types/types";
+import { Game, Player, playerSymbol, Grid, Row, Cell, GameStatus, OutgoingGameData, NonSensitivePlayer, GameType, GameDifficulty, NewGameData} from "../types/types";
 import computerService from "./computerService";
 import scoreService from "./scoreService";
+import { v4 as uuidv4 } from "uuid";
+import {addGameId, deleteGame} from "../data/liveData";
+import errors from "../utils/errors";
+import parsers from "../utils/parsers";
 
+const createNewGame = (gameData: NewGameData, user:ReturnedUser) => {
+  const game: Game = {
+      width: gameData.width,
+      height: gameData.height,
+      minMoves: gameData.minMoves,
+      squares: gameData.disableSquares
+        ? selectSquaresToDisable(
+            gameData.width,
+            gameData.height
+          )
+        : [],
+      difficulty: gameData.difficulty,
+      gameType: gameData.gameType,
+      hasStarted: gameData.gameType === GameType.SINGLEPLAYER ? true : false,
+      playerData: [],
+    };
+
+  const filteredPlayers = createAllPlayerData(gameData.players, user.username, game);
+  const gameId = uuidv4();
+  addGameId(gameId, game);
+  
+  const outgoingGameData: OutgoingGameData = {
+      grid: createGridArray(game),
+      playerData: filteredPlayers,
+      status:
+        game.gameType === GameType.SINGLEPLAYER
+          ? GameStatus.ONGOING
+          : GameStatus.NOTSTARTED,
+      winner: null,
+  };
+  
+  const data = {
+    gameId: gameId,
+    outgoingGameData: outgoingGameData,
+  }  
+  return data;
+}
+
+const createInitialPlayerData = (players:playerSymbol[], username: string, gameType: GameType):Player[] => {
+  const template:Player = {
+    symbol: '',
+    moves: [],
+    turn: false,
+    isComputer: false,
+    username: null
+  };
+  const data:Player[] = new Array();
+
+  for (let i = 0; i < players.length; i++) {
+    data.push({
+      ...template,
+      moves: template.moves.slice(),
+      symbol: players[i],
+    });
+  }
+
+  if(gameType === GameType.SINGLEPLAYER || gameType === GameType.MULTIPLAYER){
+    data[0].username = username;
+  }
+  if (gameType === GameType.SINGLEPLAYER) {
+    const computerSymbol:playerSymbol = createComputerPlayer(players);
+    data.push({ ...template, symbol: computerSymbol, isComputer: true });
+    selectFirstPlayer(data);
+  }
+  return data;
+};
 
 const createComputerPlayer = (players:string[]):playerSymbol => {
   let computer = '';
@@ -31,51 +101,111 @@ const selectFirstPlayer = (data:Player[]):void => {
   data[randomIndex].turn = true;
 };
 
-const createInitialPlayerData = (players:playerSymbol[], username: string, gameType: GameType):Player[] => {
-  const template:Player = {
-    symbol: '',
-    moves: [],
-    turn: false,
-    isComputer: false,
-    username: null
-  };
-  const data:Player[] = new Array();
+const playGame = async (user:ReturnedUser, game:Game, gridSquareId:number):Promise<OutgoingGameData> => {
+  const id = parsers.parseId(gridSquareId, game);
+  if(gameHasNotStarted(game)){
+    throw new errors.GameNotStartedError();
+  }
+  if(!currentPlayerHasSentTheRequest(user, game)){
+    throw new errors.NotCurrentPlayerError();
+  }
+  const outgoingGameData = await updateGameState(id, game);
+  return outgoingGameData
+}
 
-  for (let i = 0; i < players.length; i++) {
-    data.push({
-      ...template,
-      moves: template.moves.slice(),
-      symbol: players[i],
-    });
+const updateGameState = async (id:number, game:Game):Promise<OutgoingGameData> => {
+  let outgoingGameData = await verifyAndUpdateGameState(id, game)
+  if(game.playerData.find(p => p.turn === true && p.isComputer === true)){
+        const new_id = playAsComputer(game)
+        outgoingGameData = await verifyAndUpdateGameState(new_id, game)
+  }
+  return outgoingGameData
+}
+
+const verifyAndUpdateGameState = async (id:number, game:Game):Promise<OutgoingGameData> => {
+    game.playerData = updateMoveInPlayerData(game.playerData, id)
+    const updatedGame:OutgoingGameData = {
+      status: GameStatus.ONGOING,
+      winner: null,
+      playerData: filterPlayerData(game.playerData),
+      grid: createGridArray(game)
+    }
+    if(hasCurrentPlayerHasWon(game)){
+        const winner = game.playerData.find(player => player.turn === true)
+        if(!winner){
+          throw new Error("unable to find the current player who has won")
+        }
+        await scoreService.addWinToUserScore(winner.username);
+        game.playerData.forEach(async (player) => {
+          if(player.turn === false){
+            await scoreService.addLossToUserScore(player.username);
+          }
+        })
+        updatedGame.status = GameStatus.END
+        updatedGame.winner= winner.symbol
+        deleteGame
+    }
+    else if (nobodyWins(game)){
+      updatedGame.status = GameStatus.END
+      updatedGame.winner = null
+      game.playerData.forEach(async (player) => {
+        await scoreService.addTieToUserScore(player.username);
+      })
+    }
+    else{
+        selectNextPlayer(game.playerData)
+        updatedGame.status = GameStatus.ONGOING
+        updatedGame.winner= null
+        updatedGame.playerData= filterPlayerData(game.playerData)
+    }
+    return updatedGame
+}
+
+const createOutgoingDataFromGameData = (game:Game, gameStatus:GameStatus|null):OutgoingGameData => {
+  const outgoingGameData:OutgoingGameData = {
+    winner: null,
+    status: gameStatus === null ? GameStatus.ONGOING : gameStatus,
+    playerData: filterPlayerData(game.playerData),
+    grid: createGridArray(game),
+  }
+  return outgoingGameData;
+}
+
+const addNewPlayer = (playerSymbol:playerSymbol, user:ReturnedUser, game:Game): {symbol: string} & {game: OutgoingGameData} => {
+  const player = playerAlreadyExistsInGame(user, game)
+  if(player !== undefined){
+    const outgoingGameData:OutgoingGameData = {
+      winner: null,
+      status: GameStatus.ONGOING,
+      playerData: filterPlayerData(game.playerData),
+      grid: createGridArray(game),
+    }
+    return {symbol: player.symbol, game: outgoingGameData};
   }
 
-  if (gameType === GameType.SINGLEPLAYER) {
-    data[0].username = username
-    const computerSymbol:playerSymbol = createComputerPlayer(players);
-    data.push({ ...template, symbol: computerSymbol, isComputer: true });
-    selectFirstPlayer(data);
-  }
-  return data;
-};
-
-const addNewPlayer = (playerSymbol:playerSymbol, user_name:string, game:Game):NonSensitivePlayer => {
   const template:Player = {
     symbol: playerSymbol,
     moves: [],
     turn: false,
     isComputer: false,
-    username: user_name
+    username: user.username
   };
+
   game.playerData.push(template);
   if(!game.hasStarted){
     game.hasStarted = true;
   }
-  const {username, ...remainingData} = template
 
-  const filteredPlayer:NonSensitivePlayer = {
-    ...remainingData
+  if(game.playerData.length === 2){
+    selectNextPlayer(game.playerData);
   }
-  return filteredPlayer;
+  const outgoingGameData:OutgoingGameData = {
+      winner: null,
+      status: GameStatus.ONGOING,
+      playerData: filterPlayerData(game.playerData),
+      grid: createGridArray(game),
+    }
+  return {symbol: playerSymbol, game: outgoingGameData};
 }
 
 const createAllPlayerData = (players:playerSymbol[], username:string, game:Game):NonSensitivePlayer[] => {
@@ -83,6 +213,27 @@ const createAllPlayerData = (players:playerSymbol[], username:string, game:Game)
   playFirstMove(game)
   return filterPlayerData(game.playerData)
 }
+
+const playFirstMove = (game:Game):void => {
+  if(game.playerData.find(p => p.turn === true && p.isComputer === true) !== undefined){
+      const id = playAsComputer(game)
+      game.playerData = updateMoveInPlayerData(game.playerData, id)
+      selectNextPlayer(game.playerData)
+  }
+}
+
+const playAsComputer = (game:Game):number => {
+  switch(game.difficulty){
+    case (GameDifficulty.EASY):
+      return computerService.easyMode(game);
+    case (GameDifficulty.MEDIUM):
+      return computerService.mediumMode(game);
+    case (GameDifficulty.HARD):
+      return computerService.hardMode(game);
+    default:
+      throw new Error("Difficult level does not match with expected ones");
+  }
+};
 
 const filterPlayerData = (playerData:Player[]):NonSensitivePlayer[] => {
   const filteredPlayers = playerData.map(p => {
@@ -93,14 +244,6 @@ const filterPlayerData = (playerData:Player[]):NonSensitivePlayer[] => {
     return filteredPlayer
   })
   return filteredPlayers
-}
-
-const playFirstMove = (game:Game):void => {
-  if(game.playerData.find(p => p.turn === true && p.isComputer === true)){
-      const id = playAsComputer(game)
-      game.playerData = updateMoveInPlayerData(game.playerData, id)
-      selectNextPlayer(game.playerData)
-  }
 }
 
 const updateMoveInPlayerData = (playerData:Player[], id:number):Player[] => {
@@ -116,6 +259,10 @@ const selectNextPlayer = (playerData:Player[]):void  => {
   const currentPlayerIndex = playerData.findIndex(
     (player) => player.turn === true
   );
+  if(currentPlayerIndex === -1){
+    playerData[0].turn = true;
+    return;
+  }
   if (currentPlayerIndex + 1 === playerData.length) {
     playerData[0].turn = true;
   } else {
@@ -123,21 +270,6 @@ const selectNextPlayer = (playerData:Player[]):void  => {
   }
   playerData[currentPlayerIndex].turn = false;
 };
-
-
-const playAsComputer = (game:Game):number => {
-  switch(game.difficulty){
-    case (GameDifficulty.EASY):
-      return computerService.easyMode(game);
-    case (GameDifficulty.MEDIUM):
-      return computerService.mediumMode(game);
-    case (GameDifficulty.HARD):
-      return computerService.hardMode(game);
-    default:
-      throw new Error("Difficult level does not match with expected ones");
-  }
-};
-
 
 const createGridArray = (game:Game):Grid => {
   const grid:Grid = [];
@@ -179,11 +311,15 @@ const hasWon = (ids:number[], playerData:Player[], minMoves:number):boolean => {
   if(!currentPlayer){
     throw new Error("Unable to find current player")
   }
+  ids = ids.sort((a, b) => a - b);
   const moves = currentPlayer.moves;
   let count = 0;
   for (const id of ids) {
     if (moves.includes(id)) {
       count += 1;
+    }
+    else{
+      count = 0;
     }
     if (count === minMoves) {
       return true;
@@ -192,16 +328,20 @@ const hasWon = (ids:number[], playerData:Player[], minMoves:number):boolean => {
   return false;
 };
 
-const hasCurrentPlayerHasWon = (id:number, game:Game):boolean => {
+const hasCurrentPlayerHasWon = (game:Game):boolean => {
+  const currentPlayer = game.playerData.find(player => player.turn === true) as Player;
+  const id = currentPlayer.moves[currentPlayer.moves.length - 1];
   const maxCount = game.width * game.height - 1;
-  const leftList = [0];
-  const rightList = [game.width - 1];
+  const leftList = new Array();
+  leftList.push(0);
+  const rightList = new Array();
+  rightList.push(game.width - 1);
   for (let i = 1; i < game.height; i++) {
     leftList.push(leftList.slice(-1)[0] + game.width);
     rightList.push(rightList.slice(-1)[0] + game.width);
   }
 
-  const vertical = [];
+  const vertical = new Array();
   for (let i of range(id - (game.minMoves - 1) * game.width, id + game.width, game.width)) {
     if (i < 0) {
       continue;
@@ -215,7 +355,7 @@ const hasCurrentPlayerHasWon = (id:number, game:Game):boolean => {
     vertical.push(i);
   }
 
-  const horizontal = [];
+  const horizontal = new Array();
   for (let i of range(id, id - game.minMoves, -1)) {
     if (i == id) {
       horizontal.push(i);
@@ -235,7 +375,7 @@ const hasCurrentPlayerHasWon = (id:number, game:Game):boolean => {
   }
   horizontal.sort();
 
-  const diagonal1 = [];
+  const diagonal1 = new Array();
   for (let i of range(id, id - game.minMoves * (game.width + 1), -(game.width + 1))) {
     if (i == id) {
       diagonal1.push(i);
@@ -255,7 +395,7 @@ const hasCurrentPlayerHasWon = (id:number, game:Game):boolean => {
   }
   diagonal1.sort();
 
-  const diagonal2 = [];
+  const diagonal2 = new Array();
   for (let i of range(id - (game.width - 1) * (game.minMoves - 1), id, game.width - 1)) {
     if (leftList.includes(i) || i < 0) {
       continue;
@@ -298,15 +438,6 @@ const selectSquaresToDisable = (width:Game["width"], height:Game["height"]):Game
   return squares;
 };
 
-const updateGameState = async (id:number, game:Game):Promise<OutgoingGameData> => {
-  let outgoingGameData = await verifyAndUpdateGameState(id, game)
-  if(game.playerData.find(p => p.turn === true && p.isComputer === true)){
-        const new_id = playAsComputer(game)
-        outgoingGameData = await verifyAndUpdateGameState(new_id, game)
-  }
-  return outgoingGameData
-}
-
 const restartGame = (game:Game):OutgoingGameData => {
   game.playerData.forEach(player => player.moves = [])
     const outgoingGameData:OutgoingGameData = {
@@ -326,68 +457,33 @@ const currentPlayerHasSentTheRequest = (user:ReturnedUser, game:Game):boolean =>
   return user.username === currentPlayer.username
 }
 
-const playerAlreadyExistsInGame = (user:ReturnedUser, game: Game):boolean => {
+const playerAlreadyExistsInGame = (user:ReturnedUser, game: Game):Player | undefined => {
   const player = game.playerData.find(player => player.username === user.username)
-  return player !== undefined;
+  return player;
 }
 
 const playerSymbolAlreadyChosen = (symbol:playerSymbol, game:Game):boolean => {
-  const player = game.playerData.find(player => player.symbol.toLowerCase() === symbol.toLowerCase())
-  return player !== undefined;
+  const playerWithMatchingSymbol = game.playerData.find(player => player.symbol.toLowerCase() === symbol.toLowerCase())
+  return playerWithMatchingSymbol !== undefined;
 }
 
-const verifyAndUpdateGameState = async (id:number, game:Game):Promise<OutgoingGameData> => {
-    game.playerData = updateMoveInPlayerData(game.playerData, id)
-    const updatedGame:OutgoingGameData = {
-      status: GameStatus.ONGOING,
-      winner: null,
-      playerData: filterPlayerData(game.playerData)
-    }
-    if(hasCurrentPlayerHasWon(id, game)){
-        const winner = game.playerData.find(player => player.turn === true)
-        if(!winner){
-          throw new Error("unable to find the current player who has won")
-        }
-        await scoreService.addWinToUserScore(winner.username);
-        game.playerData.forEach(async (player) => {
-          if(player.turn === false){
-            await scoreService.addLossToUserScore(player.username);
-          }
-        })
-        updatedGame.status = GameStatus.END
-        updatedGame.winner= winner.symbol
-    }
-    else if (nobodyWins(game)){
-      updatedGame.status = GameStatus.END
-      updatedGame.winner= null
-      game.playerData.forEach(async (player) => {
-        await scoreService.addTieToUserScore(player.username);
-      })
-    }
-    else{
-        selectNextPlayer(game.playerData)
-        updatedGame.status = GameStatus.ONGOING
-        updatedGame.winner= null
-        updatedGame.playerData= filterPlayerData(game.playerData)
-        updatedGame.grid= createGridArray(game)
-    }
-    return updatedGame
+const gameHasNotStarted = (game:Game) => {
+  return game.playerData.length < 2 && game.hasStarted === false;
 }
 
 export default {
+  createNewGame,
+  playGame,
   restartGame,
-  updateGameState,
-  verifyAndUpdateGameState,
-  updateMoveInPlayerData,
-  createGridArray,
+
   selectNextPlayer,
   hasCurrentPlayerHasWon,
   nobodyWins,
-  selectSquaresToDisable,
-  playAsComputer,
-  createAllPlayerData,
-  currentPlayerHasSentTheRequest,
+  addNewPlayer,
+
+  updateMoveInPlayerData, //Does this need to be in this file?
+
   playerAlreadyExistsInGame,
-  playerSymbolAlreadyChosen,
-  addNewPlayer
+  playerSymbolAlreadyChosen, //TODO: Placeholder, func to be removed or used later
+  createOutgoingDataFromGameData,
 };

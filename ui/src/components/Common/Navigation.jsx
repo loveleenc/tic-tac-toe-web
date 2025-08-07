@@ -1,11 +1,10 @@
 import '../../styles/navigation.css'
 
-const Navigation = ({quitGame, restartGame, style}) => {
+const Navigation = ({buttons, quitGame, restartGame, style}) => {
     return(
-    <div style={style} className='navigationbar'>
-        <a className="navButtons" onClick={quitGame}>Quit</a>
-        {restartGame ? <a className="navButtons" onClick={restartGame}>Restart</a> : null}
-    </div>)
+        <div style={style} className='navigationbar'>
+            {buttons.map((button, index) => <a key={index} className="navButtons" onClick={button.action}>{button.text}</a>)}
+        </div>)
 }
 
 export default Navigation

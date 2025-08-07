@@ -5,6 +5,7 @@
     background-position: center;
     background-repeat: no-repeat;
     background-image: url('/assets/mainScreen/pika_bckgnd.jpg');
+    background-size: cover;
 }
 
 .gameTitle img{
@@ -99,6 +100,10 @@
 .navigationButton:not(:hover){
     transform: scale(1);
     transition: 0.3s;
+}
+
+.boldFont{
+    font-weight: bold;
 }
 
 .aboutSection{

@@ -12,7 +12,31 @@ class DeactivatedAccountError extends Error{
     }
 }
 
+class NotCurrentPlayerError extends Error{
+    constructor(){
+        super('You are not the current player in the game. Please wait your turn.')
+        this.name = 'NotCurrentPlayerError';
+    }
+}
+
+class AbstractClassError extends Error{
+    constructor(){
+        super("Abstract classes can't be instantiated or this method need to be implemented.")
+        this.name = 'AbstractClassError';
+    }
+}
+
+class GameNotStartedError extends Error{
+    constructor(){
+        super("Game has not started yet. Please wait for other players to join before the game begins.")
+        this.name = 'GameNotStartedError'
+    }
+}
+
 export default {
+    GameNotStartedError,
     AuthenticationError,
-    DeactivatedAccountError
+    DeactivatedAccountError,
+    NotCurrentPlayerError,
+    AbstractClassError
 }

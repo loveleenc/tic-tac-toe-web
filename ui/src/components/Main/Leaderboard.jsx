@@ -17,7 +17,7 @@ const Leaderboard = () => {
 
   const getScores = () => scores.length !== 0 ? scores.map((score) => (
           <tr>
-            <td>{score.user.name}</td>
+            <td>{score.user}</td>
             <td>{score.wins}</td>
             <td>{score.losses}</td>
             <td>{score.ties}</td>

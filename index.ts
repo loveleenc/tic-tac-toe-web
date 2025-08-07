@@ -8,10 +8,11 @@ import userRouter from './routes/user';
 import middleware from './utils/middleware';
 import logoutRouter from './routes/logout';
 import accountRouter from './routes/account';
+import SocketServer from './socket/socketServer';
 
 const app = express()
 
-const url = config.MONGODB_URI ? config.MONGODB_URI : ""
+const url = config.MONGODB_URI
 mongoose.connect(url)
     .then(() => {
         console.log('connected to mongoDB')
@@ -34,6 +35,8 @@ app.use(middleware.errorHandler)
 
 const PORT = process.env.PORT ?? 3001
 
-app.listen(PORT, () => {
-    console.log(`Server running on port: ${PORT}`)
+const server = app.listen(PORT, () => {
+    console.log(`Server running on: ${PORT}`)
 })
+
+new SocketServer(server);

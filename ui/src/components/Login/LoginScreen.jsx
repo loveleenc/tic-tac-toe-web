@@ -51,6 +51,25 @@ const Login = () => {
 
 const ForgotPasswordDialog = ({dialogRef}) => {
     const divContainerRef = useRef(null)
+    const [message, setMessage] = useState('')
+    const [display, setDisplay] = useState(false)
+
+    const sendPasswordResetRequest = (event) => {
+        event.preventDefault();
+        const email = event.target.resetEmail.value;
+        const emailFormat = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
+        if(!emailFormat.test(email)){
+            setMessage("E-mail should be in the format: xxx@xxx.x");
+            return;
+        }
+        accountAPI.requestResetPasswordEmail(email)
+            .then(() => {
+                setMessage("An e-mail has been sent to you. Please check your e-mail and use the link in it to reset your password.");
+            })
+            .catch((response) => {
+                setMessage(response.response.data.error);
+            })
+    }
 
     return(
         <dialog ref={dialogRef} style={{width: "60%", borderRadius: "4%", height: "60%"}}>
@@ -60,11 +79,32 @@ const ForgotPasswordDialog = ({dialogRef}) => {
             
                 <div className="pixelFontStyle" style={{whiteSpace: 'pre-line'}}>{`...\n...\n...\n...\n...`}</div>
                 <div className="pixelFontStyle">Just kidding, you goober.</div>
+                <div className="pixelFontStyle">
+                    <span>Click </span>
+                    <span className="boldFont" onClick={() => {
+                        setDisplay(true);
+                        setTimeout(() => divContainerRef.current.scrollBy({
+                                                                            top: 200,
+                                                                            behavior: "smooth",
+                                                                            }), 50);
+                        }}>here</span>
+                    <span> to reset your password.</span>
+                    <form style={{display: display ? '' : 'none'}} className="createAccountForm" onSubmit={sendPasswordResetRequest}>
+                        <Common.FormInput text="E-mail " fieldName="resetEmail" type="text" customStyle={{width: 'fit-content', marginRight: 'auto', marginLeft: 'auto'}}/>
+                        <div style={{paddingLeft: '5px'}} className="pixelFontStyle">{message}</div>
+                        <Common.NavigationButton text="Create" onClickEventHandler={null} >
+                            <input type="submit" className="hiddenButton"/>
+                        </Common.NavigationButton>
+                    </form>
+                </div>
+
             </div>
             <form method="dialog">
                 <Common.NavigationButton text="Okay" onClickEventHandler={() => {
                     divContainerRef.current.scrollTo(0, 0);
-                    dialogRef.current.close()
+                    setMessage("");
+                    setDisplay(false);
+                    dialogRef.current.close();
                     }}/>
             </form>
         </dialog>

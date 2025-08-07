@@ -1,12 +1,20 @@
-import { Games } from "../types/types";
+import { Games, Game } from "../types/types";
 
 const games:Games = {}
 const accountActivationIds:Array<string> = new Array();
 const passwordResetIds:Array<string> = new Array();
 
 
-export default function getGames():Games {
-    return games
+export function getGameWithId(id:string):Game | undefined{
+    return games[id];
+}
+
+export function addGameId(id:string, game:Game){
+    games[id] = game;
+} 
+
+export function deleteGame(id:string){
+    delete games[id];
 }
 
 export function deleteAllGames(){

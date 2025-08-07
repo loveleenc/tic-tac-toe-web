@@ -15,8 +15,14 @@ const GameDifficulty = Object.freeze({
   HARD : 'HARD'
 })
 
+const MultiplayerGameTypes = Object.freeze({
+  CREATE: 'create',
+  JOIN: 'join'
+})
+
 export default {
     GameStatus,
     GameType,
-    GameDifficulty
+    GameDifficulty,
+    MultiplayerGameTypes
 }

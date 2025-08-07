@@ -1,13 +1,22 @@
-import User from "../models/user"
 import bcrypt from 'bcrypt'
 import errors from "../utils/errors"
-import jwt from 'jsonwebtoken'
+import jwt, { JwtPayload } from 'jsonwebtoken'
 import { accountType } from "../types/types"
-import { ReturnedUser } from "../types/models"
+import { database } from "./databaseService"
 
+const extractUserFromToken = async (token:string | undefined) => {
+    let user = null;
+    if(typeof process.env.SECRET === 'string' && token !== undefined){
+        const decodedToken = jwt.verify(token, process.env.SECRET) as JwtPayload
+        if(decodedToken?.id){
+            user = await database().getUserById(decodedToken.id);
+        }
+    }
+    return user;
+}
 
 const validateLogin = async (username: string, password: string) => {
-    const user = await User.findOne({username: username})
+    const user = await database().getUserByUsername(username);
     if(!user){
         throw new errors.AuthenticationError()
     }
@@ -22,7 +31,7 @@ const validateLogin = async (username: string, password: string) => {
 
     const userPayload = {
         username: user.username,
-        id: user._id
+        id: user.id
     }
     if(typeof process.env.SECRET === 'string'){
         const token = jwt.sign(userPayload, process.env.SECRET, {expiresIn: 30 * 60})
@@ -34,19 +43,12 @@ const validateLogin = async (username: string, password: string) => {
 }
 
 const getAllUsers = async () => {
-    const users = await User.find({})
-    const filteredUsers = users.map(user => {
-        const filteredUser:ReturnedUser = {
-            username: user.username,
-            id: user._id.toString(),
-            name: user.name
-        }
-        return filteredUser;
-    })
-    return filteredUsers;
+    const users = await database().getAllUsers();
+    return users;
 }
 
 export default {
     getAllUsers,
-    validateLogin
+    validateLogin,
+    extractUserFromToken
 }

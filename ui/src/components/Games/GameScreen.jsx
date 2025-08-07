@@ -2,6 +2,7 @@ import Setup from "../Setup/Setup.jsx";
 import { useNavigate } from "react-router-dom";
 import Navigation from "../Common/Navigation.jsx";
 import Togglable from "../Common/Togglable.jsx";
+import JoinGame from "../Setup/Join.jsx";
 
 const GameScreen = () => {
   const navigate = useNavigate();
@@ -16,7 +17,7 @@ const GameScreen = () => {
     <>
       <div
         style={{ overflowY: "scroll", overflowX: "hidden", maxHeight: "100vh" }}>
-        <Navigation quitGame={quitGame} />
+        <Navigation buttons={[{action: quitGame, text: 'Quit'}]}/>
         <div className="setupContainer pixelFontStyle">
           <div className="formContainer form">
             <div>Create a new game or join an ongoing one?</div>
@@ -28,7 +29,7 @@ const GameScreen = () => {
               <Togglable
                 buttonLabel="Join ongoing game"
                 buttonClassName="pixelFontStyle difficultyNavButton">
-                <div>blah</div>
+                <JoinGame />
               </Togglable>
           </div>
         </div>

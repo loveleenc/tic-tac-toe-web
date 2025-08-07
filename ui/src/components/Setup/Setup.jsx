@@ -122,17 +122,25 @@ const Setup = () => {
 
   useEffect(() => {
     if(isSubmitted){
-      navigate("/game", {
-      state: {
-        width: width,
-        height: height,
-        players: players,
-        minMoves: winMoves,
-        disableSquares: disableSquares,
-        gameType: gameType,
-        difficulty: difficulty
-      },
-    });
+      const gameData = {
+            width: width,
+            height: height,
+            players: players,
+            minMoves: winMoves,
+            disableSquares: disableSquares,
+            gameType: gameType,
+            difficulty: difficulty
+      }
+      if(gameType === types.GameType.SINGLEPLAYER){
+        navigate("/gamesingle", {
+          state: gameData,
+        });
+      }
+      else if(gameType === types.GameType.MULTIPLAYER){
+        navigate(`/gamemulti/${types.MultiplayerGameTypes.CREATE}`, {
+          state: gameData,
+        });
+      }
     }
     
   }, [isSubmitted]);

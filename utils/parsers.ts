@@ -1,5 +1,6 @@
 import { Game, GameDifficulty, GameType, playerSymbol, Setup, NewAccount } from "../types/types";
 
+
 const isNewAccountData = (object: unknown): NewAccount => {
   if(!object || typeof object !== "object"){
     throw new Error("request body is not available");
@@ -61,7 +62,11 @@ const stringIsAlphanumeric = (expectedString:string):boolean => {
 }
 
 const parseUsername = (username:unknown): string => {
-  if(isUsername(username) && username.length > 6 && username.length < 13 && stringIsAlphanumeric(username)){
+  if(isUsername(username) && 
+      username.length > 6 && 
+      username.length < 13 && 
+      stringIsAlphanumeric(username) && 
+      !username.startsWith("Guest_")){
     return username;
   }
   throw new Error("Username does not match the required criteria");
@@ -135,12 +140,15 @@ const isGameSetupData = (object: unknown): Setup => {
     const setup: Setup = {
       players: parsePlayers(object.players),
       width: parseWidth(object.width),
-      height: parseWHeight(object.height),
+      height: parseHeight(object.height),
       minMoves: parseMinMoves(object.minMoves),
       disableSquares: parseDisableSquares(object.disableSquares),
       gameType: parseGameType(object.gameType),
       difficulty: parseGameDifficulty(object.difficulty),
     };
+    if(setup.minMoves < 3 || setup.minMoves > Math.max(setup.width, setup.height)){
+      throw new Error('min number of moves needed to win should be greater than or equal to 3 and less than or equal to the width/height (whichever is bigger)')
+    }
     return setup;
   }
   throw new Error("game setup data appears to be missing a few details");
@@ -164,9 +172,12 @@ const parsePlayers = (players: unknown): playerSymbol[] => {
   return players;
 };
 
-const parseWHeight = (height: unknown): number => {
+const parseHeight = (height: unknown): number => {
   if (!isHeight(height)) {
     throw new Error("height is incorrect");
+  }
+  if(height < 3){
+    throw new Error('both width and height of the grid should be greater than or equal to 3')
   }
   return height;
 };
@@ -174,6 +185,9 @@ const parseWHeight = (height: unknown): number => {
 const parseWidth = (width: unknown): number => {
   if (!isWidth(width)) {
     throw new Error("width is incorrect");
+  }
+  if(width < 3){
+    throw new Error('both width and height of the grid should be greater than or equal to 3')
   }
   return width;
 };
@@ -262,5 +276,7 @@ export default {
   isGameSetupData,
   parseId,
   parsePlayers,
-  isNewAccountData
+  isNewAccountData,
+  parsePassword,
+  parseEmail
 };

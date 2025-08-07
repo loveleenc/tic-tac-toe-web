@@ -12,7 +12,7 @@
     "tsc": "tsc",
     "backend-js": "node ./build/index.js",
     "backend": "tsc && npm run backend-js",
-    "start": "NODE_ENV=production npm run ui-build && npm run backend",
+    "start": "npm run ui-build && npm run backend",
     "dev": "NODE_ENV=development npm run ui-build && npm run backend",
     "test": "NODE_ENV=test node --test"
   },

@@ -52,10 +52,10 @@ const GameMultiPlayer = () => {
 
     useEffect(() => {   
         if (gameOver){
+            socket.disconnect();
             setTimeout(() => {
-                socket.disconnect();
                 navigate("/");
-            }, 3000)
+            }, 5000)
             
         }
     }, [gameOver])
@@ -69,11 +69,11 @@ const GameMultiPlayer = () => {
             setGrid(game.grid);
             setPlayerData(game.playerData);
             if(game.status === 'END' && game.winner !== null){
-                alert(`Game over! Player ${game.winner} has won!`)
+                setDisconnectionReason(`Game over! Player ${game.winner} has won!`)
                 setGameOver(true)
             }
             else if(game.status === 'END' && game.winner === null){
-                alert("Nobody wins :(")
+                setDisconnectionReason("Nobody wins :(")
                 setGameOver(true)
             }
         })

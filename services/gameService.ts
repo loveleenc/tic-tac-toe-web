@@ -127,7 +127,8 @@ const verifyAndUpdateGameState = async (id:number, game:Game):Promise<OutgoingGa
     const updatedGame:OutgoingGameData = {
       status: GameStatus.ONGOING,
       winner: null,
-      playerData: filterPlayerData(game.playerData)
+      playerData: filterPlayerData(game.playerData),
+      grid: createGridArray(game)
     }
     if(hasCurrentPlayerHasWon(game)){
         const winner = game.playerData.find(player => player.turn === true)
@@ -156,7 +157,6 @@ const verifyAndUpdateGameState = async (id:number, game:Game):Promise<OutgoingGa
         updatedGame.status = GameStatus.ONGOING
         updatedGame.winner= null
         updatedGame.playerData= filterPlayerData(game.playerData)
-        updatedGame.grid= createGridArray(game)
     }
     return updatedGame
 }

@@ -33,29 +33,15 @@ const GameMultiPlayer = () => {
     }, [gameIdMessage])
 
 
-    const updateGame = (id) => {                          
-        gameAPI.playMove(id)      
-                .then(response => {
-                    const game = response.data
-                    if(game.status === 'END' && game.winner !== null){
-                        alert(`Game over! Player ${game.winner} has won!`)
-                        setGameOver(true)
-                    }
-                    else if(game.status === 'END' && game.winner === null){
-                        alert("Nobody wins :(")
-                        setGameOver(true)
-                    }
-                    else{
-                        setGrid(game.grid)
-                        setPlayerData(game.playerData)
-                    }
-                })
+    const updateGame = (id) => {   
+        socket.emit('playGame', id);
     }
 
     const getSquareId = useCallback((id) => {   
         const int_id = parseInt(id, 10)
         updateGame(int_id)
     }, [state.width])
+
 
     const exitGame = () => {
         if(window.confirm("Do you want to quit the game?")){
@@ -66,15 +52,32 @@ const GameMultiPlayer = () => {
 
     useEffect(() => {   
         if (gameOver){
-            socket.disconnect();
             setTimeout(() => {
+                socket.disconnect();
                 navigate("/");
-            }, 1000)
+            }, 3000)
             
         }
     }, [gameOver])
 
     useEffect(() => {
+        socket.on('updatedGame', (game) => {
+            if("error" in game){
+                alert(game.error);
+                return;
+            }
+            setGrid(game.grid);
+            setPlayerData(game.playerData);
+            if(game.status === 'END' && game.winner !== null){
+                alert(`Game over! Player ${game.winner} has won!`)
+                setGameOver(true)
+            }
+            else if(game.status === 'END' && game.winner === null){
+                alert("Nobody wins :(")
+                setGameOver(true)
+            }
+        })
+
         socket.on('disconnect', () => {
             setIsConnected(false)
         });

@@ -43,6 +43,8 @@ const GameSinglePlayer = () => {
                 .then(response => {
                     setLoadingDialogOnDisplay(false);
                     const game = response.data
+                    setGrid(game.grid)
+                    setPlayerData(game.playerData)
                     if(game.status === 'END' && game.winner !== null){
                         alert(`Game over! Player ${game.winner} has won!`)
                         setGameOver(true)
@@ -50,10 +52,6 @@ const GameSinglePlayer = () => {
                     else if(game.status === 'END' && game.winner === null){
                         alert("Nobody wins :(")
                         setGameOver(true)
-                    }
-                    else{
-                        setGrid(game.grid)
-                        setPlayerData(game.playerData)
                     }
                 })
     }
@@ -67,7 +65,7 @@ const GameSinglePlayer = () => {
         if (gameOver){
             setTimeout(() => {
                 navigate("/")
-            }, 1000)
+            }, 3000)
             
         }
     }, [gameOver])

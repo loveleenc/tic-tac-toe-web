@@ -2,10 +2,11 @@ import { Server } from 'socket.io';
 import {parse} from 'cookie';
 import userService from "../services/userService";
 import { LoggedInUserSocketRequest } from "../types/socket/request";
-import {  Player } from "../types/types";
+import {  GameStatus, Player } from "../types/types";
 import gameService from "../services/gameService";
 import { getGameWithId } from "../data/liveData";
 import http from 'node:http';
+import { deleteGame } from '../data/liveData';
 
 class SocketServer{
     socketServer:Server;
@@ -63,6 +64,27 @@ class SocketServer{
                 socket.to(gameId).emit('playerJoined', gameAndPlayerData, socket.user.username);
                 socket.emit('joinedGame', gameAndPlayerData);
                 socket.gameId = gameId;
+            }
+        });
+
+        socket.on('playGame', async (id:number) => {
+            const game = getGameWithId(socket.gameId);
+            if(game === undefined){
+                socket.emit('updatedGame', {error: 'Game not found.'});
+                return;
+            }
+            try{
+                const outgoingGameData = await gameService.playGame(socket.user, game, id);
+                if (outgoingGameData.status === GameStatus.END) {
+                    deleteGame(socket.gameId);
+                }
+                socket.emit('updatedGame', outgoingGameData);
+                socket.to(socket.gameId).emit('updatedGame', outgoingGameData);
+            }
+            catch(error: unknown){
+                if(error instanceof Error){
+                    socket.emit('updatedGame', {error: error.message});
+                }
             }
         });
 

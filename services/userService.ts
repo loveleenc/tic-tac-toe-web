@@ -3,9 +3,10 @@ import errors from "../utils/errors"
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import { accountType } from "../types/types"
 import { database } from "./databaseService"
+import { ReturnedUser } from '../types/models'
 
 const extractUserFromToken = async (token:string | undefined) => {
-    let user = null;
+    let user:ReturnedUser | null = null;
     if(typeof process.env.SECRET === 'string' && token !== undefined){
         const decodedToken = jwt.verify(token, process.env.SECRET) as JwtPayload
         if(decodedToken?.id){

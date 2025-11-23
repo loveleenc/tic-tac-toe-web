@@ -4,6 +4,9 @@ const games:Games = {}
 const accountActivationIds:Array<string> = new Array();
 const passwordResetIds:Array<string> = new Array();
 
+export function getGames():Games {
+    return games;
+}
 
 export function getGameWithId(id:string):Game | undefined{
     return games[id];

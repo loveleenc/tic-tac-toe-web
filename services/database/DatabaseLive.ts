@@ -53,7 +53,7 @@ class DatabaseLive extends Database{
     }
 
     async getUserByUsername(username: string): Promise<UserModelId | null> {
-        let filteredUser = null;
+        let filteredUser:UserModelId | null = null;
         const user = await User.findOne({username: username});
         if(user){
             filteredUser = {
@@ -70,7 +70,7 @@ class DatabaseLive extends Database{
     }
 
     async getUserById(id: string): Promise<ReturnedUser | null> {
-        let filteredUser = null;
+        let filteredUser:ReturnedUser | null = null;
         const user = await User.findById(id);
         if(user){
             filteredUser = {
@@ -148,4 +148,4 @@ class DatabaseLive extends Database{
 }
 
 const liveDatabase = new DatabaseLive();
-export default liveDatabase;
+export default liveDatabase; 

@@ -1,11 +1,11 @@
+import { vi } from "vitest";
 import gameService from "../services/gameService";
 import { ReturnedUser } from "../types/models";
 import { GameDifficulty, GameStatus, GameType, NewGameData } from "../types/types";
 
-
 describe('testing creation of a new game', () => {
     beforeAll(() => {
-        jest.spyOn(global.Math, 'random').mockReturnValue(0.5);
+        vi.spyOn(global.Math, 'random').mockReturnValue(0.5);
     })
 
     test('creating a new single player game', () => {
@@ -94,6 +94,6 @@ describe('testing creation of a new game', () => {
     })
 
     afterAll(() => {
-        jest.spyOn(global.Math, 'random').mockRestore();
+        vi.spyOn(global.Math, 'random').mockRestore();
     })
 })

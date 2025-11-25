@@ -95,6 +95,9 @@ const errorHandler = (error:unknown, _request: ExistingGameRequest | LoggedInUse
             response.status(401).json({error: 'token invalid'});
             return;
         }
+        else if(error.name === 'AuthenticationError'){
+            response.status(401).json({error: 'Unable to access data'})
+        }
         else if (error.name === 'TokenExpiredError'){
             response.status(401).json({error: 'token expired'});
             return;

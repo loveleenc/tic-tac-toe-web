@@ -40,3 +40,5 @@ const server = app.listen(PORT, () => {
 })
 
 new SocketServer(server);
+
+export default app;

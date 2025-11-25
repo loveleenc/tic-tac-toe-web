@@ -13,8 +13,9 @@
     "backend-js": "node ./build/index.js",
     "backend": "tsc && npm run backend-js",
     "start": "npm run ui-build && npm run backend",
-    "dev": "NODE_ENV=development npm run ui-build && npm run backend",
-    "test": "NODE_ENV=test node --test"
+    "dev": "npm run ui-build && npm run backend",
+    "jest": "jest",
+    "test": "vitest"
   },
   "dependencies": {
     "@types/dotenv": "^6.1.1",
@@ -33,9 +34,9 @@
     "react-router-dom": "^7.6.2",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
+    "typescript": "^5.8.3",
     "uuid": "^11.1.0",
-    "vite": "^7.0.6",
-    "typescript": "^5.8.3"
+    "vite": "^7.0.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
@@ -55,9 +56,9 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^16.0.0",
-    "jest": "^30.0.5",
     "supertest": "^7.1.1",
     "ts-jest": "^29.4.0",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "vitest": "^4.0.13"
   }
 }

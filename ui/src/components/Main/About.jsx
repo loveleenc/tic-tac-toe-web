@@ -15,7 +15,7 @@ const About = () => {
   return (
     <div className="aboutSection">
       <span className="pixelFontStyle">Created by Loveleen Chaudhari </span>
-      <Link to="https://github.com/loveleenc" target="_blank">
+      <Link to="https://github.com/loveleenc/tic-tac-toe-web" target="_blank">
         <img
           onMouseOver={() => handleMouseOver(event)}
           onMouseOut={() => handleMouseOut(event)}

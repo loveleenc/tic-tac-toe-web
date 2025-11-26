@@ -12,6 +12,7 @@
     "tsc": "tsc",
     "backend-js": "node ./build/index.js",
     "backend": "tsc && npm run backend-js",
+    "build": "npm run ui-build && npm run tsc",
     "start": "npm run ui-build && npm run backend",
     "dev": "npm run ui-build && npm run backend",
     "jest": "jest",

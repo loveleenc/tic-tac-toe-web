@@ -17,7 +17,7 @@ const gameRouter = Router();
 
 gameRouter.post(
   "/",
-  [middleware.extractUser, middleware.parseGameSetup], async (request: LoggedInUserRequest, response: Response<OutgoingGameData>) => {
+  [middleware.extractUser, middleware.refreshToken, middleware.parseGameSetup], async (request: LoggedInUserRequest, response: Response<OutgoingGameData>) => {
     const newGameData:NewGameData = {
       width: request.body.width,
       height: request.body.height,
@@ -36,7 +36,7 @@ gameRouter.post(
 
 gameRouter.patch(
   "/",
-  [middleware.extractUser, middleware.getGame],
+  [middleware.extractUser, middleware.refreshToken, middleware.getGame],
   async (
     request: ExistingGameRequest,
     response: Response,
@@ -59,7 +59,7 @@ gameRouter.patch(
 
 gameRouter.delete(
   "/",
-  [middleware.extractUser, middleware.getGame],
+  [middleware.extractUser, middleware.refreshToken, middleware.getGame],
   async (request: ExistingGameRequest, response: Response) => {
     deleteGame(request.cookies.gameId)
     response.status(204).end();
@@ -68,7 +68,7 @@ gameRouter.delete(
 
 gameRouter.put(
   "/",
-  [middleware.extractUser, middleware.getGame],
+  [middleware.extractUser, middleware.refreshToken, middleware.getGame],
   async (
     request: ExistingGameRequest,
     response: Response<OutgoingGameData>

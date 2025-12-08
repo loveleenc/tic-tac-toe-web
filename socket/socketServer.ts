@@ -18,6 +18,7 @@ class SocketServer{
             try{
                 const cookie = parse(socket.request.headers.cookie);
                 socket.user = await userService.extractUserFromToken(cookie.token);
+                //TODO: add refresh token in socket connections
                 next();
             }
             catch(error: unknown){

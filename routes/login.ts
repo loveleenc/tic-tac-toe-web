@@ -8,7 +8,7 @@ const loginRouter = Router();
 
 loginRouter.get(
   "/whoami",
-  middleware.extractUser,
+  middleware.extractUser, middleware.refreshToken,
   async (request: LoggedInUserRequest, response: Response) => {
     try {
       if (request.user === null) {
@@ -51,7 +51,12 @@ loginRouter.post("/", async (request: Request, response: Response) => {
       secure: true,
       sameSite: "strict",
     });
-    const { token, ...remaining } = userInfo;
+    response.cookie("refreshToken", userInfo.refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+    });
+    const { token, refreshToken, ...remaining } = userInfo;
     const userInfoFiltered = { ...remaining };
     response.status(201).json(userInfoFiltered);
   } catch (error: unknown) {

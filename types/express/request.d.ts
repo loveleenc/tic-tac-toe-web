@@ -4,7 +4,9 @@ import { Game } from "../types";
 declare namespace Express {
     interface LoggedInUserRequest extends Request{
         token: string;
-        user: ReturnedUser
+        refreshToken: string;
+        user: ReturnedUser;
+        accessTokenExpired?: boolean;
     }
 
     interface ExistingGameRequest extends LoggedInUserRequest {
